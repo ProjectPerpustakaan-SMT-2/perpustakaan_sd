@@ -50,10 +50,10 @@ public class PetugasRepositoryTest {
 //    public static void main(String[] args) {
 //    // Test Get All
 //        Petugas ptg = new Petugas(
-//            "safira@gmail.com",
-//            "safira", 
-//            "Safira123", 
-//            "Safira", 
+//            "hafidzqueena607@gmail.com",
+//            "hafidz", 
+//            "hafidz123", 
+//            "Hafidz Fadhillah", 
 //                     new Date(), 
 //            Jabatan.Petugas
 //        );
@@ -61,7 +61,7 @@ public class PetugasRepositoryTest {
 //        Assert.assertTrue(repo.add(ptg) > 0);
 //        Assert.assertTrue(repo.get().size() > 1);
 //    }
-    
+//    
 //    public static void main(String[] args) {
 //    // Test Update   
 //        Petugas petugas = repo.get(petugasId);
