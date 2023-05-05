@@ -4,7 +4,6 @@
  */
 package view.pages;
 
-import javax.swing.JOptionPane;
 import service.AuthService;
 import view.popup.PopupViewLoginError;
 import view.popup.PopupViewLoginSucces;

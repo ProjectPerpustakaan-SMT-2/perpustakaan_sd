@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view.popup;
+
+import java.awt.Color;
+
 /**
  *
  * @author Hafidz Fadhillah
@@ -14,6 +17,7 @@ public class PopupViewDataPasswordTidakSama extends javax.swing.JFrame {
      */
     public PopupViewDataPasswordTidakSama() {
         initComponents();
+        this.setBackground(new Color(0,0,0,0));
     }
 
     /**

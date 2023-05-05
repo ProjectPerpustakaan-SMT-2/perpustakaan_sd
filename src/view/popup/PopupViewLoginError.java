@@ -4,6 +4,8 @@
  */
 package view.popup;
 
+import java.awt.Color;
+
 /**
  *
  * @author Hafidz Fadhillah
@@ -15,6 +17,7 @@ public class PopupViewLoginError extends javax.swing.JFrame {
      */
     public PopupViewLoginError() {
         initComponents();
+        this.setBackground(new Color(0,0,0,0));
     }
 
     /**
@@ -30,6 +33,7 @@ public class PopupViewLoginError extends javax.swing.JFrame {
         background = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(488, 320));
         setUndecorated(true);
         getContentPane().setLayout(null);
 
@@ -44,9 +48,9 @@ public class PopupViewLoginError extends javax.swing.JFrame {
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Username atau Password Anda Salah!.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 499, 320);
+        background.setBounds(0, 0, 480, 320);
 
-        setSize(new java.awt.Dimension(499, 320));
+        setSize(new java.awt.Dimension(480, 313));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
