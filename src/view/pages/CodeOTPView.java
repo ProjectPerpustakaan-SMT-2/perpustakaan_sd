@@ -6,7 +6,6 @@ package view.pages;
 
 import data.SessionData;
 import service.AuthService;
-import javax.swing.JOptionPane;
 import view.popup.PopupViewKodeOTPTidakCocok;
 
 /**
@@ -63,6 +62,7 @@ public class CodeOTPView extends javax.swing.JFrame {
         getContentPane().add(btnKirim);
         btnKirim.setBounds(480, 440, 125, 50);
 
+        background.setForeground(new java.awt.Color(255, 255, 255));
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/pages/Code OTP.png"))); // NOI18N
         background.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         background.setMinimumSize(new java.awt.Dimension(1080, 763));

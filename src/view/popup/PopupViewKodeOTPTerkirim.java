@@ -4,6 +4,7 @@
  */
 package view.popup;
 
+import java.awt.Color;
 import view.pages.CodeOTPView;
 
 /**
@@ -17,6 +18,7 @@ public class PopupViewKodeOTPTerkirim extends javax.swing.JFrame {
      */
     public PopupViewKodeOTPTerkirim() {
         initComponents();
+        this.setBackground(new Color(0,0,0,0));
     }
 
     /**

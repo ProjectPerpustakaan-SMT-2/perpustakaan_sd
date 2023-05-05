@@ -4,6 +4,8 @@
  */
 package view.popup;
 
+import java.awt.Color;
+
 /**
  *
  * @author Hafidz Fadhillah
@@ -15,6 +17,7 @@ public class PopupViewDataTidakDitemukan extends javax.swing.JFrame {
      */
     public PopupViewDataTidakDitemukan() {
         initComponents();
+        this.setBackground(new Color(0,0,0,0));
     }
 
     /**
