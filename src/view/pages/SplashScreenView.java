@@ -89,7 +89,7 @@ public class SplashScreenView extends javax.swing.JFrame {
         
         try {
             for (int i = 1; i <= 100; i++) {
-                Thread.sleep(111);
+                Thread.sleep(102);
                 
                 view.loadingBar.setValue(i);
                 view.loadingPercent.setText(i + "%");

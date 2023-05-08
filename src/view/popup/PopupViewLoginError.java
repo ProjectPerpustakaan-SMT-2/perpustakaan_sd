@@ -44,13 +44,13 @@ public class PopupViewLoginError extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnOke);
-        btnOke.setBounds(190, 246, 120, 40);
+        btnOke.setBounds(618, 465, 130, 45);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Username atau Password Anda Salah!.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Username atau Password  Anda Salah!.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 480, 320);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(480, 313));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

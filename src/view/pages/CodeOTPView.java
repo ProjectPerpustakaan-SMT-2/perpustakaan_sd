@@ -46,12 +46,12 @@ public class CodeOTPView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnBack);
-        btnBack.setBounds(305, 190, 43, 40);
+        btnBack.setBounds(413, 257, 50, 45);
 
         tKode.setFont(new java.awt.Font("Calisto MT", 0, 20)); // NOI18N
         tKode.setBorder(null);
         getContentPane().add(tKode);
-        tKode.setBounds(350, 373, 380, 40);
+        tKode.setBounds(450, 478, 510, 44);
 
         btnKirim.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnKirim.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -60,17 +60,17 @@ public class CodeOTPView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnKirim);
-        btnKirim.setBounds(480, 440, 125, 50);
+        btnKirim.setBounds(630, 570, 155, 50);
 
         background.setForeground(new java.awt.Color(255, 255, 255));
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/pages/Code OTP.png"))); // NOI18N
         background.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         background.setMinimumSize(new java.awt.Dimension(1080, 763));
-        background.setPreferredSize(new java.awt.Dimension(1080, 763));
+        background.setPreferredSize(new java.awt.Dimension(1366, 768));
         getContentPane().add(background);
-        background.setBounds(0, 0, 1080, 763);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(1080, 763));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

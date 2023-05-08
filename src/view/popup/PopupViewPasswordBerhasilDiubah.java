@@ -44,13 +44,13 @@ public class PopupViewPasswordBerhasilDiubah extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnOke);
-        btnOke.setBounds(189, 245, 120, 40);
+        btnOke.setBounds(617, 470, 130, 45);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Password Berhasil Diubah! (Phone).png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Password Berhasil Diubah!.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 499, 320);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(499, 320));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

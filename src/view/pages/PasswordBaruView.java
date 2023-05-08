@@ -54,17 +54,17 @@ public class PasswordBaruView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnBack);
-        btnBack.setBounds(296, 167, 54, 50);
+        btnBack.setBounds(383, 113, 53, 50);
 
         tPassBaru.setFont(new java.awt.Font("Calisto MT", 0, 20)); // NOI18N
         tPassBaru.setBorder(null);
         getContentPane().add(tPassBaru);
-        tPassBaru.setBounds(345, 344, 373, 45);
+        tPassBaru.setBounds(420, 340, 505, 50);
 
         tPassKonf.setFont(new java.awt.Font("Calisto MT", 0, 20)); // NOI18N
         tPassKonf.setBorder(null);
         getContentPane().add(tPassKonf);
-        tPassKonf.setBounds(345, 453, 373, 45);
+        tPassKonf.setBounds(420, 480, 505, 50);
 
         CheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,7 +72,7 @@ public class PasswordBaruView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(CheckBox);
-        CheckBox.setBounds(335, 514, 20, 20);
+        CheckBox.setBounds(412, 558, 20, 20);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -81,13 +81,13 @@ public class PasswordBaruView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(463, 550, 116, 40);
+        btnSimpan.setBounds(580, 606, 158, 50);
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/pages/Ganti Password.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 1080, 763);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(1080, 763));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

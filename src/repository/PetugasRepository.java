@@ -4,7 +4,6 @@
  */
 package repository;
 
-import data.Jabatan;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -92,7 +91,7 @@ public class PetugasRepository implements Repository<Petugas>{
         
         for(String valueKey: values.keySet()) {
             if(iterate > 0) sql += " OR ";
-            sql += valueKey + " LIKE CONCAT( '&',?,'%')";
+            sql += valueKey + " LIKE CONCAT( '%',?,'%')";
             
             iterate++;
         }
@@ -112,7 +111,7 @@ public class PetugasRepository implements Repository<Petugas>{
     }
     
     public Integer add(Petugas ptg) {
-        String sql = "INSERT INTO " + tableName + " (`email`, `username`, `password`, `nama`, `tgl_lahir`, `jabatan`) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + tableName + " (`email`, `username`, `password`, `nama`, `tgl_lahir`) VALUES (?, ?, ?, ?, ?)";
         
         try(PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, ptg.getEmail());
@@ -120,7 +119,6 @@ public class PetugasRepository implements Repository<Petugas>{
             stmt.setString(3, ptg.getPassword());
             stmt.setString(4, ptg.getNama());
             stmt.setDate(5, new Date(ptg.getTgl_lahir().getTime()));
-            stmt.setString(6, ptg.getJabatan().toString());
             stmt.executeUpdate();
             
             ResultSet rs = stmt.getGeneratedKeys();
@@ -178,8 +176,7 @@ public class PetugasRepository implements Repository<Petugas>{
                 result.getString("username"),
                 result.getString("password"),
                 result.getString("nama"),
-                result.getDate("tgl_lahir"),
-                Jabatan.valueOf(result.getString("jabatan"))
+                result.getDate("tgl_lahir")
         );
         
         petugas.setId(result.getInt("kode_petugas"));

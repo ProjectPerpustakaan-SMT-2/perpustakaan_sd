@@ -4,7 +4,6 @@
  */
 package RepositoryTest;
 
-import data.Jabatan;
 import entity.Petugas;
 import java.util.Date;
 import java.util.HashMap;
