@@ -4,7 +4,6 @@
  */
 package view.pages;
 
-import UI.LupaPassword;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
@@ -51,17 +50,17 @@ public class LupaPasswordView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnBack);
-        btnBack.setBounds(306, 170, 50, 50);
+        btnBack.setBounds(398, 135, 50, 50);
 
         tUsername.setFont(new java.awt.Font("Calisto MT", 0, 20)); // NOI18N
         tUsername.setBorder(null);
         getContentPane().add(tUsername);
-        tUsername.setBounds(350, 341, 380, 40);
+        tUsername.setBounds(450, 338, 470, 48);
 
         tEmail.setFont(new java.awt.Font("Calisto MT", 0, 20)); // NOI18N
         tEmail.setBorder(null);
         getContentPane().add(tEmail);
-        tEmail.setBounds(350, 442, 380, 40);
+        tEmail.setBounds(450, 465, 470, 50);
 
         btnKirm.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnKirm.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -70,13 +69,13 @@ public class LupaPasswordView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnKirm);
-        btnKirm.setBounds(480, 516, 120, 45);
+        btnKirm.setBounds(608, 540, 155, 60);
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/pages/Lupa Password.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 1080, 763);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(1080, 763));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -96,7 +95,7 @@ public class LupaPasswordView extends javax.swing.JFrame {
                 new PopupViewDataTidakDitemukan().setVisible(true);
             }
         } catch (MessagingException ex) {
-            Logger.getLogger(LupaPassword.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LupaPasswordView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnKirmMouseClicked
 

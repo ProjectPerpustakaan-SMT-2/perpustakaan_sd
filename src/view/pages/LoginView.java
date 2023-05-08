@@ -44,12 +44,12 @@ public class LoginView extends javax.swing.JFrame {
         tUsername.setFont(new java.awt.Font("Calisto MT", 0, 22)); // NOI18N
         tUsername.setBorder(null);
         getContentPane().add(tUsername);
-        tUsername.setBounds(575, 280, 360, 50);
+        tUsername.setBounds(740, 288, 397, 48);
 
         tPassword.setFont(new java.awt.Font("Calisto MT", 0, 22)); // NOI18N
         tPassword.setBorder(null);
         getContentPane().add(tPassword);
-        tPassword.setBounds(575, 403, 360, 50);
+        tPassword.setBounds(740, 420, 397, 48);
 
         btnLupaPassword.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLupaPassword.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -58,11 +58,11 @@ public class LoginView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnLupaPassword);
-        btnLupaPassword.setBounds(670, 480, 170, 20);
+        btnLupaPassword.setBounds(855, 495, 170, 20);
 
         btnSiswa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         getContentPane().add(btnSiswa);
-        btnSiswa.setBounds(565, 530, 165, 40);
+        btnSiswa.setBounds(736, 560, 165, 45);
 
         btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -71,13 +71,13 @@ public class LoginView extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnLogin);
-        btnLogin.setBounds(780, 530, 170, 40);
+        btnLogin.setBounds(975, 561, 170, 45);
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/pages/Login.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 1080, 763);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(1064, 755));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -93,6 +93,7 @@ public class LoginView extends javax.swing.JFrame {
             new PopupViewLoginError().setVisible(true);
         } else {
             new PopupViewLoginSucces().setVisible(true);
+            this.dispose();
         }
     }//GEN-LAST:event_btnLoginMouseClicked
 

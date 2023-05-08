@@ -4,7 +4,6 @@
  */
 package entity;
 
-import data.Jabatan;
 import java.util.Date;
 
 /**
@@ -20,19 +19,17 @@ public class Petugas implements Entity {
     private String username;
     private String password;
     private Date tgl_lahir;
-    private Jabatan jabatan;
     
     public Petugas() {
         
     }
     
-    public Petugas (String email, String username, String password, String nama, Date tgl_lahir, Jabatan jabatan) {
+    public Petugas (String email, String username, String password, String nama, Date tgl_lahir) {
         this.email = email;
         this.username = username;
         this.password = password;
         this.nama = nama;
         this.tgl_lahir = tgl_lahir;
-        this.jabatan = jabatan;
     }
     
     public Integer getId() {
@@ -81,13 +78,5 @@ public class Petugas implements Entity {
     
     public void setTgl_lahir(Date tgl_lahir) {
         this.tgl_lahir = tgl_lahir;
-    }
-    
-    public Jabatan getJabatan() {
-        return jabatan;
-    }
-    
-    public void setJabatan(Jabatan jabatan) {
-        this.jabatan = jabatan;
     }
 }

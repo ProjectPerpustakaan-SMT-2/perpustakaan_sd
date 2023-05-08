@@ -5,6 +5,8 @@
 package view.popup;
 
 import java.awt.Color;
+import view.pages.DashboardPetugas;
+import view.pages.LoginView;
 
 /**
  *
@@ -43,18 +45,19 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnOke);
-        btnOke.setBounds(190, 246, 120, 40);
+        btnOke.setBounds(620, 462, 125, 45);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Login Berhasil! (Phone).png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Login Berhasil!.png"))); // NOI18N
         getContentPane().add(background);
-        background.setBounds(0, 0, 499, 320);
+        background.setBounds(0, 0, 1366, 768);
 
-        setSize(new java.awt.Dimension(499, 320));
+        setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOkeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOkeMouseClicked
         // TODO add your handling code here:
+        new DashboardPetugas().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnOkeMouseClicked
 
