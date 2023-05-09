@@ -25,9 +25,8 @@ public class Buku implements Entity {
         
     }
     
-    public Buku(Integer kode_buku, String judul_buku, String nama_pengarang, Integer isbn,
+    public Buku(String judul_buku, String nama_pengarang, Integer isbn,
                 Integer kode_penerbit, String sumber, Integer halaman, Integer jumlah, Integer kode_ddc) {
-        this.kode_buku = kode_buku;
         this.judul_buku = judul_buku;
         this.nama_pengarang = nama_pengarang;
         this.isbn = isbn;
@@ -82,7 +81,7 @@ public class Buku implements Entity {
         return sumber;
     }
     
-    public void getSumber(String sumber) {
+    public void setSumber(String sumber) {
         this.sumber = sumber;
     }
     
