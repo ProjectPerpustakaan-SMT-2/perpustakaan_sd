@@ -4,6 +4,7 @@
  */
 package view.layouts;
 
+import customUI.TableCustom;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
@@ -14,32 +15,32 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-import entity.Petugas;
+import entity.Buku;
 import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import repository.BukuRepository;
 import repository.Repository;
-import repository.PetugasRepository;
-import customUI.TableCustom;
 import util.ViewUtil;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class DaftarPetugas extends javax.swing.JInternalFrame {
-    private Repository<Petugas> ptgRepo = new PetugasRepository();
+public class ManajemenBuku extends javax.swing.JInternalFrame {
+    private Repository<Buku> bkuRepo = new BukuRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     
     /**
      * Creates new form TambahBuku
      */
-    public DaftarPetugas() {
+    public ManajemenBuku() {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
         
         jam();
-        loadDataTable(ptgRepo.get());
+        loadDataTable(bkuRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
@@ -53,7 +54,9 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
-        btnTambahData = new javax.swing.JLabel();
+        btnTambahBuku = new javax.swing.JLabel();
+        btnKlasifikasi = new javax.swing.JLabel();
+        btnPenerbit = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -67,14 +70,32 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
 
-        btnTambahData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnTambahData.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnTambahBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnTambahBuku.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnTambahDataMouseClicked(evt);
+                btnTambahBukuMouseClicked(evt);
             }
         });
-        getContentPane().add(btnTambahData);
-        btnTambahData.setBounds(433, 145, 180, 40);
+        getContentPane().add(btnTambahBuku);
+        btnTambahBuku.setBounds(433, 150, 150, 33);
+
+        btnKlasifikasi.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnKlasifikasi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnKlasifikasiMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btnKlasifikasi);
+        btnKlasifikasi.setBounds(605, 150, 102, 33);
+
+        btnPenerbit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPenerbit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnPenerbitMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btnPenerbit);
+        btnPenerbit.setBounds(732, 150, 102, 33);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -84,7 +105,7 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(979, 145, 280, 40);
+        tCari.setBounds(988, 147, 280, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -106,50 +127,74 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(437, 210, 863, 495);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Petugas.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Management Buku.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
         setBounds(0, 0, 1366, 768);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnTambahDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahDataMouseClicked
-        // TODO add your handling code here:
-        TambahPetugas tambahPetugas = new TambahPetugas();
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(tambahPetugas);
-        tambahPetugas.setVisible(true);
-        
-        this.dispose();
-    }//GEN-LAST:event_btnTambahDataMouseClicked
-
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Petugas> petugass = ptgRepo.search(new HashMap<>() {{
-            put("nama", value);
-            put("email", value);
-            put("username", value);
+        List<Buku> bukus = bkuRepo.search(new HashMap<>() {{
+            put("isbn", value);
+            put("judul_buku", value);
+            put("nama_pengarang", value);
         }});
         
-        loadDataTable(petugass);
+        loadDataTable(bukus);
     }//GEN-LAST:event_tCariKeyReleased
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
         int row = Tabel.getSelectedRow();
-        String value = Tabel.getModel().getValueAt(row, 5).toString();
-        Petugas petugas = ptgRepo.get(Integer.valueOf(value));
+        String value = Tabel.getModel().getValueAt(row, 7).toString();
+        Buku buku = bkuRepo.get(Integer.valueOf(value));
         
-        EditPetugas editPetugas = new EditPetugas(petugas);
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(editPetugas);
-        editPetugas.setVisible(true);
-        
-        this.dispose();
+        int choice = JOptionPane.showOptionDialog(
+            this, 
+            "Pilih Opsi Yang Akan Anda Lakukan!",
+            "Konfirmasi", 
+            JOptionPane.DEFAULT_OPTION, 
+            JOptionPane.QUESTION_MESSAGE, 
+            null, 
+            new Object[]{"Detail", "Edit", "Cancel"}, 
+            "Detail" 
+        );
+
+        if (choice == 0) {
+            System.out.println("Detail");
+        } else if (choice == 1) {
+            EditBuku editBuku = new EditBuku(buku);
+            JDesktopPane desktopPane = getDesktopPane();
+            desktopPane.add(editBuku);
+            editBuku.setVisible(true);
+
+            this.dispose();
+        }
     }//GEN-LAST:event_TabelMouseClicked
 
-    private void loadDataTable(List<Petugas> petugass) {
+    private void btnTambahBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahBukuMouseClicked
+        // TODO add your handling code here:
+        TambahBuku tambahBuku = new TambahBuku();
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(tambahBuku);
+        tambahBuku.setVisible(true);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnTambahBukuMouseClicked
+
+    private void btnKlasifikasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKlasifikasiMouseClicked
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnKlasifikasiMouseClicked
+
+    private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPenerbitMouseClicked
+
+    private void loadDataTable(List<Buku> bukus) {
         int no = 1;
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -159,26 +204,30 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         };
         
         model.addColumn("No");
-        model.addColumn("Nama");
-        model.addColumn("Email");
-        model.addColumn("Username");
-        model.addColumn("Tanggal Lahir");
+        model.addColumn("ISBN");
+        model.addColumn("Judul Buku");
+        model.addColumn("Nama Pengarang");
+        model.addColumn("Sumber");
+        model.addColumn("Halaman");
+        model.addColumn("Jumlah");
         model.addColumn("ID");
         
-        for (Petugas petugas: petugass) {
+        for (Buku buku: bukus) {
             
             model.addRow(new Object[] {
                 no++,
-                petugas.getNama(),
-                petugas.getEmail(),
-                petugas.getUsername(),
-                sdf.format(petugas.getTgl_lahir()),
-                petugas.getId()
+                buku.getIsbn(),
+                buku.getJudul_buku(),
+                buku.getNama_pengarang(),
+                buku.getSumber(),
+                buku.getHalaman(),
+                buku.getJumlah(),
+                buku.getKode_buku()
             });
         }
         
         Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 5);
+        ViewUtil.hideTableColumn(Tabel, 7);
         customStyleTable();
     }
     
@@ -228,7 +277,9 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
-    private javax.swing.JLabel btnTambahData;
+    private javax.swing.JLabel btnKlasifikasi;
+    private javax.swing.JLabel btnPenerbit;
+    private javax.swing.JLabel btnTambahBuku;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;

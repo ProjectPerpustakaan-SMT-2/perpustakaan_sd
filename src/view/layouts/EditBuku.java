@@ -9,16 +9,15 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.text.SimpleDateFormat;
+import jakarta.validation.ConstraintViolation;
+
+import entity.Buku;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
-import jakarta.validation.ConstraintViolation;
-
-import entity.Petugas;
 import util.ValidasiUtil;
 import repository.Repository;
-import repository.PetugasRepository;
+import repository.BukuRepository;
 import view.popup.PopupViewDataDiubah;
 import view.popup.PopupViewHapusData;
 
@@ -26,26 +25,24 @@ import view.popup.PopupViewHapusData;
  *
  * @author Hafidz Fadhillah
  */
-public class EditPetugas extends javax.swing.JInternalFrame {
-    private Petugas petugas;
-    private Repository<Petugas> ptgRepo = new PetugasRepository();
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+public class EditBuku extends javax.swing.JInternalFrame {
+    private Buku buku;
+    private Repository<Buku> bkuRepo = new BukuRepository();
     
     /**
      * Creates new form TambahBuku
      */
-    public EditPetugas(Petugas petugas) {
+    public EditBuku(Buku buku) {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
         
-        this.petugas = petugas;
+        this.buku = buku;
         
         fillForm();
         
         jam();
-        customJDateChooser();
     }
 
     /**
@@ -58,13 +55,16 @@ public class EditPetugas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
-        tNama = new javax.swing.JTextField();
-        tEmail = new javax.swing.JTextField();
-        tUsername = new javax.swing.JTextField();
-        tPassword = new javax.swing.JPasswordField();
+        tISBN = new javax.swing.JTextField();
+        tJudulBuku = new javax.swing.JTextField();
+        tNamaPengarang = new javax.swing.JTextField();
+        tKodePenerbit = new javax.swing.JTextField();
+        tKodeDDC = new javax.swing.JTextField();
+        tSumber = new javax.swing.JTextField();
+        tHalaman = new javax.swing.JTextField();
+        tJumlah = new javax.swing.JTextField();
         btnHapus = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
-        tKalender = new com.toedter.calendar.JDateChooser();
         background = new javax.swing.JLabel();
 
         setBorder(null);
@@ -75,25 +75,45 @@ public class EditPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
 
-        tNama.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tNama.setBorder(null);
-        getContentPane().add(tNama);
-        tNama.setBounds(470, 195, 770, 35);
+        tISBN.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tISBN.setBorder(null);
+        getContentPane().add(tISBN);
+        tISBN.setBounds(447, 186, 840, 35);
 
-        tEmail.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tEmail.setBorder(null);
-        getContentPane().add(tEmail);
-        tEmail.setBounds(470, 276, 770, 35);
+        tJudulBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tJudulBuku.setBorder(null);
+        getContentPane().add(tJudulBuku);
+        tJudulBuku.setBounds(447, 267, 403, 35);
 
-        tUsername.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tUsername.setBorder(null);
-        getContentPane().add(tUsername);
-        tUsername.setBounds(470, 357, 370, 35);
+        tNamaPengarang.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tNamaPengarang.setBorder(null);
+        getContentPane().add(tNamaPengarang);
+        tNamaPengarang.setBounds(882, 267, 403, 35);
 
-        tPassword.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tPassword.setBorder(null);
-        getContentPane().add(tPassword);
-        tPassword.setBounds(870, 357, 370, 35);
+        tKodePenerbit.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKodePenerbit.setBorder(null);
+        getContentPane().add(tKodePenerbit);
+        tKodePenerbit.setBounds(447, 348, 403, 35);
+
+        tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKodeDDC.setBorder(null);
+        getContentPane().add(tKodeDDC);
+        tKodeDDC.setBounds(882, 348, 404, 35);
+
+        tSumber.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tSumber.setBorder(null);
+        getContentPane().add(tSumber);
+        tSumber.setBounds(447, 429, 840, 35);
+
+        tHalaman.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tHalaman.setBorder(null);
+        getContentPane().add(tHalaman);
+        tHalaman.setBounds(447, 510, 404, 35);
+
+        tJumlah.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tJumlah.setBorder(null);
+        getContentPane().add(tJumlah);
+        tJumlah.setBounds(882, 510, 404, 35);
 
         btnHapus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -102,7 +122,7 @@ public class EditPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnHapus);
-        btnHapus.setBounds(470, 520, 130, 40);
+        btnHapus.setBounds(443, 595, 130, 40);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -111,13 +131,9 @@ public class EditPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1110, 520, 130, 40);
+        btnSimpan.setBounds(1160, 595, 130, 40);
 
-        tKalender.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        getContentPane().add(tKalender);
-        tKalender.setBounds(470, 438, 767, 36);
-
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Edit Petugas.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Edit Buku.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -126,27 +142,30 @@ public class EditPetugas extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
-        petugas.setNama(tNama.getText());
-        petugas.setEmail(tEmail.getText());
-        petugas.setUsername(tUsername.getText());
-        petugas.setPassword(tPassword.getText());
-        petugas.setTgl_lahir(tKalender.getDate());
+        buku.setJudul_buku(tJudulBuku.getText());
+        buku.setNama_pengarang(tNamaPengarang.getText());
+        buku.setIsbn(Integer.valueOf(tISBN.getText()));
+        buku.setKode_penerbit(Integer.valueOf(tKodePenerbit.getText()));
+        buku.setSumber(tSumber.getText());
+        buku.setHalaman(Integer.valueOf(tHalaman.getText()));
+        buku.setJumlah(Integer.valueOf(tJumlah.getText()));
+        buku.setKode_ddc(Integer.valueOf(tKodeDDC.getText()));
         
-        Set<ConstraintViolation<Petugas>> vols = ValidasiUtil.validate(petugas);
+        Set<ConstraintViolation<Buku>> vols = ValidasiUtil.validate(buku);
         
         if (vols.size() > 0) {
             JOptionPane.showMessageDialog(this,ValidasiUtil.getErrorsAsString(vols, "\n"));
             return;
         } else {
-            ptgRepo.update(petugas);
+            bkuRepo.update(buku);
             
-            DaftarPetugas daftarPetugas = new DaftarPetugas();
+            ManajemenBuku manajemenBuku = new ManajemenBuku();
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarPetugas);
-            daftarPetugas.setVisible(true);
+            desktopPane.add(manajemenBuku);
+            manajemenBuku.setVisible(true);
 
             this.dispose();
-
+            
             new PopupViewDataDiubah().setVisible(true);
         }
     }//GEN-LAST:event_btnSimpanMouseClicked
@@ -154,36 +173,39 @@ public class EditPetugas extends javax.swing.JInternalFrame {
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
         int clicked = JOptionPane.showOptionDialog(
-            this, 
-            "Apakah Anda yakin ?",
+            this, // Parent component
+            "Apakah Anda yakin ?", 
             "Konfirmasi", 
-            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE, 
             null, 
             new Object[]{"Ya", "Tidak"}, 
             "Tidak" 
         );
-        
+
         if (clicked == JOptionPane.YES_OPTION) {
-            ptgRepo.delete(petugas.getId());
+            bkuRepo.delete(buku.getKode_buku());
             
-            DaftarPetugas daftarPetugas = new DaftarPetugas();
+            ManajemenBuku manajemenBuku = new ManajemenBuku();
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarPetugas);
-            daftarPetugas.setVisible(true);
+            desktopPane.add(manajemenBuku);
+            manajemenBuku.setVisible(true);
 
             this.dispose();
             
             new PopupViewHapusData().setVisible(true);
-        }
+        } 
     }//GEN-LAST:event_btnHapusMouseClicked
 
     private void fillForm() {
-        tNama.setText(petugas.getNama());
-        tEmail.setText(petugas.getEmail());
-        tUsername.setText(petugas.getUsername());
-        tPassword.setText(petugas.getPassword());
-        tKalender.setDate(petugas.getTgl_lahir());
+        tISBN.setText(String.valueOf(buku.getIsbn()));
+        tJudulBuku.setText(buku.getJudul_buku());
+        tNamaPengarang.setText(buku.getNama_pengarang());
+        tKodePenerbit.setText(String.valueOf(buku.getKode_penerbit()));
+        tSumber.setText(buku.getSumber());
+        tHalaman.setText(String.valueOf(buku.getHalaman()));
+        tJumlah.setText(String.valueOf(buku.getJumlah()));
+        tKodeDDC.setText(String.valueOf(buku.GetKode_ddc()));
     }
     
     private void jam() {
@@ -224,20 +246,19 @@ public class EditPetugas extends javax.swing.JInternalFrame {
             System.out.println(e);
         }
     }
-    
-    private void customJDateChooser() {
-        tKalender.setDateFormatString("dd - MM - yyyy");
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnHapus;
     private javax.swing.JLabel btnSimpan;
-    private javax.swing.JTextField tEmail;
+    private javax.swing.JTextField tHalaman;
+    private javax.swing.JTextField tISBN;
     private javax.swing.JLabel tJam;
-    private com.toedter.calendar.JDateChooser tKalender;
-    private javax.swing.JTextField tNama;
-    private javax.swing.JPasswordField tPassword;
-    private javax.swing.JTextField tUsername;
+    private javax.swing.JTextField tJudulBuku;
+    private javax.swing.JTextField tJumlah;
+    private javax.swing.JTextField tKodeDDC;
+    private javax.swing.JTextField tKodePenerbit;
+    private javax.swing.JTextField tNamaPengarang;
+    private javax.swing.JTextField tSumber;
     // End of variables declaration//GEN-END:variables
 }
