@@ -9,38 +9,41 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.text.SimpleDateFormat;
 import jakarta.validation.ConstraintViolation;
 
-import entity.Petugas;
+import entity.Klasifikasi;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import util.ValidasiUtil;
 import repository.Repository;
-import repository.PetugasRepository;
-import view.popup.PopupViewDataBerhasil;
-import view.popup.PopupViewDataGagal;
+import repository.KlasifikasiRepository;
+import view.popup.PopupViewDataDiubah;
+import view.popup.PopupViewHapusData;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class TambahPetugas extends javax.swing.JInternalFrame {
-    private Repository<Petugas> ptgRepo = new PetugasRepository();
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+public class EditKlasifikasi extends javax.swing.JInternalFrame {
+    private Klasifikasi klasifikasi; 
+    private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
     
     /**
-     * Creates new form TambahBuku
+     * Creates new form TambahKlasifikasi
      */
-    public TambahPetugas() {
+    public EditKlasifikasi(Klasifikasi klasifikasi) {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
         
+        this.klasifikasi = klasifikasi;
+        
+        fillForm();
+        
         jam();
-        customJDateChooser();
     }
 
     /**
@@ -53,13 +56,10 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
-        tNama = new javax.swing.JTextField();
-        tEmail = new javax.swing.JTextField();
-        tUsername = new javax.swing.JTextField();
-        tPassword = new javax.swing.JPasswordField();
-        btnReset = new javax.swing.JLabel();
+        tKodeDDC = new javax.swing.JTextField();
+        tNamaKlasifikasi = new javax.swing.JTextField();
+        btnHapus = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
-        tKalender = new com.toedter.calendar.JDateChooser();
         background = new javax.swing.JLabel();
 
         setBorder(null);
@@ -70,34 +70,24 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
 
-        tNama.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tNama.setBorder(null);
-        getContentPane().add(tNama);
-        tNama.setBounds(470, 195, 770, 35);
+        tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKodeDDC.setBorder(null);
+        getContentPane().add(tKodeDDC);
+        tKodeDDC.setBounds(447, 183, 850, 35);
 
-        tEmail.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tEmail.setBorder(null);
-        getContentPane().add(tEmail);
-        tEmail.setBounds(470, 276, 770, 35);
+        tNamaKlasifikasi.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tNamaKlasifikasi.setBorder(null);
+        getContentPane().add(tNamaKlasifikasi);
+        tNamaKlasifikasi.setBounds(447, 264, 850, 35);
 
-        tUsername.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tUsername.setBorder(null);
-        getContentPane().add(tUsername);
-        tUsername.setBounds(470, 357, 370, 35);
-
-        tPassword.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tPassword.setBorder(null);
-        getContentPane().add(tPassword);
-        tPassword.setBounds(870, 357, 370, 35);
-
-        btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnHapus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnResetMouseClicked(evt);
+                btnHapusMouseClicked(evt);
             }
         });
-        getContentPane().add(btnReset);
-        btnReset.setBounds(470, 520, 130, 40);
+        getContentPane().add(btnHapus);
+        btnHapus.setBounds(443, 330, 130, 40);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -106,13 +96,9 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1110, 520, 130, 40);
+        btnSimpan.setBounds(1160, 330, 130, 40);
 
-        tKalender.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        getContentPane().add(tKalender);
-        tKalender.setBounds(470, 438, 767, 36);
-
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Petugas.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Edit Klasifikasi.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -121,42 +107,59 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
-        Petugas petugas = new Petugas(
-                tEmail.getText(), 
-                tUsername.getText(), 
-                tPassword.getText(), 
-                tNama.getText(), 
-                tKalender.getDate()
-        );
+        klasifikasi.setKode_ddc(Integer.valueOf(tKodeDDC.getText()));
+        klasifikasi.setNama_klasifiksi(tNamaKlasifikasi.getText());
         
-        Set<ConstraintViolation<Petugas>> vols = ValidasiUtil.validate(petugas);
+        Set<ConstraintViolation<Klasifikasi>> vols = ValidasiUtil.validate(klasifikasi);
         
-        if (vols.size() < 1) {
-            ptgRepo.add(petugas);
+        try {
+            klsfRepo.update(klasifikasi);
             
-            DaftarPetugas daftarPetugas = new DaftarPetugas();
+            DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarPetugas);
-            daftarPetugas.setVisible(true);
+            desktopPane.add(daftarKlasifikasii);
+            daftarKlasifikasii.setVisible(true);
 
             this.dispose();
             
-            new PopupViewDataBerhasil().setVisible(true);
-        } else {
-            new PopupViewDataGagal().setVisible(true);
-            JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
+            new PopupViewDataDiubah().setVisible(true);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }//GEN-LAST:event_btnSimpanMouseClicked
 
-    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+    private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
-        tNama.setText("");
-        tEmail.setText("");
-        tUsername.setText("");
-        tPassword.setText("");
-        tKalender.setDate(null);
-    }//GEN-LAST:event_btnResetMouseClicked
+        int clicked = JOptionPane.showOptionDialog(
+            this, // Parent component
+            "Apakah Anda yakin ?", 
+            "Konfirmasi", 
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE, 
+            null, 
+            new Object[]{"Ya", "Tidak"}, 
+            "Tidak" 
+        );
 
+        if (clicked == JOptionPane.YES_OPTION) {
+            klsfRepo.delete(klasifikasi.getId_klasifikasi());
+            
+            DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
+            JDesktopPane desktopPane = getDesktopPane();
+            desktopPane.add(daftarKlasifikasii);
+            daftarKlasifikasii.setVisible(true);
+
+            this.dispose();
+            
+            new PopupViewHapusData().setVisible(true);
+        } 
+    }//GEN-LAST:event_btnHapusMouseClicked
+
+    private void fillForm() {
+        tKodeDDC.setText(String.valueOf(klasifikasi.getKode_ddc()));
+        tNamaKlasifikasi.setText(klasifikasi.getNama_klasifikasi());
+    }
+    
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -195,20 +198,13 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
             System.out.println(e);
         }
     }
-    
-    private void customJDateChooser() {
-        tKalender.setDateFormatString("dd - MM - yyyy");
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
-    private javax.swing.JLabel btnReset;
+    private javax.swing.JLabel btnHapus;
     private javax.swing.JLabel btnSimpan;
-    private javax.swing.JTextField tEmail;
     private javax.swing.JLabel tJam;
-    private com.toedter.calendar.JDateChooser tKalender;
-    private javax.swing.JTextField tNama;
-    private javax.swing.JPasswordField tPassword;
-    private javax.swing.JTextField tUsername;
+    private javax.swing.JTextField tKodeDDC;
+    private javax.swing.JTextField tNamaKlasifikasi;
     // End of variables declaration//GEN-END:variables
 }

@@ -9,16 +9,15 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.text.SimpleDateFormat;
 import jakarta.validation.ConstraintViolation;
 
-import entity.Petugas;
+import entity.Klasifikasi;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import util.ValidasiUtil;
 import repository.Repository;
-import repository.PetugasRepository;
+import repository.KlasifikasiRepository;
 import view.popup.PopupViewDataBerhasil;
 import view.popup.PopupViewDataGagal;
 
@@ -26,21 +25,19 @@ import view.popup.PopupViewDataGagal;
  *
  * @author Hafidz Fadhillah
  */
-public class TambahPetugas extends javax.swing.JInternalFrame {
-    private Repository<Petugas> ptgRepo = new PetugasRepository();
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+public class TambahKlasifikasi extends javax.swing.JInternalFrame {
+    private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
     
     /**
-     * Creates new form TambahBuku
+     * Creates new form TambahKlasifikasi
      */
-    public TambahPetugas() {
+    public TambahKlasifikasi() {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
         
         jam();
-        customJDateChooser();
     }
 
     /**
@@ -53,13 +50,10 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
-        tNama = new javax.swing.JTextField();
-        tEmail = new javax.swing.JTextField();
-        tUsername = new javax.swing.JTextField();
-        tPassword = new javax.swing.JPasswordField();
+        tKodeDDC = new javax.swing.JTextField();
+        tNamaKlasifikasi = new javax.swing.JTextField();
         btnReset = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
-        tKalender = new com.toedter.calendar.JDateChooser();
         background = new javax.swing.JLabel();
 
         setBorder(null);
@@ -70,25 +64,15 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
 
-        tNama.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tNama.setBorder(null);
-        getContentPane().add(tNama);
-        tNama.setBounds(470, 195, 770, 35);
+        tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKodeDDC.setBorder(null);
+        getContentPane().add(tKodeDDC);
+        tKodeDDC.setBounds(447, 183, 850, 35);
 
-        tEmail.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tEmail.setBorder(null);
-        getContentPane().add(tEmail);
-        tEmail.setBounds(470, 276, 770, 35);
-
-        tUsername.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tUsername.setBorder(null);
-        getContentPane().add(tUsername);
-        tUsername.setBounds(470, 357, 370, 35);
-
-        tPassword.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tPassword.setBorder(null);
-        getContentPane().add(tPassword);
-        tPassword.setBounds(870, 357, 370, 35);
+        tNamaKlasifikasi.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tNamaKlasifikasi.setBorder(null);
+        getContentPane().add(tNamaKlasifikasi);
+        tNamaKlasifikasi.setBounds(447, 264, 850, 35);
 
         btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -97,7 +81,7 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnReset);
-        btnReset.setBounds(470, 520, 130, 40);
+        btnReset.setBounds(443, 330, 130, 40);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -106,13 +90,9 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1110, 520, 130, 40);
+        btnSimpan.setBounds(1160, 330, 130, 40);
 
-        tKalender.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        getContentPane().add(tKalender);
-        tKalender.setBounds(470, 438, 767, 36);
-
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Petugas.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Klasifikasi.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -121,23 +101,20 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
-        Petugas petugas = new Petugas(
-                tEmail.getText(), 
-                tUsername.getText(), 
-                tPassword.getText(), 
-                tNama.getText(), 
-                tKalender.getDate()
+        Klasifikasi klasifikasi = new Klasifikasi(
+            Integer.valueOf(tKodeDDC.getText()),
+            tNamaKlasifikasi.getText()
         );
         
-        Set<ConstraintViolation<Petugas>> vols = ValidasiUtil.validate(petugas);
+        Set<ConstraintViolation<Klasifikasi>> vols = ValidasiUtil.validate(klasifikasi);
         
         if (vols.size() < 1) {
-            ptgRepo.add(petugas);
+            klsfRepo.add(klasifikasi);
             
-            DaftarPetugas daftarPetugas = new DaftarPetugas();
+            DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarPetugas);
-            daftarPetugas.setVisible(true);
+            desktopPane.add(daftarKlasifikasii);
+            daftarKlasifikasii.setVisible(true);
 
             this.dispose();
             
@@ -150,11 +127,8 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
 
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         // TODO add your handling code here:
-        tNama.setText("");
-        tEmail.setText("");
-        tUsername.setText("");
-        tPassword.setText("");
-        tKalender.setDate(null);
+        tKodeDDC.setText("");
+        tNamaKlasifikasi.setText("");
     }//GEN-LAST:event_btnResetMouseClicked
 
     private void jam() {
@@ -195,20 +169,13 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
             System.out.println(e);
         }
     }
-    
-    private void customJDateChooser() {
-        tKalender.setDateFormatString("dd - MM - yyyy");
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnReset;
     private javax.swing.JLabel btnSimpan;
-    private javax.swing.JTextField tEmail;
     private javax.swing.JLabel tJam;
-    private com.toedter.calendar.JDateChooser tKalender;
-    private javax.swing.JTextField tNama;
-    private javax.swing.JPasswordField tPassword;
-    private javax.swing.JTextField tUsername;
+    private javax.swing.JTextField tKodeDDC;
+    private javax.swing.JTextField tNamaKlasifikasi;
     // End of variables declaration//GEN-END:variables
 }

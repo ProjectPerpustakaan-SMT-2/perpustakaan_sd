@@ -14,6 +14,7 @@ import jakarta.validation.ConstraintViolation;
 import entity.Buku;
 import java.util.Set;
 import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
 import util.ValidasiUtil;
 import repository.Repository;
 import repository.BukuRepository;
@@ -162,7 +163,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
             new PopupViewDataBerhasil().setVisible(true);
         } else {
             new PopupViewDataGagal().setVisible(true);
-            System.out.println(ValidasiUtil.getErrorsAsString(vols, "\n"));
+            JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
         }
     }//GEN-LAST:event_btnSimpanMouseClicked
 

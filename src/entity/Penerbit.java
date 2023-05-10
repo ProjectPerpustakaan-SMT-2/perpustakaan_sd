@@ -11,7 +11,7 @@ import java.time.Year;
  * @author Hafidz Fadhillah
  */
 public class Penerbit implements Entity {
-    private final static String tableName = "penerbit";
+    public final static String tableName = "penerbit";
     
     private Integer kode_penerbit;
     private String penerbit;

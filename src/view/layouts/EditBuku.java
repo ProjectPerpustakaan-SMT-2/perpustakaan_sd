@@ -154,7 +154,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         Set<ConstraintViolation<Buku>> vols = ValidasiUtil.validate(buku);
         
         if (vols.size() > 0) {
-            JOptionPane.showMessageDialog(this,ValidasiUtil.getErrorsAsString(vols, "\n"));
+            JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
             return;
         } else {
             bkuRepo.update(buku);

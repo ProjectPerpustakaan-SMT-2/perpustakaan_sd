@@ -4,7 +4,6 @@
  */
 package repository;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -15,34 +14,34 @@ import java.util.List;
 import java.util.Map;
 import util.Database;
 
-import entity.Petugas;
+import entity.Klasifikasi;
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class PetugasRepository implements Repository<Petugas>{
-    private static String tableName = Petugas.tableName;
+public class KlasifikasiRepository implements Repository<Klasifikasi>{
+    private static String tableName = Klasifikasi.tableName;
     
-    public List<Petugas> get() {
+    public List<Klasifikasi> get() {
         String sql = "SELECT * FROM " + tableName;
-        List<Petugas> petugass = new ArrayList<>();
+        List<Klasifikasi> klasifikasis = new ArrayList<>();
         
         try(PreparedStatement statement = conn.prepareStatement(sql)) {
             ResultSet results = statement.executeQuery();
             
             while(results.next()) {
-                petugass.add(mapToEntity(results));
+                klasifikasis.add(mapToEntity(results));
             }
         } catch (SQLException e) {
             
         }
         
-        return petugass;
+        return klasifikasis;
     }
     
-    public Petugas get(Integer id) {
-        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas = ?";
-        Petugas petugas = new Petugas();
+    public Klasifikasi get(Integer id) {
+        String sql = "SELECT * FROM " + tableName + " WHERE id_klasifikasi = ?";
+        Klasifikasi klasifikasi = new Klasifikasi();
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -55,13 +54,13 @@ public class PetugasRepository implements Repository<Petugas>{
             
         }
         
-        return petugas;
+        return klasifikasi;
     }
     
-    public List<Petugas> get(Map<String, Object> values) {
+    public List<Klasifikasi> get(Map<String, Object> values) {
         int iterate = 0;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
-        List<Petugas> petugass = new ArrayList<>();
+        List<Klasifikasi> klasifikasis = new ArrayList<>();
         
         for(String valueKey: values.keySet()) {
             if(iterate > 0) sql += " AND ";
@@ -75,19 +74,19 @@ public class PetugasRepository implements Repository<Petugas>{
             ResultSet rs = stmt.executeQuery();
             
             while(rs.next()) {
-                petugass.add(mapToEntity(rs));
+                klasifikasis.add(mapToEntity(rs));
             }
         } catch(SQLException e) {
             System.out.println(e);
         }
         
-        return petugass;
+        return klasifikasis;
     }
     
-    public List<Petugas> search(Map<String, Object> values) {
+    public List<Klasifikasi> search(Map<String, Object> values) {
         int iterate = 0;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
-        List<Petugas> petugass = new ArrayList<>();
+        List<Klasifikasi> klasifikasis = new ArrayList<>();
         
         for(String valueKey: values.keySet()) {
             if(iterate > 0) sql += " OR ";
@@ -101,24 +100,36 @@ public class PetugasRepository implements Repository<Petugas>{
             ResultSet rs = stmt.executeQuery();
             
             while(rs.next()) {
-                petugass.add(mapToEntity(rs));
+                klasifikasis.add(mapToEntity(rs));
             }
         } catch (SQLException e) {
             
         }
         
-        return petugass;
+        return klasifikasis;
     }
     
-    public Integer add(Petugas ptg) {
-        String sql = "INSERT INTO " + tableName + " (`email`, `username`, `password`, `nama`, `tgl_lahir`) VALUES (?, ?, ?, ?, ?)";
+    public boolean isKodeDdcExists(Integer id) {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE kode_ddc = ?";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            
+        }
+        
+        return false;
+    }
+    
+    public Integer add(Klasifikasi klsf) {
+        String sql = "INSERT INTO " + tableName + " (`kode_ddc`, `nama_klasifikasi`) VALUES (?, ?)";
         
         try(PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, ptg.getEmail());
-            stmt.setString(2, ptg.getUsername());
-            stmt.setString(3, ptg.getPassword());
-            stmt.setString(4, ptg.getNama());
-            stmt.setDate(5, new Date(ptg.getTgl_lahir().getTime()));
+            stmt.setInt(1, klsf.getKode_ddc());
+            stmt.setString(2, klsf.getNama_klasifikasi());
             stmt.executeUpdate();
             
             ResultSet rs = stmt.getGeneratedKeys();
@@ -130,33 +141,32 @@ public class PetugasRepository implements Repository<Petugas>{
         return 0;
     }
     
-    public boolean update(Petugas ptg) {
-        Petugas petugas = this.get(ptg.getId());
-        boolean isChangePass = !petugas.getPassword().equals(ptg.getPassword());
-        String sql = "UPDATE " + tableName + " SET nama = ?, email = ?, username = ?, tgl_lahir = ? ";
-        
-        if(isChangePass) sql += ", password = ? ";
-        sql += "WHERE kode_petugas = " + ptg.getId();
-        
-        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, ptg.getNama());
-            stmt.setString(2, ptg.getEmail());
-            stmt.setString(3, ptg.getUsername());
-            stmt.setDate(4, new Date(ptg.getTgl_lahir().getTime()));            
-            
-            if(isChangePass) stmt.setString(5, ptg.getPassword());
+    public boolean update(Klasifikasi klsf) {
+        Klasifikasi klasifikasi = this.get(klsf.getId_klasifikasi());
+        boolean isChangeKodeDDC = !klasifikasi.getKode_ddc().equals(klsf.getKode_ddc());
+
+        if (isChangeKodeDDC && isKodeDdcExists(klsf.getKode_ddc())) {
+            throw new IllegalArgumentException("Kode DDC " + klsf.getKode_ddc() + " telah digunakan!");
+        }
+
+        String sql = "UPDATE " + tableName + " SET kode_ddc = ?, nama_klasifikasi = ? WHERE id_klasifikasi = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, klsf.getKode_ddc());
+            stmt.setString(2, klsf.getNama_klasifikasi());
+            stmt.setInt(3, klsf.getId_klasifikasi());
+
             stmt.executeUpdate();
-            
             return stmt.getUpdateCount() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
-        
+        }
+
         return false;
     }
     
     public boolean delete(int id) {
-        String sql = "DELETE FROM " + tableName + " WHERE kode_petugas = ?";
+        String sql = "DELETE FROM " + tableName + " WHERE id_klasifikasi = ?";
         
         try(PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -170,16 +180,13 @@ public class PetugasRepository implements Repository<Petugas>{
         return false;
     }
     
-    private Petugas mapToEntity(ResultSet result) throws SQLException {
-        Petugas petugas = new Petugas(
-                result.getString("email"),
-                result.getString("username"),
-                result.getString("password"),
-                result.getString("nama"),
-                result.getDate("tgl_lahir")
+    private Klasifikasi mapToEntity(ResultSet result) throws SQLException {
+        Klasifikasi klasifikasi = new Klasifikasi(
+            result.getInt("kode_ddc"),
+            result.getString("nama_klasifikasi")
         );
         
-        petugas.setId(result.getInt("kode_petugas"));
-        return petugas;
+        klasifikasi.setId_klasifikasi(result.getInt("id_klasifikasi"));
+        return klasifikasi;
     }
 }
