@@ -4,7 +4,7 @@
  */
 package entity;
 
-import java.time.Year;
+import java.util.Date;
 
 /**
  *
@@ -16,14 +16,13 @@ public class Penerbit implements Entity {
     private Integer kode_penerbit;
     private String penerbit;
     private String kota_penerbit;
-    private Year tahun_terbit;
+    private Date tahun_terbit;
     
     public Penerbit() {
         
     }
     
-    public Penerbit(Integer kode_penerbit, String penerbit, String kota_penerbit, Year tahun_terbit) {
-        this.kode_penerbit = kode_penerbit;
+    public Penerbit(String penerbit, String kota_penerbit, Date tahun_terbit) {
         this.penerbit = penerbit;
         this.kota_penerbit = kota_penerbit;
         this.tahun_terbit = tahun_terbit;
@@ -53,11 +52,11 @@ public class Penerbit implements Entity {
         this.kota_penerbit = kota_penerbit;
     }
     
-    public Year getTahun_tebit() {
+    public Date getTahun_tebit() {
         return tahun_terbit;
     }
     
-    public void setTahun_terbit(Year tahun_terbit) {
+    public void setTahun_terbit(Date tahun_terbit) {
         this.tahun_terbit = tahun_terbit;
     }
 }
