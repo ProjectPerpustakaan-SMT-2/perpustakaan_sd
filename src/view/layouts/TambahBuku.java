@@ -4,20 +4,28 @@
  */
 package view.layouts;
 
+import data.ComboItem;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import jakarta.validation.ConstraintViolation;
-
-import entity.Buku;
+import java.util.List;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+
+import entity.Buku;
+import entity.Klasifikasi;
+import entity.Penerbit;
+import java.text.SimpleDateFormat;
 import util.ValidasiUtil;
 import repository.Repository;
 import repository.BukuRepository;
+import repository.KlasifikasiRepository;
+import repository.PenerbitRepository;
+import util.SearchableComboBox;
 import view.popup.PopupViewDataBerhasil;
 import view.popup.PopupViewDataGagal;
 
@@ -27,11 +35,15 @@ import view.popup.PopupViewDataGagal;
  */
 public class TambahBuku extends javax.swing.JInternalFrame {
     private Repository<Buku> bkuRepo = new BukuRepository();
+    private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
+    private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     
     /**
      * Creates new form TambahBuku
-     */
+     */   
     public TambahBuku() {
+        fillComboBox();
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
@@ -40,6 +52,37 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         jam();
     }
 
+    private void fillComboBox() {
+        ComboItem[] items;
+        List<Penerbit> penerbits = pnbtRepo.get();
+        List<Klasifikasi> klasifikasis  = klsfRepo.get();
+        
+        items = new ComboItem[penerbits.size()];
+        for(int i = 0; i < penerbits.size(); i++) {
+            Penerbit penerbit = penerbits.get(i);
+            items[i] = new ComboItem(penerbit.getKode_penerbit(), penerbit.getKode_penerbit() + ". " + penerbit.getPenerbit() + " - " + penerbit.getKota_penerbit() + " - " + sdf.format(penerbit.getTahun_tebit()));
+        }
+
+        penerbitInput = new SearchableComboBox(items);
+        penerbitInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
+        penerbitInput.setBorder(null);
+        penerbitInput.setBounds(448, 349, 403, 35);
+
+        items = new ComboItem[klasifikasis.size()];
+        for(int i = 0; i < klasifikasis.size(); i++) {
+            Klasifikasi klasifikasi = klasifikasis.get(i);
+            items[i] = new ComboItem(klasifikasi.getId_klasifikasi(), klasifikasi.getKode_ddc() + " - " + klasifikasi.getNama_klasifikasi());
+        }
+
+        klasifikasiInput = new SearchableComboBox(items);
+        klasifikasiInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
+        klasifikasiInput.setBorder(null);
+        klasifikasiInput.setBounds(883, 349, 404, 35);
+
+        getContentPane().add(penerbitInput);
+        getContentPane().add(klasifikasiInput);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,8 +96,6 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         tISBN = new javax.swing.JTextField();
         tJudulBuku = new javax.swing.JTextField();
         tNamaPengarang = new javax.swing.JTextField();
-        tKodePenerbit = new javax.swing.JTextField();
-        tKodeDDC = new javax.swing.JTextField();
         tSumber = new javax.swing.JTextField();
         tHalaman = new javax.swing.JTextField();
         tJumlah = new javax.swing.JTextField();
@@ -84,16 +125,6 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         tNamaPengarang.setBorder(null);
         getContentPane().add(tNamaPengarang);
         tNamaPengarang.setBounds(882, 267, 403, 35);
-
-        tKodePenerbit.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tKodePenerbit.setBorder(null);
-        getContentPane().add(tKodePenerbit);
-        tKodePenerbit.setBounds(447, 348, 403, 35);
-
-        tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tKodeDDC.setBorder(null);
-        getContentPane().add(tKodeDDC);
-        tKodeDDC.setBounds(882, 348, 404, 35);
 
         tSumber.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tSumber.setBorder(null);
@@ -137,15 +168,18 @@ public class TambahBuku extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        ComboItem pnbtItem = (ComboItem) penerbitInput.getSelectedItem();
+        ComboItem kodeDDCItem = (ComboItem) klasifikasiInput.getSelectedItem();
+         
         Buku buku = new Buku(
             tJudulBuku.getText(),
             tNamaPengarang.getText(),
             Integer.valueOf(tISBN.getText()),
-            Integer.valueOf(tKodePenerbit.getText()),
+            pnbtRepo.get(pnbtItem.getKey()),
             tSumber.getText(),
             Integer.valueOf(tHalaman.getText()),
             Integer.valueOf(tJumlah.getText()),
-            Integer.valueOf(tKodeDDC.getText())
+            klsfRepo.get(kodeDDCItem.getKey())
         );
         
         Set<ConstraintViolation<Buku>> vols = ValidasiUtil.validate(buku);
@@ -169,14 +203,14 @@ public class TambahBuku extends javax.swing.JInternalFrame {
 
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         // TODO add your handling code here:
-        tISBN.setText("");
+        tISBN.setText(""); 
         tJudulBuku.setText("");
         tNamaPengarang.setText("");
-        tKodePenerbit.setText("");
+        penerbitInput.setSelectedIndex(0);
+        klasifikasiInput.setSelectedIndex(0);
         tSumber.setText("");
         tHalaman.setText("");
         tJumlah.setText("");
-        tKodeDDC.setText("");
     }//GEN-LAST:event_btnResetMouseClicked
 
     private void jam() {
@@ -218,6 +252,8 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         }
     }
 
+    private javax.swing.JComboBox penerbitInput;
+    private javax.swing.JComboBox klasifikasiInput;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnReset;
@@ -227,8 +263,6 @@ public class TambahBuku extends javax.swing.JInternalFrame {
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJudulBuku;
     private javax.swing.JTextField tJumlah;
-    private javax.swing.JTextField tKodeDDC;
-    private javax.swing.JTextField tKodePenerbit;
     private javax.swing.JTextField tNamaPengarang;
     private javax.swing.JTextField tSumber;
     // End of variables declaration//GEN-END:variables

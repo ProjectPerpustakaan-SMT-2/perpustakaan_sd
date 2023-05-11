@@ -61,6 +61,11 @@ public class LoginView extends javax.swing.JFrame {
         btnLupaPassword.setBounds(855, 495, 170, 20);
 
         btnSiswa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSiswa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSiswaMouseClicked(evt);
+            }
+        });
         getContentPane().add(btnSiswa);
         btnSiswa.setBounds(736, 560, 165, 45);
 
@@ -96,6 +101,12 @@ public class LoginView extends javax.swing.JFrame {
             this.dispose();
         }
     }//GEN-LAST:event_btnLoginMouseClicked
+
+    private void btnSiswaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSiswaMouseClicked
+        // TODO add your handling code here:
+        new DashboardSiswa().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnSiswaMouseClicked
 
     /**
      * @param args the command line arguments

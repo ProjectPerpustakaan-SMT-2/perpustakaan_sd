@@ -4,20 +4,28 @@
  */
 package view.layouts;
 
+import data.ComboItem;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import jakarta.validation.ConstraintViolation;
-
-import entity.Buku;
+import java.util.List;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+
+import entity.Buku;
+import entity.Klasifikasi;
+import entity.Penerbit;
+import java.text.SimpleDateFormat;
 import util.ValidasiUtil;
 import repository.Repository;
 import repository.BukuRepository;
+import repository.KlasifikasiRepository;
+import repository.PenerbitRepository;
+import util.SearchableComboBox;
 import view.popup.PopupViewDataDiubah;
 import view.popup.PopupViewHapusData;
 
@@ -28,11 +36,15 @@ import view.popup.PopupViewHapusData;
 public class EditBuku extends javax.swing.JInternalFrame {
     private Buku buku;
     private Repository<Buku> bkuRepo = new BukuRepository();
+    private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
+    private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     
     /**
      * Creates new form TambahBuku
      */
     public EditBuku(Buku buku) {
+        fillComboBox();
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
@@ -58,8 +70,6 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tISBN = new javax.swing.JTextField();
         tJudulBuku = new javax.swing.JTextField();
         tNamaPengarang = new javax.swing.JTextField();
-        tKodePenerbit = new javax.swing.JTextField();
-        tKodeDDC = new javax.swing.JTextField();
         tSumber = new javax.swing.JTextField();
         tHalaman = new javax.swing.JTextField();
         tJumlah = new javax.swing.JTextField();
@@ -89,16 +99,6 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tNamaPengarang.setBorder(null);
         getContentPane().add(tNamaPengarang);
         tNamaPengarang.setBounds(882, 267, 403, 35);
-
-        tKodePenerbit.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tKodePenerbit.setBorder(null);
-        getContentPane().add(tKodePenerbit);
-        tKodePenerbit.setBounds(447, 348, 403, 35);
-
-        tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tKodeDDC.setBorder(null);
-        getContentPane().add(tKodeDDC);
-        tKodeDDC.setBounds(882, 348, 404, 35);
 
         tSumber.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tSumber.setBorder(null);
@@ -142,14 +142,17 @@ public class EditBuku extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        ComboItem pnbtItem = (ComboItem) penerbitInput.getSelectedItem();
+        ComboItem kodeDDCItem = (ComboItem) klasifikasiInput.getSelectedItem();
+        
         buku.setJudul_buku(tJudulBuku.getText());
         buku.setNama_pengarang(tNamaPengarang.getText());
         buku.setIsbn(Integer.valueOf(tISBN.getText()));
-        buku.setKode_penerbit(Integer.valueOf(tKodePenerbit.getText()));
+        buku.setPenerbit(pnbtRepo.get(pnbtItem.getKey()));
         buku.setSumber(tSumber.getText());
         buku.setHalaman(Integer.valueOf(tHalaman.getText()));
         buku.setJumlah(Integer.valueOf(tJumlah.getText()));
-        buku.setKode_ddc(Integer.valueOf(tKodeDDC.getText()));
+        buku.setKlasifikasi(klsfRepo.get(kodeDDCItem.getKey()));
         
         Set<ConstraintViolation<Buku>> vols = ValidasiUtil.validate(buku);
         
@@ -201,11 +204,50 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tISBN.setText(String.valueOf(buku.getIsbn()));
         tJudulBuku.setText(buku.getJudul_buku());
         tNamaPengarang.setText(buku.getNama_pengarang());
-        tKodePenerbit.setText(String.valueOf(buku.getKode_penerbit()));
         tSumber.setText(buku.getSumber());
         tHalaman.setText(String.valueOf(buku.getHalaman()));
         tJumlah.setText(String.valueOf(buku.getJumlah()));
-        tKodeDDC.setText(String.valueOf(buku.GetKode_ddc()));
+        
+        penerbitInput.setSelectedItem(new ComboItem(
+            buku.getPenerbit().getKode_penerbit(), 
+            buku.getPenerbit().getPenerbit() + " - " + buku.getPenerbit().getKota_penerbit() + " - " + sdf.format(buku.getPenerbit().getTahun_tebit()))
+        );
+
+        klasifikasiInput.setSelectedItem(new ComboItem(
+            buku.getKlasifikasi().getId_klasifikasi(),
+            buku.getKlasifikasi().getKode_ddc() + " - "+ buku.getKlasifikasi().getNama_klasifikasi())
+        );
+    }
+    
+    private void fillComboBox() {
+        ComboItem[] items;
+        List<Penerbit> penerbits = pnbtRepo.get();
+        List<Klasifikasi> klasifikasis  = klsfRepo.get();
+        
+        items = new ComboItem[penerbits.size()];
+        for(int i = 0; i < penerbits.size(); i++) {
+            Penerbit penerbit = penerbits.get(i);
+            items[i] = new ComboItem(penerbit.getKode_penerbit(), penerbit.getPenerbit() + " - " + penerbit.getKota_penerbit() + " - " + sdf.format(penerbit.getTahun_tebit()));
+        }
+
+        penerbitInput = new SearchableComboBox(items);
+        penerbitInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
+        penerbitInput.setBorder(null);
+        penerbitInput.setBounds(448, 349, 403, 35);
+
+        items = new ComboItem[klasifikasis.size()];
+        for(int i = 0; i < klasifikasis.size(); i++) {
+            Klasifikasi klasifikasi = klasifikasis.get(i);
+            items[i] = new ComboItem(klasifikasi.getId_klasifikasi(), klasifikasi.getKode_ddc() + " - " + klasifikasi.getNama_klasifikasi());
+        }
+
+        klasifikasiInput = new SearchableComboBox(items);
+        klasifikasiInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
+        klasifikasiInput.setBorder(null);
+        klasifikasiInput.setBounds(883, 349, 404, 35);
+
+        getContentPane().add(penerbitInput);
+        getContentPane().add(klasifikasiInput);
     }
     
     private void jam() {
@@ -247,6 +289,8 @@ public class EditBuku extends javax.swing.JInternalFrame {
         }
     }
 
+    private javax.swing.JComboBox penerbitInput;
+    private javax.swing.JComboBox klasifikasiInput;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnHapus;
@@ -256,8 +300,6 @@ public class EditBuku extends javax.swing.JInternalFrame {
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJudulBuku;
     private javax.swing.JTextField tJumlah;
-    private javax.swing.JTextField tKodeDDC;
-    private javax.swing.JTextField tKodePenerbit;
     private javax.swing.JTextField tNamaPengarang;
     private javax.swing.JTextField tSumber;
     // End of variables declaration//GEN-END:variables

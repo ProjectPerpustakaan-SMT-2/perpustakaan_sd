@@ -15,26 +15,26 @@ public class Buku implements Entity {
     private String judul_buku;
     private String nama_pengarang;
     private Integer isbn;
-    private Integer kode_penerbit;
+    private Penerbit penerbit;
     private String sumber;
     private Integer halaman;
     private Integer jumlah;
-    private Integer kode_ddc;
+    private Klasifikasi klasifikasi;
     
     public Buku() {
         
     }
     
     public Buku(String judul_buku, String nama_pengarang, Integer isbn,
-                Integer kode_penerbit, String sumber, Integer halaman, Integer jumlah, Integer kode_ddc) {
+                Penerbit penerbit, String sumber, Integer halaman, Integer jumlah, Klasifikasi klasifikasi) {
         this.judul_buku = judul_buku;
         this.nama_pengarang = nama_pengarang;
         this.isbn = isbn;
-        this.kode_penerbit = kode_penerbit;
+        this.penerbit = penerbit;
         this.sumber = sumber;
         this.halaman = halaman;
         this.jumlah = jumlah;
-        this.kode_ddc = kode_ddc;
+        this.klasifikasi = klasifikasi;
     }
     
     public Integer getKode_buku() {
@@ -69,12 +69,12 @@ public class Buku implements Entity {
         this.isbn = isbn;
     }
     
-    public Integer getKode_penerbit() {
-        return kode_penerbit;
+    public Penerbit getPenerbit() {
+        return penerbit;
     }
     
-    public void setKode_penerbit(Integer kode_penerbit) {
-        this.kode_penerbit = kode_penerbit;
+    public void setPenerbit(Penerbit penerbit) {
+        this.penerbit = penerbit;
     }
     
     public String getSumber() {
@@ -101,11 +101,11 @@ public class Buku implements Entity {
         this.jumlah = jumlah;
     }
     
-    public Integer GetKode_ddc() {
-        return kode_ddc;
+    public Klasifikasi getKlasifikasi() {
+        return klasifikasi;
     }
     
-    public void setKode_ddc(Integer kode_ddc) {
-        this.kode_ddc = kode_ddc;
+    public void setKlasifikasi(Klasifikasi klasifikasi) {
+        this.klasifikasi = klasifikasi;
     }
 }
