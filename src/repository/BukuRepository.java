@@ -116,11 +116,11 @@ public class BukuRepository implements Repository<Buku>{
             stmt.setString(1, bku.getJudul_buku());
             stmt.setString(2, bku.getNama_pengarang());
             stmt.setInt(3, bku.getIsbn());
-            stmt.setInt(4, bku.getKode_penerbit());
+            stmt.setInt(4, bku.getPenerbit().getKode_penerbit());
             stmt.setString(5, bku.getSumber());
             stmt.setInt(6, bku.getHalaman());
             stmt.setInt(7, bku.getJumlah());
-            stmt.setInt(8, bku.GetKode_ddc());
+            stmt.setInt(8, bku.getKlasifikasi().getId_klasifikasi());
             stmt.executeUpdate();
             
             ResultSet rs = stmt.getGeneratedKeys();
@@ -139,11 +139,11 @@ public class BukuRepository implements Repository<Buku>{
             stmt.setString(1, bku.getJudul_buku());
             stmt.setString(2, bku.getNama_pengarang());
             stmt.setInt(3, bku.getIsbn());
-            stmt.setInt(4, bku.getKode_penerbit());
+            stmt.setInt(4, bku.getPenerbit().getKode_penerbit());
             stmt.setString(5, bku.getSumber());
             stmt.setInt(6, bku.getHalaman());
             stmt.setInt(7, bku.getJumlah());
-            stmt.setInt(8, bku.GetKode_ddc());
+            stmt.setInt(8, bku.getKlasifikasi().getId_klasifikasi());
             stmt.setInt(9, bku.getKode_buku());
 
             stmt.executeUpdate();
@@ -169,15 +169,18 @@ public class BukuRepository implements Repository<Buku>{
     }
     
     private Buku mapToEntity(ResultSet result) throws SQLException {
+        int pnbtId = result.getInt("kode_penerbit");
+        int klsfId = result.getInt("kode_ddc");
+        
         Buku buku = new Buku(
                 result.getString("judul_buku"),
                 result.getString("nama_pengarang"),
                 result.getInt("isbn"),
-                result.getInt("kode_penerbit"),
+                new PenerbitRepository().get(pnbtId),
                 result.getString("sumber"),
                 result.getInt("halaman"),
                 result.getInt("jumlah"),
-                result.getInt("kode_ddc")
+                new KlasifikasiRepository().get(klsfId)
         );
         
         buku.setKode_buku(result.getInt("kode_buku"));
