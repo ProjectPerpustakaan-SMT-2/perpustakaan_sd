@@ -179,6 +179,12 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
 
     private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
         // TODO add your handling code here:
+        DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(daftarPenerbit);
+        daftarPenerbit.setVisible(true);
+        
+        this.dispose();
     }//GEN-LAST:event_btnPenerbitMouseClicked
 
     private void loadDataTable(List<Klasifikasi> klasifikasis) {

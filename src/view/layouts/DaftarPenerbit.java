@@ -11,14 +11,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-import entity.Buku;
+import entity.Penerbit;
+import java.text.SimpleDateFormat;
 import javax.swing.JDesktopPane;
-import javax.swing.JOptionPane;
-import repository.BukuRepository;
+import repository.PenerbitRepository;
 import repository.Repository;
 import util.ViewUtil;
 
@@ -26,20 +25,21 @@ import util.ViewUtil;
  *
  * @author Hafidz Fadhillah
  */
-public class ManajemenBuku extends javax.swing.JInternalFrame {
-    private Repository<Buku> bkuRepo = new BukuRepository();
+public class DaftarPenerbit extends javax.swing.JInternalFrame {
+    private Repository<Penerbit> pnbtRepo = new PenerbitRepository();    
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     
     /**
-     * Creates new form TambahBuku
+     * Creates new form DaftarPenerbit
      */
-    public ManajemenBuku() {
+    public DaftarPenerbit() {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
         
         jam();
-        loadDataTable(bkuRepo.get());
+        loadDataTable(pnbtRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
@@ -53,7 +53,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
-        btnTambahBuku = new javax.swing.JLabel();
+        btnManajemenBuku = new javax.swing.JLabel();
         btnKlasifikasi = new javax.swing.JLabel();
         btnPenerbit = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
@@ -69,14 +69,14 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
 
-        btnTambahBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnTambahBuku.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnManajemenBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnManajemenBuku.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnTambahBukuMouseClicked(evt);
+                btnManajemenBukuMouseClicked(evt);
             }
         });
-        getContentPane().add(btnTambahBuku);
-        btnTambahBuku.setBounds(433, 150, 150, 33);
+        getContentPane().add(btnManajemenBuku);
+        btnManajemenBuku.setBounds(433, 150, 105, 33);
 
         btnKlasifikasi.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnKlasifikasi.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -85,7 +85,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnKlasifikasi);
-        btnKlasifikasi.setBounds(605, 150, 102, 33);
+        btnKlasifikasi.setBounds(562, 150, 102, 33);
 
         btnPenerbit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPenerbit.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -94,7 +94,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnPenerbit);
-        btnPenerbit.setBounds(732, 150, 102, 33);
+        btnPenerbit.setBounds(688, 150, 124, 33);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -126,7 +126,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(437, 210, 863, 495);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Management Buku.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Penerbit.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -136,53 +136,38 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Buku> bukus = bkuRepo.search(new HashMap<>() {{
-            put("isbn", value);
-            put("judul_buku", value);
-            put("nama_pengarang", value);
+        List<Penerbit> penerbits = pnbtRepo.search(new HashMap<>() {{
+            put("penerbit", value);
+            put("kota_penerbit", value);
+            put("tahun_terbit", value);
         }});
         
-        loadDataTable(bukus);
+        loadDataTable(penerbits);
     }//GEN-LAST:event_tCariKeyReleased
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
         int row = Tabel.getSelectedRow();
-        String value = Tabel.getModel().getValueAt(row, 7).toString();
-        Buku buku = bkuRepo.get(Integer.valueOf(value));
+        String value = Tabel.getModel().getValueAt(row, 4).toString();
+        Penerbit penerbit = pnbtRepo.get(Integer.valueOf(value));
         
-        int choice = JOptionPane.showOptionDialog(
-            this, 
-            "Pilih Opsi Yang Akan Anda Lakukan!",
-            "Konfirmasi", 
-            JOptionPane.DEFAULT_OPTION, 
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            new Object[]{"Detail", "Edit", "Cancel"}, 
-            "Detail" 
-        );
+        EditPenerbit editPenerbit = new EditPenerbit(penerbit);
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(editPenerbit);
+        editPenerbit.setVisible(true);
 
-        if (choice == 0) {
-            System.out.println("Detail");
-        } else if (choice == 1) {
-            EditBuku editBuku = new EditBuku(buku);
-            JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(editBuku);
-            editBuku.setVisible(true);
-
-            this.dispose();
-        }
+        this.dispose();
     }//GEN-LAST:event_TabelMouseClicked
 
-    private void btnTambahBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahBukuMouseClicked
+    private void btnManajemenBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenBukuMouseClicked
         // TODO add your handling code here:
-        TambahBuku tambahBuku = new TambahBuku();
+        ManajemenBuku manajemenPenerbit = new ManajemenBuku();
         JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(tambahBuku);
-        tambahBuku.setVisible(true);
+        desktopPane.add(manajemenPenerbit);
+        manajemenPenerbit.setVisible(true);
         
         this.dispose();
-    }//GEN-LAST:event_btnTambahBukuMouseClicked
+    }//GEN-LAST:event_btnManajemenBukuMouseClicked
 
     private void btnKlasifikasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKlasifikasiMouseClicked
         // TODO add your handling code here:
@@ -196,15 +181,15 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
 
     private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
         // TODO add your handling code here:
-        DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+        TambahPenerbit tambahPenerbit = new TambahPenerbit();
         JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarPenerbit);
-        daftarPenerbit.setVisible(true);
+        desktopPane.add(tambahPenerbit);
+        tambahPenerbit.setVisible(true);
         
         this.dispose();
     }//GEN-LAST:event_btnPenerbitMouseClicked
 
-    private void loadDataTable(List<Buku> bukus) {
+    private void loadDataTable(List<Penerbit> penerbits) {
         int no = 1;
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -214,30 +199,24 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         };
         
         model.addColumn("No");
-        model.addColumn("ISBN");
-        model.addColumn("Judul Buku");
-        model.addColumn("Nama Pengarang");
-        model.addColumn("Sumber");
-        model.addColumn("Halaman");
-        model.addColumn("Jumlah");
+        model.addColumn("Penerbit");
+        model.addColumn("Kota Terbit");
+        model.addColumn("Tahun Terbit");
         model.addColumn("ID");
         
-        for (Buku buku: bukus) {
+        for (Penerbit penerbit: penerbits) {
             
             model.addRow(new Object[] {
                 no++,
-                buku.getIsbn(),
-                buku.getJudul_buku(),
-                buku.getNama_pengarang(),
-                buku.getSumber(),
-                buku.getHalaman(),
-                buku.getJumlah(),
-                buku.getKode_buku()
+                penerbit.getPenerbit(),
+                penerbit.getKota_penerbit(),
+                sdf.format(penerbit.getTahun_tebit()),
+                penerbit.getKode_penerbit()
             });
         }
         
         Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 7);
+        ViewUtil.hideTableColumn(Tabel, 4);
         customStyleTable();
     }
     
@@ -288,8 +267,8 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnKlasifikasi;
+    private javax.swing.JLabel btnManajemenBuku;
     private javax.swing.JLabel btnPenerbit;
-    private javax.swing.JLabel btnTambahBuku;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;
