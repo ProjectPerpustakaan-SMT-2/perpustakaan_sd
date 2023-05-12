@@ -7,19 +7,16 @@ package view.layouts;
 import customUI.TableCustom;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 import entity.Buku;
-import javax.swing.JDesktopPane;
-import javax.swing.JOptionPane;
+
 import repository.BukuRepository;
 import repository.Repository;
 import util.ViewUtil;
+import view.popup.PopupViewDetailBuku;
 
 /**
  *
@@ -114,10 +111,7 @@ public class DaftarBukuSiswa extends javax.swing.JInternalFrame {
         String value = Tabel.getModel().getValueAt(row, 7).toString();
         Buku buku = bkuRepo.get(Integer.valueOf(value));
         
-//        EditBuku editBuku = new EditBuku(buku);
-//        JDesktopPane desktopPane = getDesktopPane();
-//        desktopPane.add(editBuku);
-//        editBuku.setVisible(true);
+        new PopupViewDetailBuku(buku).setVisible(true);
     }//GEN-LAST:event_TabelMouseClicked
 
     private void loadDataTable(List<Buku> bukus) {

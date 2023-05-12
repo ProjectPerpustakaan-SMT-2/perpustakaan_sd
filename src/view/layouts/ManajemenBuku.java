@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,6 +20,7 @@ import javax.swing.JOptionPane;
 import repository.BukuRepository;
 import repository.Repository;
 import util.ViewUtil;
+import view.popup.PopupViewDetailBuku;
 
 /**
  *
@@ -163,7 +163,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         );
 
         if (choice == 0) {
-            System.out.println("Detail");
+            new PopupViewDetailBuku(buku).setVisible(true);
         } else if (choice == 1) {
             EditBuku editBuku = new EditBuku(buku);
             JDesktopPane desktopPane = getDesktopPane();
