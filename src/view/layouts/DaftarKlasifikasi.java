@@ -16,7 +16,6 @@ import javax.swing.table.DefaultTableModel;
 
 import entity.Klasifikasi;
 import javax.swing.JDesktopPane;
-import javax.swing.JOptionPane;
 import repository.KlasifikasiRepository;
 import repository.Repository;
 import util.ViewUtil;
@@ -26,6 +25,8 @@ import util.ViewUtil;
  * @author Hafidz Fadhillah
  */
 public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
     
     /**
@@ -42,6 +43,12 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -52,6 +59,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         btnManajemenBuku = new javax.swing.JLabel();
         btnKlasifikasi = new javax.swing.JLabel();
         btnPenerbit = new javax.swing.JLabel();
@@ -67,6 +75,11 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         btnManajemenBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnManajemenBuku.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -150,6 +163,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         Klasifikasi klasifikasi = klsfRepo.get(Integer.valueOf(value));
         
         EditKlasifikasi editKlasifikasi = new EditKlasifikasi(klasifikasi);
+        editKlasifikasi.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(editKlasifikasi);
         editKlasifikasi.setVisible(true);
@@ -160,6 +174,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
     private void btnManajemenBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenBukuMouseClicked
         // TODO add your handling code here:
         ManajemenBuku manajemenKlasifikasi = new ManajemenBuku();
+        manajemenKlasifikasi.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(manajemenKlasifikasi);
         manajemenKlasifikasi.setVisible(true);
@@ -170,6 +185,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
     private void btnKlasifikasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKlasifikasiMouseClicked
         // TODO add your handling code here:
         TambahKlasifikasi tambahKlasifikasi = new TambahKlasifikasi();
+        tambahKlasifikasi.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahKlasifikasi);
         tambahKlasifikasi.setVisible(true);
@@ -180,6 +196,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
     private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
         // TODO add your handling code here:
         DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+        daftarPenerbit.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarPenerbit);
         daftarPenerbit.setVisible(true);
@@ -268,5 +285,6 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

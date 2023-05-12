@@ -35,6 +35,8 @@ import view.popup.PopupViewHapusData;
  */
 public class EditBuku extends javax.swing.JInternalFrame {
     private Buku buku;
+    private String username;
+    
     private Repository<Buku> bkuRepo = new BukuRepository();
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
@@ -57,6 +59,12 @@ public class EditBuku extends javax.swing.JInternalFrame {
         jam();
     }
 
+     public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -67,6 +75,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         tISBN = new javax.swing.JTextField();
         tJudulBuku = new javax.swing.JTextField();
         tNamaPengarang = new javax.swing.JTextField();
@@ -84,6 +93,11 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         tISBN.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tISBN.setBorder(null);
@@ -163,6 +177,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
             bkuRepo.update(buku);
             
             ManajemenBuku manajemenBuku = new ManajemenBuku();
+            manajemenBuku.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(manajemenBuku);
             manajemenBuku.setVisible(true);
@@ -190,6 +205,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
             bkuRepo.delete(buku.getKode_buku());
             
             ManajemenBuku manajemenBuku = new ManajemenBuku();
+            manajemenBuku.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(manajemenBuku);
             manajemenBuku.setVisible(true);
@@ -302,5 +318,6 @@ public class EditBuku extends javax.swing.JInternalFrame {
     private javax.swing.JTextField tJumlah;
     private javax.swing.JTextField tNamaPengarang;
     private javax.swing.JTextField tSumber;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

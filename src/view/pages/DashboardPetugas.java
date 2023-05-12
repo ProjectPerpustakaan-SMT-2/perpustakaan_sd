@@ -13,7 +13,8 @@ import view.layouts.ManajemenBuku;
  * @author Hafidz Fadhillah
  */
 public class DashboardPetugas extends javax.swing.JFrame {
-
+    private String username;
+    
     /**
      * Creates new form Dashboard
      */
@@ -23,6 +24,11 @@ public class DashboardPetugas extends javax.swing.JFrame {
         menuAktifPertama();
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+        tUsername.setText(username);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -42,6 +48,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnLaporan = new javax.swing.JLabel();
         btnLogout = new javax.swing.JLabel();
         SideBar = new javax.swing.JLabel();
+        tUsername = new javax.swing.JLabel();
         jDesktopPane1 = new javax.swing.JDesktopPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -131,6 +138,10 @@ public class DashboardPetugas extends javax.swing.JFrame {
         getContentPane().add(panelSideBar);
         panelSideBar.setBounds(0, 0, 350, 768);
 
+        tUsername.setText("jLabel1");
+        getContentPane().add(tUsername);
+        tUsername.setBounds(280, 70, 37, 16);
+
         jDesktopPane1.setOpaque(false);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
@@ -173,8 +184,9 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnLaporan.setIcon(null);
         
         jDesktopPane1.removeAll();
-        DaftarPetugas tb = new DaftarPetugas();
-        jDesktopPane1.add(tb).setVisible(true);
+        DaftarPetugas dp = new DaftarPetugas();
+        dp.setUsername(username);
+        jDesktopPane1.add(dp).setVisible(true);
     }//GEN-LAST:event_btnDaftarPetugasMouseClicked
 
     private void btnPeminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPeminjamanMouseClicked
@@ -211,6 +223,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         
         jDesktopPane1.removeAll();
         ManajemenBuku mb = new ManajemenBuku();
+        mb.setUsername(username);
         jDesktopPane1.add(mb).setVisible(true);
     }//GEN-LAST:event_btnManajemenMouseClicked
 
@@ -296,5 +309,6 @@ public class DashboardPetugas extends javax.swing.JFrame {
     private javax.swing.JLabel btnSanksi;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JPanel panelSideBar;
+    private javax.swing.JLabel tUsername;
     // End of variables declaration//GEN-END:variables
 }

@@ -26,6 +26,8 @@ import util.ViewUtil;
  * @author Hafidz Fadhillah
  */
 public class DaftarPetugas extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -42,6 +44,12 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         loadDataTable(ptgRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
+    
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,6 +61,7 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         btnTambahData = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -66,6 +75,11 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         btnTambahData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTambahData.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -116,6 +130,7 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
     private void btnTambahDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahDataMouseClicked
         // TODO add your handling code here:
         TambahPetugas tambahPetugas = new TambahPetugas();
+        tambahPetugas.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahPetugas);
         tambahPetugas.setVisible(true);
@@ -142,6 +157,7 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         Petugas petugas = ptgRepo.get(Integer.valueOf(value));
         
         EditPetugas editPetugas = new EditPetugas(petugas);
+        editPetugas.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(editPetugas);
         editPetugas.setVisible(true);
@@ -232,5 +248,6 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

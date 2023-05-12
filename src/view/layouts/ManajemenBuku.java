@@ -27,6 +27,8 @@ import view.popup.PopupViewDetailBuku;
  * @author Hafidz Fadhillah
  */
 public class ManajemenBuku extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Buku> bkuRepo = new BukuRepository();
     
     /**
@@ -43,6 +45,12 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,6 +61,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         btnTambahBuku = new javax.swing.JLabel();
         btnKlasifikasi = new javax.swing.JLabel();
         btnPenerbit = new javax.swing.JLabel();
@@ -68,6 +77,11 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         btnTambahBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTambahBuku.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -166,6 +180,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
             new PopupViewDetailBuku(buku).setVisible(true);
         } else if (choice == 1) {
             EditBuku editBuku = new EditBuku(buku);
+            editBuku.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(editBuku);
             editBuku.setVisible(true);
@@ -177,6 +192,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void btnTambahBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahBukuMouseClicked
         // TODO add your handling code here:
         TambahBuku tambahBuku = new TambahBuku();
+        tambahBuku.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahBuku);
         tambahBuku.setVisible(true);
@@ -187,6 +203,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void btnKlasifikasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKlasifikasiMouseClicked
         // TODO add your handling code here:
         DaftarKlasifikasi daftarKlasifikasi = new DaftarKlasifikasi();
+        daftarKlasifikasi.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarKlasifikasi);
         daftarKlasifikasi.setVisible(true);
@@ -197,6 +214,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
         // TODO add your handling code here:
         DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+        daftarPenerbit.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarPenerbit);
         daftarPenerbit.setVisible(true);
@@ -293,5 +311,6 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

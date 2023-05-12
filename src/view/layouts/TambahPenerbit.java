@@ -27,6 +27,8 @@ import view.popup.PopupViewDataGagal;
  * @author Hafidz Fadhillah
  */
 public class TambahPenerbit extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     
@@ -42,6 +44,12 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
         jam();
         customJDateChooser();
     }
+    
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,6 +61,7 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         tPenerbit = new javax.swing.JTextField();
         tKota = new javax.swing.JTextField();
         btnReset = new javax.swing.JLabel();
@@ -67,6 +76,11 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         tPenerbit.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tPenerbit.setBorder(null);
@@ -121,6 +135,7 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
             pnbtRepo.add(penerbit);
             
             DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+            daftarPenerbit.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(daftarPenerbit);
             daftarPenerbit.setVisible(true);
@@ -192,5 +207,6 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
     private com.toedter.calendar.JDateChooser tKalender;
     private javax.swing.JTextField tKota;
     private javax.swing.JTextField tPenerbit;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }
