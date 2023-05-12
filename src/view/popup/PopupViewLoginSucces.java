@@ -6,14 +6,14 @@ package view.popup;
 
 import java.awt.Color;
 import view.pages.DashboardPetugas;
-import view.pages.LoginView;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class PopupViewLoginSucces extends javax.swing.JFrame {
-
+public class PopupViewLoginSucces extends javax.swing.JFrame {   
+    private String username;
+    
     /**
      * Creates new form PopupViewLogin
      */
@@ -22,6 +22,11 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
         this.setBackground(new Color(0,0,0,0));
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+        tUsername.setText(username);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,6 +38,7 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
 
         btnOke = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
+        tUsername = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -50,6 +56,8 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/popup/Login Berhasil!.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
+        getContentPane().add(tUsername);
+        tUsername.setBounds(470, 280, 40, 20);
 
         setSize(new java.awt.Dimension(1366, 768));
         setLocationRelativeTo(null);
@@ -57,7 +65,9 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
 
     private void btnOkeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOkeMouseClicked
         // TODO add your handling code here:
-        new DashboardPetugas().setVisible(true);
+        DashboardPetugas dashboardPetugas = new DashboardPetugas();
+        dashboardPetugas.setUsername(tUsername.getText());
+        dashboardPetugas.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnOkeMouseClicked
 
@@ -99,5 +109,6 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnOke;
+    private javax.swing.JLabel tUsername;
     // End of variables declaration//GEN-END:variables
 }

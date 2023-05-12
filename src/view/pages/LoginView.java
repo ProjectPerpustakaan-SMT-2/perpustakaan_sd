@@ -4,6 +4,9 @@
  */
 package view.pages;
 
+import entity.Petugas;
+import repository.PetugasRepository;
+import repository.Repository;
 import service.AuthService;
 import view.popup.PopupViewLoginError;
 import view.popup.PopupViewLoginSucces;
@@ -13,7 +16,8 @@ import view.popup.PopupViewLoginSucces;
  * @author Hafidz Fadhillah
  */
 public class LoginView extends javax.swing.JFrame {
-
+    private Repository<Petugas> ptgRepo = new PetugasRepository();
+    
     /**
      * Creates new form LoginView
      */
@@ -93,11 +97,15 @@ public class LoginView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLupaPasswordMouseClicked
 
     private void btnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseClicked
-        // TODO add your handling code here:
+        // TODO add your handling code here:       
+        
+        
         if(!new AuthService().login(tUsername.getText(), tPassword.getText())) {
             new PopupViewLoginError().setVisible(true);
         } else {
-            new PopupViewLoginSucces().setVisible(true);
+            PopupViewLoginSucces loginSucces = new PopupViewLoginSucces();
+            loginSucces.setUsername(tUsername.getText());
+            loginSucces.setVisible(true);
             this.dispose();
         }
     }//GEN-LAST:event_btnLoginMouseClicked

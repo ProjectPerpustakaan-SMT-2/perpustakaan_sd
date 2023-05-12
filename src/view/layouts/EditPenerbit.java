@@ -9,7 +9,6 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.text.SimpleDateFormat;
 import jakarta.validation.ConstraintViolation;
 
 import entity.Penerbit;
@@ -19,6 +18,7 @@ import javax.swing.JOptionPane;
 import util.ValidasiUtil;
 import repository.Repository;
 import repository.PenerbitRepository;
+import view.popup.PopupViewDataDiubah;
 import view.popup.PopupViewHapusData;
 
 /**
@@ -27,6 +27,8 @@ import view.popup.PopupViewHapusData;
  */
 public class EditPenerbit extends javax.swing.JInternalFrame {
     private Penerbit penerbit;
+    private String username;
+    
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     
     /**
@@ -46,6 +48,12 @@ public class EditPenerbit extends javax.swing.JInternalFrame {
         customJDateChooser();
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -56,6 +64,7 @@ public class EditPenerbit extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         tPenerbit = new javax.swing.JTextField();
         tKota = new javax.swing.JTextField();
         btnHapus = new javax.swing.JLabel();
@@ -70,6 +79,11 @@ public class EditPenerbit extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         tPenerbit.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tPenerbit.setBorder(null);
@@ -125,11 +139,14 @@ public class EditPenerbit extends javax.swing.JInternalFrame {
             pnbtRepo.update(penerbit);
             
             DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+            daftarPenerbit.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(daftarPenerbit);
             daftarPenerbit.setVisible(true);
 
             this.dispose();
+            
+            new PopupViewDataDiubah().setVisible(true);
         }
     }//GEN-LAST:event_btnSimpanMouseClicked
 
@@ -150,6 +167,7 @@ public class EditPenerbit extends javax.swing.JInternalFrame {
             pnbtRepo.delete(penerbit.getKode_penerbit());
             
             DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
+            daftarPenerbit.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(daftarPenerbit);
             daftarPenerbit.setVisible(true);
@@ -217,5 +235,6 @@ public class EditPenerbit extends javax.swing.JInternalFrame {
     private com.toedter.calendar.JDateChooser tKalender;
     private javax.swing.JTextField tKota;
     private javax.swing.JTextField tPenerbit;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

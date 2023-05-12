@@ -26,6 +26,8 @@ import view.popup.PopupViewDataGagal;
  * @author Hafidz Fadhillah
  */
 public class TambahKlasifikasi extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
     
     /**
@@ -39,6 +41,12 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
         
         jam();
     }
+    
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -50,6 +58,7 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         tKodeDDC = new javax.swing.JTextField();
         tNamaKlasifikasi = new javax.swing.JTextField();
         btnReset = new javax.swing.JLabel();
@@ -63,6 +72,11 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKodeDDC.setBorder(null);
@@ -112,6 +126,7 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
             klsfRepo.add(klasifikasi);
             
             DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
+            daftarKlasifikasii.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(daftarKlasifikasii);
             daftarKlasifikasii.setVisible(true);
@@ -177,5 +192,6 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tKodeDDC;
     private javax.swing.JTextField tNamaKlasifikasi;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

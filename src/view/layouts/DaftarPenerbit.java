@@ -26,6 +26,8 @@ import util.ViewUtil;
  * @author Hafidz Fadhillah
  */
 public class DaftarPenerbit extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();    
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     
@@ -43,6 +45,12 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + " !");
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,6 +61,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         btnManajemenBuku = new javax.swing.JLabel();
         btnKlasifikasi = new javax.swing.JLabel();
         btnPenerbit = new javax.swing.JLabel();
@@ -68,6 +77,11 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         btnManajemenBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnManajemenBuku.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -152,6 +166,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         Penerbit penerbit = pnbtRepo.get(Integer.valueOf(value));
         
         EditPenerbit editPenerbit = new EditPenerbit(penerbit);
+        editPenerbit.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(editPenerbit);
         editPenerbit.setVisible(true);
@@ -162,6 +177,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
     private void btnManajemenBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenBukuMouseClicked
         // TODO add your handling code here:
         ManajemenBuku manajemenPenerbit = new ManajemenBuku();
+        manajemenPenerbit.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(manajemenPenerbit);
         manajemenPenerbit.setVisible(true);
@@ -172,6 +188,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
     private void btnKlasifikasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKlasifikasiMouseClicked
         // TODO add your handling code here:
         DaftarKlasifikasi daftarKlasifikasi = new DaftarKlasifikasi();
+        daftarKlasifikasi.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarKlasifikasi);
         daftarKlasifikasi.setVisible(true);
@@ -182,6 +199,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
     private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
         // TODO add your handling code here:
         TambahPenerbit tambahPenerbit = new TambahPenerbit();
+        tambahPenerbit.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahPenerbit);
         tambahPenerbit.setVisible(true);
@@ -272,5 +290,6 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }

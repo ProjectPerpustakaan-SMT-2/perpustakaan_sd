@@ -27,6 +27,8 @@ import view.popup.PopupViewDataGagal;
  * @author Hafidz Fadhillah
  */
 public class TambahPetugas extends javax.swing.JInternalFrame {
+    private String username;
+    
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -42,6 +44,12 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
         jam();
         customJDateChooser();
     }
+    
+    public void setUsername(String username) {
+        this.username = username;
+        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
+        tUserLogin.setText("Selamat Datang " + result + "!");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,6 +61,7 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tJam = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
         tNama = new javax.swing.JTextField();
         tEmail = new javax.swing.JTextField();
         tUsername = new javax.swing.JTextField();
@@ -69,6 +78,11 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
         tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
         getContentPane().add(tJam);
         tJam.setBounds(670, 8, 110, 40);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
 
         tNama.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tNama.setBorder(null);
@@ -135,6 +149,7 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
             ptgRepo.add(petugas);
             
             DaftarPetugas daftarPetugas = new DaftarPetugas();
+            daftarPetugas.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
             desktopPane.add(daftarPetugas);
             daftarPetugas.setVisible(true);
@@ -209,6 +224,7 @@ public class TambahPetugas extends javax.swing.JInternalFrame {
     private com.toedter.calendar.JDateChooser tKalender;
     private javax.swing.JTextField tNama;
     private javax.swing.JPasswordField tPassword;
+    private javax.swing.JLabel tUserLogin;
     private javax.swing.JTextField tUsername;
     // End of variables declaration//GEN-END:variables
 }
