@@ -6,6 +6,7 @@ package view.pages;
 
 import javax.swing.ImageIcon;
 import view.layouts.DaftarPetugas;
+import view.layouts.DaftarSanksi;
 import view.layouts.ManajemenBuku;
 
 /**
@@ -236,6 +237,11 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnPengembalian.setIcon(null);
         btnManajemen.setIcon(null);
         btnLaporan.setIcon(null);
+        
+        jDesktopPane1.removeAll();
+        DaftarSanksi ds = new DaftarSanksi();
+        ds.setUsername(username);
+        jDesktopPane1.add(ds).setVisible(true);
     }//GEN-LAST:event_btnSanksiMouseClicked
 
     private void btnLaporanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLaporanMouseClicked
