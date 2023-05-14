@@ -136,7 +136,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(437, 210, 863, 495);
+        jScrollPane2.setBounds(437, 210, 887, 495);
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Klasifikasi.png"))); // NOI18N
         getContentPane().add(background);
