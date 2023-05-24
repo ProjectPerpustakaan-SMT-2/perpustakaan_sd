@@ -11,13 +11,13 @@ import java.awt.event.ActionListener;
 import java.util.Calendar;
 import jakarta.validation.ConstraintViolation;
 
-import entity.Sanksi;
+import entity.Kerusakan;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import util.ValidasiUtil;
 import repository.Repository;
-import repository.SanksiRepository;
+import repository.KerusakanRepository;
 import view.popup.PopupViewDataDiubah;
 import view.popup.PopupViewHapusData;
 
@@ -25,28 +25,29 @@ import view.popup.PopupViewHapusData;
  *
  * @author Hafidz Fadhillah
  */
-public class EditSanksi extends javax.swing.JInternalFrame {
-    private Sanksi sanksi; 
+public class EditKerusakan extends javax.swing.JInternalFrame {
+
+    private Kerusakan sanksi;
     private String username;
-    
-    private Repository<Sanksi> snksRepo = new SanksiRepository();
-    
+
+    private Repository<Kerusakan> snksRepo = new KerusakanRepository();
+
     /**
      * Creates new form TambahSanksi
      */
-    public EditSanksi(Sanksi sanksi) {
+    public EditKerusakan(Kerusakan sanksi) {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         this.sanksi = sanksi;
-        
+
         fillForm();
-        
+
         jam();
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
         String result = username.substring(0, 1).toUpperCase() + username.substring(1);
@@ -123,7 +124,7 @@ public class EditSanksi extends javax.swing.JInternalFrame {
         getContentPane().add(btnSimpan);
         btnSimpan.setBounds(1185, 470, 145, 40);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Edit Sanksi.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Edit Kerusakan.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -133,22 +134,22 @@ public class EditSanksi extends javax.swing.JInternalFrame {
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
         sanksi.setJenis_kerusakan(tJenisDenda.getText());
-        sanksi.setDeskripsi_sanksi(tDeskripsiDenda.getText());
-        sanksi.setJumlah_denda(Integer.valueOf(tNominalDenda.getText()));
-        
-        Set<ConstraintViolation<Sanksi>> vols = ValidasiUtil.validate(sanksi);
-        
+        sanksi.setDeskripsi_kerusakan(tDeskripsiDenda.getText());
+        sanksi.setNominal_denda(Integer.valueOf(tNominalDenda.getText()));
+
+        Set<ConstraintViolation<Kerusakan>> vols = ValidasiUtil.validate(sanksi);
+
         try {
             snksRepo.update(sanksi);
-            
-            DaftarSanksi daftarSanksii = new DaftarSanksi();
-            daftarSanksii.setUsername(username);
+
+            DaftarKerusakan daftarKerusakan = new DaftarKerusakan();
+            daftarKerusakan.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarSanksii);
-            daftarSanksii.setVisible(true);
+            desktopPane.add(daftarKerusakan);
+            daftarKerusakan.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewDataDiubah().setVisible(true);
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -158,37 +159,37 @@ public class EditSanksi extends javax.swing.JInternalFrame {
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
         int clicked = JOptionPane.showOptionDialog(
-            this, // Parent component
-            "Apakah Anda yakin ?", 
-            "Konfirmasi", 
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            new Object[]{"Ya", "Tidak"}, 
-            "Tidak" 
+                this, // Parent component
+                "Apakah Anda yakin ?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Ya", "Tidak"},
+                "Tidak"
         );
 
         if (clicked == JOptionPane.YES_OPTION) {
-            snksRepo.delete(sanksi.getKode_sanksi());
-            
-            DaftarSanksi daftarSanksii = new DaftarSanksi();
-            daftarSanksii.setUsername(username);
+            snksRepo.delete(sanksi.getKode_kerusakan());
+
+            DaftarKerusakan daftarKerusakan = new DaftarKerusakan();
+            daftarKerusakan.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarSanksii);
-            daftarSanksii.setVisible(true);
+            desktopPane.add(daftarKerusakan);
+            daftarKerusakan.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewHapusData().setVisible(true);
-        } 
+        }
     }//GEN-LAST:event_btnHapusMouseClicked
 
     private void fillForm() {
         tJenisDenda.setText(sanksi.getJenis_kerusakan());
-        tDeskripsiDenda.setText(sanksi.getDeskripsi_sanksi());
-        tNominalDenda.setText(String.valueOf(sanksi.getJumlah_denda()));
+        tDeskripsiDenda.setText(sanksi.getDeskripsi_kerusakan());
+        tNominalDenda.setText(String.valueOf(sanksi.getNominal_denda()));
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -198,30 +199,31 @@ public class EditSanksi extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

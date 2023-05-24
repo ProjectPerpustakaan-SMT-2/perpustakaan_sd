@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotBlank;
  *
  * @author Hafidz Fadhillah
  */
-public class Transaksi implements Entity {
+public class TransaksiSiswa implements Entity {
 
     public final static String tableName = "transaksi";
 
@@ -26,19 +26,17 @@ public class Transaksi implements Entity {
     private TransaksiStatus status;
     private Integer total_pinjam;
     private Integer total_denda;
-    private Petugas petugas;
 
-    public Transaksi() {
+    public TransaksiSiswa() {
 
     }
 
-    public Transaksi(String nama_peminjam, String kelas, TransaksiStatus status, Integer total_pinjam, Integer total_denda, Petugas petugas) {
+    public TransaksiSiswa(String nama_peminjam, String kelas, TransaksiStatus status, Integer total_pinjam, Integer total_denda) {
         this.nama_peminjam = nama_peminjam;
         this.kelas = kelas;
         this.status = status;
         this.total_pinjam = total_pinjam;
         this.total_denda = total_denda;
-        this.petugas = petugas;
     }
 
     public Integer getKode_transaksi() {
@@ -87,13 +85,5 @@ public class Transaksi implements Entity {
 
     public void setTotal_denda(Integer total_denda) {
         this.total_denda = total_denda;
-    }
-
-    public Petugas getPetugas() {
-        return petugas;
-    }
-
-    public void setPetugas(Petugas petugas) {
-        this.petugas = petugas;
     }
 }
