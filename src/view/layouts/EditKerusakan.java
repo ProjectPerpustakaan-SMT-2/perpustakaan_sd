@@ -50,8 +50,17 @@ public class EditKerusakan extends javax.swing.JInternalFrame {
 
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
 
     /**

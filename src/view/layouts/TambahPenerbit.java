@@ -27,28 +27,38 @@ import view.popup.PopupViewDataGagal;
  * @author Hafidz Fadhillah
  */
 public class TambahPenerbit extends javax.swing.JInternalFrame {
+
     private String username;
-    
+
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    
+
     /**
      * Creates new form TambahBuku
      */
     public TambahPenerbit() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
         customJDateChooser();
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
 
     /**
@@ -124,16 +134,16 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
         Penerbit penerbit = new Penerbit(
-                tPenerbit.getText(), 
-                tKota.getText(), 
+                tPenerbit.getText(),
+                tKota.getText(),
                 tKalender.getDate()
         );
-        
+
         Set<ConstraintViolation<Penerbit>> vols = ValidasiUtil.validate(penerbit);
-        
+
         if (vols.size() < 1) {
             pnbtRepo.add(penerbit);
-            
+
             DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
             daftarPenerbit.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -141,7 +151,7 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
             daftarPenerbit.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewDataBerhasil().setVisible(true);
         } else {
             new PopupViewDataGagal().setVisible(true);
@@ -159,7 +169,7 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
     private void customJDateChooser() {
         tKalender.setDateFormatString("yyyy");
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -169,30 +179,31 @@ public class TambahPenerbit extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

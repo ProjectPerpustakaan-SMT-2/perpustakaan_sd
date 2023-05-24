@@ -34,39 +34,49 @@ import view.popup.PopupViewDataGagal;
  * @author Hafidz Fadhillah
  */
 public class TambahBuku extends javax.swing.JInternalFrame {
+
     private String username;
-    
+
     private Repository<Buku> bkuRepo = new BukuRepository();
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    
+
     /**
      * Creates new form TambahBuku
-     */   
+     */
     public TambahBuku() {
         fillComboBox();
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
 
     private void fillComboBox() {
         ComboItem[] items;
         List<Penerbit> penerbits = pnbtRepo.get();
-        List<Klasifikasi> klasifikasis  = klsfRepo.get();
-        
+        List<Klasifikasi> klasifikasis = klsfRepo.get();
+
         items = new ComboItem[penerbits.size()];
-        for(int i = 0; i < penerbits.size(); i++) {
+        for (int i = 0; i < penerbits.size(); i++) {
             Penerbit penerbit = penerbits.get(i);
             items[i] = new ComboItem(penerbit.getKode_penerbit(), penerbit.getKode_penerbit() + ". " + penerbit.getPenerbit() + " - " + penerbit.getKota_penerbit() + " - " + sdf.format(penerbit.getTahun_tebit()));
         }
@@ -77,7 +87,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         penerbitInput.setBounds(448, 349, 403, 35);
 
         items = new ComboItem[klasifikasis.size()];
-        for(int i = 0; i < klasifikasis.size(); i++) {
+        for (int i = 0; i < klasifikasis.size(); i++) {
             Klasifikasi klasifikasi = klasifikasis.get(i);
             items[i] = new ComboItem(klasifikasi.getId_klasifikasi(), klasifikasi.getKode_ddc() + " - " + klasifikasi.getNama_klasifikasi());
         }
@@ -90,7 +100,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         getContentPane().add(penerbitInput);
         getContentPane().add(klasifikasiInput);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -184,23 +194,23 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         ComboItem pnbtItem = (ComboItem) penerbitInput.getSelectedItem();
         ComboItem kodeDDCItem = (ComboItem) klasifikasiInput.getSelectedItem();
-         
+
         Buku buku = new Buku(
-            tJudulBuku.getText(),
-            tNamaPengarang.getText(),
-            Integer.valueOf(tISBN.getText()),
-            pnbtRepo.get(pnbtItem.getKey()),
-            tSumber.getText(),
-            Integer.valueOf(tHalaman.getText()),
-            Integer.valueOf(tJumlah.getText()),
-            klsfRepo.get(kodeDDCItem.getKey())
+                tJudulBuku.getText(),
+                tNamaPengarang.getText(),
+                Integer.valueOf(tISBN.getText()),
+                pnbtRepo.get(pnbtItem.getKey()),
+                tSumber.getText(),
+                Integer.valueOf(tHalaman.getText()),
+                Integer.valueOf(tJumlah.getText()),
+                klsfRepo.get(kodeDDCItem.getKey())
         );
-        
+
         Set<ConstraintViolation<Buku>> vols = ValidasiUtil.validate(buku);
-        
+
         if (vols.size() < 1) {
             bkuRepo.add(buku);
-            
+
             ManajemenBuku manajemenBuku = new ManajemenBuku();
             manajemenBuku.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -208,7 +218,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
             manajemenBuku.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewDataBerhasil().setVisible(true);
         } else {
             new PopupViewDataGagal().setVisible(true);
@@ -218,7 +228,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
 
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         // TODO add your handling code here:
-        tISBN.setText(""); 
+        tISBN.setText("");
         tJudulBuku.setText("");
         tNamaPengarang.setText("");
         penerbitInput.setSelectedIndex(0);
@@ -237,30 +247,31 @@ public class TambahBuku extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

@@ -11,22 +11,23 @@ import view.pages.DashboardPetugas;
  *
  * @author Hafidz Fadhillah
  */
-public class PopupViewLoginSucces extends javax.swing.JFrame {   
+public class PopupViewLoginSucces extends javax.swing.JFrame {
+
     private String username;
-    
+
     /**
      * Creates new form PopupViewLogin
      */
     public PopupViewLoginSucces() {
         initComponents();
-        this.setBackground(new Color(0,0,0,0));
+        this.setBackground(new Color(0, 0, 0, 0));
     }
 
     public void setUsername(String username) {
         this.username = username;
         tUsername.setText(username);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -78,7 +79,7 @@ public class PopupViewLoginSucces extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

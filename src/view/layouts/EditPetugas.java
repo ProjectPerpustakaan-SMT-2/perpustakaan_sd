@@ -27,35 +27,45 @@ import view.popup.PopupViewHapusData;
  * @author Hafidz Fadhillah
  */
 public class EditPetugas extends javax.swing.JInternalFrame {
+
     private Petugas petugas;
     private String username;
-    
+
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    
+
     /**
      * Creates new form TambahBuku
      */
     public EditPetugas(Petugas petugas) {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         this.petugas = petugas;
-              
+
         fillForm();
-        
+
         jam();
         customJDateChooser();
     }
 
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -145,15 +155,15 @@ public class EditPetugas extends javax.swing.JInternalFrame {
         petugas.setUsername(tUsername.getText());
         petugas.setPassword(tPassword.getText());
         petugas.setTgl_lahir(tKalender.getDate());
-        
+
         Set<ConstraintViolation<Petugas>> vols = ValidasiUtil.validate(petugas);
-        
+
         if (vols.size() > 0) {
-            JOptionPane.showMessageDialog(this,ValidasiUtil.getErrorsAsString(vols, "\n"));
+            JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
             return;
         } else {
             ptgRepo.update(petugas);
-            
+
             DaftarPetugas daftarPetugas = new DaftarPetugas();
             daftarPetugas.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -169,19 +179,19 @@ public class EditPetugas extends javax.swing.JInternalFrame {
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
         int clicked = JOptionPane.showOptionDialog(
-            this, 
-            "Apakah Anda yakin ?",
-            "Konfirmasi", 
-            JOptionPane.YES_NO_OPTION, 
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            new Object[]{"Ya", "Tidak"}, 
-            "Tidak" 
+                this,
+                "Apakah Anda yakin ?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Ya", "Tidak"},
+                "Tidak"
         );
-        
+
         if (clicked == JOptionPane.YES_OPTION) {
             ptgRepo.delete(petugas.getId());
-            
+
             DaftarPetugas daftarPetugas = new DaftarPetugas();
             daftarPetugas.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -189,7 +199,7 @@ public class EditPetugas extends javax.swing.JInternalFrame {
             daftarPetugas.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewHapusData().setVisible(true);
         }
     }//GEN-LAST:event_btnHapusMouseClicked
@@ -201,7 +211,7 @@ public class EditPetugas extends javax.swing.JInternalFrame {
         tPassword.setText(petugas.getPassword());
         tKalender.setDate(petugas.getTgl_lahir());
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -211,36 +221,37 @@ public class EditPetugas extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
+
     private void customJDateChooser() {
         tKalender.setDateFormatString("dd - MM - yyyy");
     }
