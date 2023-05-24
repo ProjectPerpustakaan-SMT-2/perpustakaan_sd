@@ -6,7 +6,7 @@ package view.pages;
 
 import javax.swing.ImageIcon;
 import view.layouts.DaftarPetugas;
-import view.layouts.DaftarSanksi;
+import view.layouts.DaftarKerusakan;
 import view.layouts.ManajemenBuku;
 
 /**
@@ -14,14 +14,15 @@ import view.layouts.ManajemenBuku;
  * @author Hafidz Fadhillah
  */
 public class DashboardPetugas extends javax.swing.JFrame {
+
     private String username;
-    
+
     /**
      * Creates new form Dashboard
      */
     public DashboardPetugas() {
         initComponents();
-        
+
         menuAktifPertama();
     }
 
@@ -29,7 +30,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         this.username = username;
         tUsername.setText(username);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -183,7 +184,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnManajemen.setIcon(null);
         btnSanksi.setIcon(null);
         btnLaporan.setIcon(null);
-        
+
         jDesktopPane1.removeAll();
         DaftarPetugas dp = new DaftarPetugas();
         dp.setUsername(username);
@@ -221,7 +222,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnPengembalian.setIcon(null);
         btnSanksi.setIcon(null);
         btnLaporan.setIcon(null);
-        
+
         jDesktopPane1.removeAll();
         ManajemenBuku mb = new ManajemenBuku();
         mb.setUsername(username);
@@ -230,16 +231,16 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
     private void btnSanksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSanksiMouseClicked
         // TODO add your handling code here:
-        btnSanksi.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Sanksi.png")));
+        btnSanksi.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Kerusakan.png")));
         btnDashboard.setIcon(null);
         btnDaftarPetugas.setIcon(null);
         btnPeminjaman.setIcon(null);
         btnPengembalian.setIcon(null);
         btnManajemen.setIcon(null);
         btnLaporan.setIcon(null);
-        
+
         jDesktopPane1.removeAll();
-        DaftarSanksi ds = new DaftarSanksi();
+        DaftarKerusakan ds = new DaftarKerusakan();
         ds.setUsername(username);
         jDesktopPane1.add(ds).setVisible(true);
     }//GEN-LAST:event_btnSanksiMouseClicked
@@ -268,7 +269,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -296,11 +297,10 @@ public class DashboardPetugas extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void menuAktifPertama() {
-       btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
-       
-       
+        btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

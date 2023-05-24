@@ -6,8 +6,7 @@ package view.pages;
 
 import javax.swing.ImageIcon;
 import view.layouts.DaftarBukuSiswa;
-import view.layouts.DaftarPetugas;
-import view.layouts.ManajemenBuku;
+import view.layouts.TambahPinjamanSiswa;
 
 /**
  *
@@ -20,7 +19,7 @@ public class DashboardSiswa extends javax.swing.JFrame {
      */
     public DashboardSiswa() {
         initComponents();
-        
+
         menuAktifPertama();
     }
 
@@ -124,7 +123,7 @@ public class DashboardSiswa extends javax.swing.JFrame {
         btnDaftarBuku.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Daftar Buku.png")));
         btnDashboard.setIcon(null);
         btnPinjamBuku.setIcon(null);
-        
+
         jDesktopPane1.removeAll();
         DaftarBukuSiswa dbs = new DaftarBukuSiswa();
         jDesktopPane1.add(dbs).setVisible(true);
@@ -135,6 +134,10 @@ public class DashboardSiswa extends javax.swing.JFrame {
         btnPinjamBuku.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Pinjam Buku.png")));
         btnDashboard.setIcon(null);
         btnDaftarBuku.setIcon(null);
+
+        jDesktopPane1.removeAll();
+        TambahPinjamanSiswa tps = new TambahPinjamanSiswa();
+        jDesktopPane1.add(tps).setVisible(true);
     }//GEN-LAST:event_btnPinjamBukuMouseClicked
 
     private void btnLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogoutMouseClicked
@@ -150,7 +153,7 @@ public class DashboardSiswa extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -180,11 +183,10 @@ public class DashboardSiswa extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void menuAktifPertama() {
-       btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
-       
-       
+        btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

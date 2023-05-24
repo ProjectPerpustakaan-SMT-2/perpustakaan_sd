@@ -11,13 +11,13 @@ import java.awt.event.ActionListener;
 import java.util.Calendar;
 import jakarta.validation.ConstraintViolation;
 
-import entity.Sanksi;
+import entity.Kerusakan;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import util.ValidasiUtil;
 import repository.Repository;
-import repository.SanksiRepository;
+import repository.KerusakanRepository;
 import view.popup.PopupViewDataBerhasil;
 import view.popup.PopupViewDataGagal;
 
@@ -25,23 +25,24 @@ import view.popup.PopupViewDataGagal;
  *
  * @author Hafidz Fadhillah
  */
-public class TambahSanksi extends javax.swing.JInternalFrame {
+public class TambahKerusakan extends javax.swing.JInternalFrame {
+
     private String username;
-    
-    private Repository<Sanksi> snksRepo = new SanksiRepository();
-    
+
+    private Repository<Kerusakan> snksRepo = new KerusakanRepository();
+
     /**
      * Creates new form TambahSanksi
      */
-    public TambahSanksi() {
+    public TambahKerusakan() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
         String result = username.substring(0, 1).toUpperCase() + username.substring(1);
@@ -118,7 +119,7 @@ public class TambahSanksi extends javax.swing.JInternalFrame {
         getContentPane().add(btnSimpan);
         btnSimpan.setBounds(1186, 470, 142, 40);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Sanksi.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Kerusakan.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -127,25 +128,25 @@ public class TambahSanksi extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
-        Sanksi sanksi = new Sanksi(
-            tJenisDenda.getText(),
-            tDeskripsiDenda.getText(),
-            Integer.valueOf(tNominalDenda.getText())
+        Kerusakan kerusakan = new Kerusakan(
+                tJenisDenda.getText(),
+                tDeskripsiDenda.getText(),
+                Integer.valueOf(tNominalDenda.getText())
         );
-        
-        Set<ConstraintViolation<Sanksi>> vols = ValidasiUtil.validate(sanksi);
-        
+
+        Set<ConstraintViolation<Kerusakan>> vols = ValidasiUtil.validate(kerusakan);
+
         if (vols.size() < 1) {
-            snksRepo.add(sanksi);
-            
-            DaftarSanksi daftarSanksii = new DaftarSanksi();
-            daftarSanksii.setUsername(username);
+            snksRepo.add(kerusakan);
+
+            DaftarKerusakan daftarKerusakan = new DaftarKerusakan();
+            daftarKerusakan.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarSanksii);
-            daftarSanksii.setVisible(true);
+            desktopPane.add(daftarKerusakan);
+            daftarKerusakan.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewDataBerhasil().setVisible(true);
         } else {
             new PopupViewDataGagal().setVisible(true);
@@ -169,30 +170,31 @@ public class TambahSanksi extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);
