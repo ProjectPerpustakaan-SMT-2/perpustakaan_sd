@@ -9,6 +9,9 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import java.util.Date;
+import repository.DashboardPRespository;
+import util.NumberFormatUtil;
 
 /**
  *
@@ -17,6 +20,8 @@ import java.util.Calendar;
 public class DashboardPetugasView extends javax.swing.JInternalFrame {
 
     private String username;
+
+    private DashboardPRespository repo = new DashboardPRespository();
 
     /**
      * Creates new form TambahBuku
@@ -28,9 +33,12 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         BUI.setNorthPane(null);
 
         jam();
+        fillDashboard();
     }
 
     public void setUsername(String username) {
+        this.username = username;
+
         if (username != null) {
             username = username.trim();
             // Split the username into words
@@ -54,6 +62,10 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
 
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
+        tPetugas = new javax.swing.JLabel();
+        tBukuDipinjam = new javax.swing.JLabel();
+        tBukuBelumKembali = new javax.swing.JLabel();
+        tTotalBuku = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
         setBorder(null);
@@ -69,12 +81,43 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         getContentPane().add(tUserLogin);
         tUserLogin.setBounds(1105, 15, 200, 23);
 
+        tPetugas.setFont(new java.awt.Font("Calisto MT", 0, 90)); // NOI18N
+        tPetugas.setForeground(new java.awt.Color(51, 51, 51));
+        tPetugas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        getContentPane().add(tPetugas);
+        tPetugas.setBounds(470, 200, 140, 120);
+
+        tBukuDipinjam.setFont(new java.awt.Font("Calisto MT", 0, 90)); // NOI18N
+        tBukuDipinjam.setForeground(new java.awt.Color(51, 51, 51));
+        tBukuDipinjam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        getContentPane().add(tBukuDipinjam);
+        tBukuDipinjam.setBounds(693, 200, 140, 120);
+
+        tBukuBelumKembali.setFont(new java.awt.Font("Calisto MT", 0, 90)); // NOI18N
+        tBukuBelumKembali.setForeground(new java.awt.Color(51, 51, 51));
+        tBukuBelumKembali.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        getContentPane().add(tBukuBelumKembali);
+        tBukuBelumKembali.setBounds(917, 200, 140, 120);
+
+        tTotalBuku.setFont(new java.awt.Font("Calisto MT", 0, 90)); // NOI18N
+        tTotalBuku.setForeground(new java.awt.Color(51, 51, 51));
+        tTotalBuku.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        getContentPane().add(tTotalBuku);
+        tTotalBuku.setBounds(1143, 200, 140, 120);
+
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Dashboard Petugas.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
         setBounds(0, 0, 1366, 768);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fillDashboard() {
+        tPetugas.setText(NumberFormatUtil.formatDec(repo.getTotalPetugas()));
+        tBukuDipinjam.setText(NumberFormatUtil.formatDec(repo.getBukuDipinjam(new Date())));
+        tBukuBelumKembali.setText(NumberFormatUtil.formatDec(repo.getBukuBelumKembali(new Date())));
+        tTotalBuku.setText(NumberFormatUtil.formatDec(repo.getTotalBuku()));
+    }
 
     private void jam() {
         try {
@@ -118,7 +161,11 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
+    private javax.swing.JLabel tBukuBelumKembali;
+    private javax.swing.JLabel tBukuDipinjam;
     private javax.swing.JLabel tJam;
+    private javax.swing.JLabel tPetugas;
+    private javax.swing.JLabel tTotalBuku;
     private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }
