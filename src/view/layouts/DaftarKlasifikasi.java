@@ -25,19 +25,20 @@ import util.ViewUtil;
  * @author Hafidz Fadhillah
  */
 public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
+
     private String username;
-    
+
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
-    
+
     /**
      * Creates new form TambahKlasifikasi
      */
     public DaftarKlasifikasi() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
         loadDataTable(klsfRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
@@ -45,10 +46,19 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
 
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -148,11 +158,13 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Klasifikasi> klasifikasis = klsfRepo.search(new HashMap<>() {{
-            put("kode_ddc", value);
-            put("nama_klasifikasi", value);
-        }});
-        
+        List<Klasifikasi> klasifikasis = klsfRepo.search(new HashMap<>() {
+            {
+                put("kode_ddc", value);
+                put("nama_klasifikasi", value);
+            }
+        });
+
         loadDataTable(klasifikasis);
     }//GEN-LAST:event_tCariKeyReleased
 
@@ -161,7 +173,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         int row = Tabel.getSelectedRow();
         String value = Tabel.getModel().getValueAt(row, 3).toString();
         Klasifikasi klasifikasi = klsfRepo.get(Integer.valueOf(value));
-        
+
         EditKlasifikasi editKlasifikasi = new EditKlasifikasi(klasifikasi);
         editKlasifikasi.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
@@ -178,7 +190,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(manajemenKlasifikasi);
         manajemenKlasifikasi.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnManajemenBukuMouseClicked
 
@@ -189,7 +201,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahKlasifikasi);
         tambahKlasifikasi.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnKlasifikasiMouseClicked
 
@@ -200,7 +212,7 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarPenerbit);
         daftarPenerbit.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnPenerbitMouseClicked
 
@@ -212,31 +224,30 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
                 return false; // Disable cell editing
             }
         };
-        
+
         model.addColumn("No");
         model.addColumn("Kode DDC");
         model.addColumn("Nama Klasifikasi");
         model.addColumn("ID");
-        
-        for (Klasifikasi klasifikasi: klasifikasis) {
-            
-            model.addRow(new Object[] {
+
+        for (Klasifikasi klasifikasi : klasifikasis) {
+
+            model.addRow(new Object[]{
                 no++,
                 klasifikasi.getKode_ddc(),
                 klasifikasi.getNama_klasifikasi(),
-                klasifikasi.getId_klasifikasi(),
-            });
+                klasifikasi.getId_klasifikasi(),});
         }
-        
+
         Tabel.setModel(model);
         ViewUtil.hideTableColumn(Tabel, 3);
         customStyleTable();
     }
-    
-    private void customStyleTable() {        
+
+    private void customStyleTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -246,30 +257,31 @@ public class DaftarKlasifikasi extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

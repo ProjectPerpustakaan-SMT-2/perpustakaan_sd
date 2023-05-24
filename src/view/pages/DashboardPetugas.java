@@ -4,9 +4,16 @@
  */
 package view.pages;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.ImageIcon;
+import static repository.Repository.conn;
 import view.layouts.DaftarPetugas;
 import view.layouts.DaftarKerusakan;
+import view.layouts.DashboardPetugasView;
 import view.layouts.ManajemenBuku;
 
 /**
@@ -22,13 +29,35 @@ public class DashboardPetugas extends javax.swing.JFrame {
      */
     public DashboardPetugas() {
         initComponents();
+        tUsername.setVisible(false);
+        buttonAktif.setVisible(false);
 
-        menuAktifPertama();
+        addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent e) {
+                buttonAktif.doClick(); // Perform button click after JFrame is shown
+            }
+        });
     }
 
     public void setUsername(String username) {
         this.username = username;
-        tUsername.setText(username);
+
+        String sql = "SELECT nama FROM petugas WHERE username = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String nama = rs.getString("nama");
+                tUsername.setText(nama);
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -51,6 +80,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnLogout = new javax.swing.JLabel();
         SideBar = new javax.swing.JLabel();
         tUsername = new javax.swing.JLabel();
+        buttonAktif = new javax.swing.JButton();
         jDesktopPane1 = new javax.swing.JDesktopPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -144,6 +174,15 @@ public class DashboardPetugas extends javax.swing.JFrame {
         getContentPane().add(tUsername);
         tUsername.setBounds(280, 70, 37, 16);
 
+        buttonAktif.setText("jButton1");
+        buttonAktif.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAktifActionPerformed(evt);
+            }
+        });
+        getContentPane().add(buttonAktif);
+        buttonAktif.setBounds(260, 60, 75, 23);
+
         jDesktopPane1.setOpaque(false);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
@@ -173,6 +212,11 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnManajemen.setIcon(null);
         btnSanksi.setIcon(null);
         btnLaporan.setIcon(null);
+
+        jDesktopPane1.removeAll();
+        DashboardPetugasView dpv = new DashboardPetugasView();
+        dpv.setUsername(tUsername.getText());
+        jDesktopPane1.add(dpv).setVisible(true);
     }//GEN-LAST:event_btnDashboardMouseClicked
 
     private void btnDaftarPetugasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDaftarPetugasMouseClicked
@@ -187,7 +231,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
         jDesktopPane1.removeAll();
         DaftarPetugas dp = new DaftarPetugas();
-        dp.setUsername(username);
+        dp.setUsername(tUsername.getText());
         jDesktopPane1.add(dp).setVisible(true);
     }//GEN-LAST:event_btnDaftarPetugasMouseClicked
 
@@ -225,7 +269,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
         jDesktopPane1.removeAll();
         ManajemenBuku mb = new ManajemenBuku();
-        mb.setUsername(username);
+        mb.setUsername(tUsername.getText());
         jDesktopPane1.add(mb).setVisible(true);
     }//GEN-LAST:event_btnManajemenMouseClicked
 
@@ -241,7 +285,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
         jDesktopPane1.removeAll();
         DaftarKerusakan ds = new DaftarKerusakan();
-        ds.setUsername(username);
+        ds.setUsername(tUsername.getText());
         jDesktopPane1.add(ds).setVisible(true);
     }//GEN-LAST:event_btnSanksiMouseClicked
 
@@ -261,6 +305,16 @@ public class DashboardPetugas extends javax.swing.JFrame {
         new LoginView().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnLogoutMouseClicked
+
+    private void buttonAktifActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAktifActionPerformed
+        // TODO add your handling code here:
+        btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
+
+        jDesktopPane1.removeAll();
+        DashboardPetugasView dpv = new DashboardPetugasView();
+        dpv.setUsername(tUsername.getText());
+        jDesktopPane1.add(dpv).setVisible(true);
+    }//GEN-LAST:event_buttonAktifActionPerformed
 
     /**
      * @param args the command line arguments
@@ -298,11 +352,6 @@ public class DashboardPetugas extends javax.swing.JFrame {
         });
     }
 
-    private void menuAktifPertama() {
-        btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
-
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel SideBar;
     private javax.swing.JLabel btnDaftarPetugas;
@@ -313,6 +362,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
     private javax.swing.JLabel btnPeminjaman;
     private javax.swing.JLabel btnPengembalian;
     private javax.swing.JLabel btnSanksi;
+    private javax.swing.JButton buttonAktif;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JPanel panelSideBar;
     private javax.swing.JLabel tUsername;

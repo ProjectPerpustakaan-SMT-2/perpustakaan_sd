@@ -34,37 +34,47 @@ import view.popup.PopupViewHapusData;
  * @author Hafidz Fadhillah
  */
 public class EditBuku extends javax.swing.JInternalFrame {
+
     private Buku buku;
     private String username;
-    
+
     private Repository<Buku> bkuRepo = new BukuRepository();
     private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    
+
     /**
      * Creates new form TambahBuku
      */
     public EditBuku(Buku buku) {
         fillComboBox();
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         this.buku = buku;
-        
+
         fillForm();
-        
+
         jam();
     }
 
-     public void setUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -158,7 +168,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         ComboItem pnbtItem = (ComboItem) penerbitInput.getSelectedItem();
         ComboItem kodeDDCItem = (ComboItem) klasifikasiInput.getSelectedItem();
-        
+
         buku.setJudul_buku(tJudulBuku.getText());
         buku.setNama_pengarang(tNamaPengarang.getText());
         buku.setIsbn(Integer.valueOf(tISBN.getText()));
@@ -167,15 +177,15 @@ public class EditBuku extends javax.swing.JInternalFrame {
         buku.setHalaman(Integer.valueOf(tHalaman.getText()));
         buku.setJumlah(Integer.valueOf(tJumlah.getText()));
         buku.setKlasifikasi(klsfRepo.get(kodeDDCItem.getKey()));
-        
+
         Set<ConstraintViolation<Buku>> vols = ValidasiUtil.validate(buku);
-        
+
         if (vols.size() > 0) {
             JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
             return;
         } else {
             bkuRepo.update(buku);
-            
+
             ManajemenBuku manajemenBuku = new ManajemenBuku();
             manajemenBuku.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -183,7 +193,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
             manajemenBuku.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewDataDiubah().setVisible(true);
         }
     }//GEN-LAST:event_btnSimpanMouseClicked
@@ -191,19 +201,19 @@ public class EditBuku extends javax.swing.JInternalFrame {
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
         int clicked = JOptionPane.showOptionDialog(
-            this, // Parent component
-            "Apakah Anda yakin ?", 
-            "Konfirmasi", 
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            new Object[]{"Ya", "Tidak"}, 
-            "Tidak" 
+                this, // Parent component
+                "Apakah Anda yakin ?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Ya", "Tidak"},
+                "Tidak"
         );
 
         if (clicked == JOptionPane.YES_OPTION) {
             bkuRepo.delete(buku.getKode_buku());
-            
+
             ManajemenBuku manajemenBuku = new ManajemenBuku();
             manajemenBuku.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -211,9 +221,9 @@ public class EditBuku extends javax.swing.JInternalFrame {
             manajemenBuku.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewHapusData().setVisible(true);
-        } 
+        }
     }//GEN-LAST:event_btnHapusMouseClicked
 
     private void fillForm() {
@@ -223,25 +233,25 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tSumber.setText(buku.getSumber());
         tHalaman.setText(String.valueOf(buku.getHalaman()));
         tJumlah.setText(String.valueOf(buku.getJumlah()));
-        
+
         penerbitInput.setSelectedItem(new ComboItem(
-            buku.getPenerbit().getKode_penerbit(), 
-            buku.getPenerbit().getPenerbit() + " - " + buku.getPenerbit().getKota_penerbit() + " - " + sdf.format(buku.getPenerbit().getTahun_tebit()))
+                buku.getPenerbit().getKode_penerbit(),
+                buku.getPenerbit().getPenerbit() + " - " + buku.getPenerbit().getKota_penerbit() + " - " + sdf.format(buku.getPenerbit().getTahun_tebit()))
         );
 
         klasifikasiInput.setSelectedItem(new ComboItem(
-            buku.getKlasifikasi().getId_klasifikasi(),
-            buku.getKlasifikasi().getKode_ddc() + " - "+ buku.getKlasifikasi().getNama_klasifikasi())
+                buku.getKlasifikasi().getId_klasifikasi(),
+                buku.getKlasifikasi().getKode_ddc() + " - " + buku.getKlasifikasi().getNama_klasifikasi())
         );
     }
-    
+
     private void fillComboBox() {
         ComboItem[] items;
         List<Penerbit> penerbits = pnbtRepo.get();
-        List<Klasifikasi> klasifikasis  = klsfRepo.get();
-        
+        List<Klasifikasi> klasifikasis = klsfRepo.get();
+
         items = new ComboItem[penerbits.size()];
-        for(int i = 0; i < penerbits.size(); i++) {
+        for (int i = 0; i < penerbits.size(); i++) {
             Penerbit penerbit = penerbits.get(i);
             items[i] = new ComboItem(penerbit.getKode_penerbit(), penerbit.getPenerbit() + " - " + penerbit.getKota_penerbit() + " - " + sdf.format(penerbit.getTahun_tebit()));
         }
@@ -252,7 +262,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         penerbitInput.setBounds(448, 349, 403, 35);
 
         items = new ComboItem[klasifikasis.size()];
-        for(int i = 0; i < klasifikasis.size(); i++) {
+        for (int i = 0; i < klasifikasis.size(); i++) {
             Klasifikasi klasifikasi = klasifikasis.get(i);
             items[i] = new ComboItem(klasifikasi.getId_klasifikasi(), klasifikasi.getKode_ddc() + " - " + klasifikasi.getNama_klasifikasi());
         }
@@ -265,7 +275,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         getContentPane().add(penerbitInput);
         getContentPane().add(klasifikasiInput);
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -275,30 +285,31 @@ public class EditBuku extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

@@ -26,20 +26,21 @@ import util.ViewUtil;
  * @author Hafidz Fadhillah
  */
 public class DaftarPenerbit extends javax.swing.JInternalFrame {
+
     private String username;
-    
-    private Repository<Penerbit> pnbtRepo = new PenerbitRepository();    
+
+    private Repository<Penerbit> pnbtRepo = new PenerbitRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    
+
     /**
      * Creates new form DaftarPenerbit
      */
     public DaftarPenerbit() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
         loadDataTable(pnbtRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
@@ -47,10 +48,19 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
 
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -150,12 +160,14 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Penerbit> penerbits = pnbtRepo.search(new HashMap<>() {{
-            put("penerbit", value);
-            put("kota_penerbit", value);
-            put("tahun_terbit", value);
-        }});
-        
+        List<Penerbit> penerbits = pnbtRepo.search(new HashMap<>() {
+            {
+                put("penerbit", value);
+                put("kota_penerbit", value);
+                put("tahun_terbit", value);
+            }
+        });
+
         loadDataTable(penerbits);
     }//GEN-LAST:event_tCariKeyReleased
 
@@ -164,7 +176,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         int row = Tabel.getSelectedRow();
         String value = Tabel.getModel().getValueAt(row, 4).toString();
         Penerbit penerbit = pnbtRepo.get(Integer.valueOf(value));
-        
+
         EditPenerbit editPenerbit = new EditPenerbit(penerbit);
         editPenerbit.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
@@ -181,7 +193,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(manajemenPenerbit);
         manajemenPenerbit.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnManajemenBukuMouseClicked
 
@@ -192,7 +204,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarKlasifikasi);
         daftarKlasifikasi.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnKlasifikasiMouseClicked
 
@@ -203,7 +215,7 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahPenerbit);
         tambahPenerbit.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnPenerbitMouseClicked
 
@@ -215,16 +227,16 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
                 return false; // Disable cell editing
             }
         };
-        
+
         model.addColumn("No");
         model.addColumn("Penerbit");
         model.addColumn("Kota Terbit");
         model.addColumn("Tahun Terbit");
         model.addColumn("ID");
-        
-        for (Penerbit penerbit: penerbits) {
-            
-            model.addRow(new Object[] {
+
+        for (Penerbit penerbit : penerbits) {
+
+            model.addRow(new Object[]{
                 no++,
                 penerbit.getPenerbit(),
                 penerbit.getKota_penerbit(),
@@ -232,16 +244,16 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
                 penerbit.getKode_penerbit()
             });
         }
-        
+
         Tabel.setModel(model);
         ViewUtil.hideTableColumn(Tabel, 4);
         customStyleTable();
     }
-    
-    private void customStyleTable() {        
+
+    private void customStyleTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -251,30 +263,31 @@ public class DaftarPenerbit extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

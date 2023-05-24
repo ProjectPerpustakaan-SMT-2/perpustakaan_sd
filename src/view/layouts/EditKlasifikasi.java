@@ -26,31 +26,41 @@ import view.popup.PopupViewHapusData;
  * @author Hafidz Fadhillah
  */
 public class EditKlasifikasi extends javax.swing.JInternalFrame {
-    private Klasifikasi klasifikasi; 
+
+    private Klasifikasi klasifikasi;
     private String username;
-    
+
     private Repository<Klasifikasi> klsfRepo = new KlasifikasiRepository();
-    
+
     /**
      * Creates new form TambahKlasifikasi
      */
     public EditKlasifikasi(Klasifikasi klasifikasi) {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         this.klasifikasi = klasifikasi;
-        
+
         fillForm();
-        
+
         jam();
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
 
     /**
@@ -122,12 +132,12 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         klasifikasi.setKode_ddc(Integer.valueOf(tKodeDDC.getText()));
         klasifikasi.setNama_klasifiksi(tNamaKlasifikasi.getText());
-        
+
         Set<ConstraintViolation<Klasifikasi>> vols = ValidasiUtil.validate(klasifikasi);
-        
+
         try {
             klsfRepo.update(klasifikasi);
-            
+
             DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
             daftarKlasifikasii.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -135,7 +145,7 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
             daftarKlasifikasii.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewDataDiubah().setVisible(true);
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -145,19 +155,19 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
         int clicked = JOptionPane.showOptionDialog(
-            this, // Parent component
-            "Apakah Anda yakin ?", 
-            "Konfirmasi", 
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            new Object[]{"Ya", "Tidak"}, 
-            "Tidak" 
+                this, // Parent component
+                "Apakah Anda yakin ?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Ya", "Tidak"},
+                "Tidak"
         );
 
         if (clicked == JOptionPane.YES_OPTION) {
             klsfRepo.delete(klasifikasi.getId_klasifikasi());
-            
+
             DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
             daftarKlasifikasii.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
@@ -165,16 +175,16 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
             daftarKlasifikasii.setVisible(true);
 
             this.dispose();
-            
+
             new PopupViewHapusData().setVisible(true);
-        } 
+        }
     }//GEN-LAST:event_btnHapusMouseClicked
 
     private void fillForm() {
         tKodeDDC.setText(String.valueOf(klasifikasi.getKode_ddc()));
         tNamaKlasifikasi.setText(klasifikasi.getNama_klasifikasi());
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -184,30 +194,31 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

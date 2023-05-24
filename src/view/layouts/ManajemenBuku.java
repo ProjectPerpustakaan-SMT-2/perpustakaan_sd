@@ -27,19 +27,20 @@ import view.popup.PopupViewDetailBuku;
  * @author Hafidz Fadhillah
  */
 public class ManajemenBuku extends javax.swing.JInternalFrame {
+
     private String username;
-    
+
     private Repository<Buku> bkuRepo = new BukuRepository();
-    
+
     /**
      * Creates new form TambahBuku
      */
     public ManajemenBuku() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
         loadDataTable(bkuRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
@@ -47,10 +48,19 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
 
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -150,12 +160,14 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Buku> bukus = bkuRepo.search(new HashMap<>() {{
-            put("isbn", value);
-            put("judul_buku", value);
-            put("nama_pengarang", value);
-        }});
-        
+        List<Buku> bukus = bkuRepo.search(new HashMap<>() {
+            {
+                put("isbn", value);
+                put("judul_buku", value);
+                put("nama_pengarang", value);
+            }
+        });
+
         loadDataTable(bukus);
     }//GEN-LAST:event_tCariKeyReleased
 
@@ -164,16 +176,16 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         int row = Tabel.getSelectedRow();
         String value = Tabel.getModel().getValueAt(row, 7).toString();
         Buku buku = bkuRepo.get(Integer.valueOf(value));
-        
+
         int choice = JOptionPane.showOptionDialog(
-            this, 
-            "Pilih Opsi Yang Akan Anda Lakukan!",
-            "Konfirmasi", 
-            JOptionPane.DEFAULT_OPTION, 
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            new Object[]{"Detail", "Edit", "Cancel"}, 
-            "Detail" 
+                this,
+                "Pilih Opsi Yang Akan Anda Lakukan!",
+                "Konfirmasi",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Detail", "Edit", "Cancel"},
+                "Detail"
         );
 
         if (choice == 0) {
@@ -196,7 +208,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahBuku);
         tambahBuku.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnTambahBukuMouseClicked
 
@@ -207,7 +219,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarKlasifikasi);
         daftarKlasifikasi.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnKlasifikasiMouseClicked
 
@@ -218,7 +230,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(daftarPenerbit);
         daftarPenerbit.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnPenerbitMouseClicked
 
@@ -230,7 +242,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
                 return false; // Disable cell editing
             }
         };
-        
+
         model.addColumn("No");
         model.addColumn("ISBN");
         model.addColumn("Judul Buku");
@@ -239,10 +251,10 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         model.addColumn("Halaman");
         model.addColumn("Jumlah");
         model.addColumn("ID");
-        
-        for (Buku buku: bukus) {
-            
-            model.addRow(new Object[] {
+
+        for (Buku buku : bukus) {
+
+            model.addRow(new Object[]{
                 no++,
                 buku.getIsbn(),
                 buku.getJudul_buku(),
@@ -253,16 +265,16 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
                 buku.getKode_buku()
             });
         }
-        
+
         Tabel.setModel(model);
         ViewUtil.hideTableColumn(Tabel, 7);
         customStyleTable();
     }
-    
-    private void customStyleTable() {        
+
+    private void customStyleTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -272,30 +284,31 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);

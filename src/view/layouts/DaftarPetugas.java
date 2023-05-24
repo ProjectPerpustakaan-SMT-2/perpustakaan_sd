@@ -26,29 +26,39 @@ import util.ViewUtil;
  * @author Hafidz Fadhillah
  */
 public class DaftarPetugas extends javax.swing.JInternalFrame {
+
     private String username;
-    
+
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-    
+
     /**
      * Creates new form TambahBuku
      */
     public DaftarPetugas() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         jam();
         loadDataTable(ptgRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
-        String result = username.substring(0, 1).toUpperCase() + username.substring(1);
-        tUserLogin.setText("Selamat Datang " + result + " !");
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+        }
     }
 
     /**
@@ -88,7 +98,7 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnTambahData);
-        btnTambahData.setBounds(433, 145, 180, 40);
+        btnTambahData.setBounds(435, 147, 150, 35);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -134,19 +144,21 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(tambahPetugas);
         tambahPetugas.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnTambahDataMouseClicked
 
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Petugas> petugass = ptgRepo.search(new HashMap<>() {{
-            put("nama", value);
-            put("email", value);
-            put("username", value);
-        }});
-        
+        List<Petugas> petugass = ptgRepo.search(new HashMap<>() {
+            {
+                put("nama", value);
+                put("email", value);
+                put("username", value);
+            }
+        });
+
         loadDataTable(petugass);
     }//GEN-LAST:event_tCariKeyReleased
 
@@ -155,13 +167,13 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
         int row = Tabel.getSelectedRow();
         String value = Tabel.getModel().getValueAt(row, 5).toString();
         Petugas petugas = ptgRepo.get(Integer.valueOf(value));
-        
+
         EditPetugas editPetugas = new EditPetugas(petugas);
         editPetugas.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
         desktopPane.add(editPetugas);
         editPetugas.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_TabelMouseClicked
 
@@ -173,17 +185,17 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
                 return false; // Disable cell editing
             }
         };
-        
+
         model.addColumn("No");
         model.addColumn("Nama");
         model.addColumn("Email");
         model.addColumn("Username");
         model.addColumn("Tanggal Lahir");
         model.addColumn("ID");
-        
-        for (Petugas petugas: petugass) {
-            
-            model.addRow(new Object[] {
+
+        for (Petugas petugas : petugass) {
+
+            model.addRow(new Object[]{
                 no++,
                 petugas.getNama(),
                 petugas.getEmail(),
@@ -192,16 +204,16 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
                 petugas.getId()
             });
         }
-        
+
         Tabel.setModel(model);
         ViewUtil.hideTableColumn(Tabel, 5);
         customStyleTable();
     }
-    
-    private void customStyleTable() {        
+
+    private void customStyleTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
-    
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -211,30 +223,31 @@ public class DaftarPetugas extends javax.swing.JInternalFrame {
                     String nolmenit = "";
                     String noldetik = "";
                     Calendar dt = Calendar.getInstance();
-                    
+
                     int jam = dt.get(Calendar.HOUR_OF_DAY);
                     int menit = dt.get(Calendar.MINUTE);
                     int detik = dt.get(Calendar.SECOND);
-                    
+
                     if (jam < 10) {
                         noljam = "0";
                     }
-                    
+
                     if (menit < 10) {
                         nolmenit = "0";
                     }
-                    
+
                     if (detik < 10) {
                         noldetik = "0";
                     }
-                    
+
                     String Sjam = noljam + Integer.toString(jam);
                     String Smenit = nolmenit + Integer.toString(menit);
                     String Sdetik = noldetik + Integer.toString(detik);
                     finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-                    
+
                     tJam.setText(finalJam);
-            }};
+                }
+            };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
             System.out.println(e);
