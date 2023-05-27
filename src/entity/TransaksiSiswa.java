@@ -26,17 +26,19 @@ public class TransaksiSiswa implements Entity {
     private TransaksiStatus status;
     private Integer total_pinjam;
     private Integer total_denda;
+    private Petugas kode_petugas;
 
     public TransaksiSiswa() {
 
     }
 
-    public TransaksiSiswa(String nama_peminjam, String kelas, TransaksiStatus status, Integer total_pinjam, Integer total_denda) {
+    public TransaksiSiswa(String nama_peminjam, String kelas, TransaksiStatus status, Integer total_pinjam, Integer total_denda, Petugas kode_petugas) {
         this.nama_peminjam = nama_peminjam;
         this.kelas = kelas;
         this.status = status;
         this.total_pinjam = total_pinjam;
         this.total_denda = total_denda;
+        this.kode_petugas = kode_petugas;
     }
 
     public Integer getKode_transaksi() {
@@ -85,5 +87,13 @@ public class TransaksiSiswa implements Entity {
 
     public void setTotal_denda(Integer total_denda) {
         this.total_denda = total_denda;
+    }
+
+    public Petugas getKode_petugas() {
+        return kode_petugas;
+    }
+
+    public void setKode_petugas(Petugas kode_petugas) {
+        this.kode_petugas = kode_petugas;
     }
 }
