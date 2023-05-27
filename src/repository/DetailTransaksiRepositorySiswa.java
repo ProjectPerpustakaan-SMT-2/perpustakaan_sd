@@ -149,6 +149,7 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
             stmt.setInt(4, detTrans.getJumlah());
             stmt.setInt(5, detTrans.getNominal_denda());
             stmt.setInt(6, detTrans.getKode_transaksi().getKode_transaksi());
+            stmt.setInt(7, detTrans.getKode_Detailtransaksi());
 
             stmt.executeUpdate();
             return stmt.getUpdateCount() > 0;

@@ -64,7 +64,9 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         tUserLogin = new javax.swing.JLabel();
         tPetugas = new javax.swing.JLabel();
         tBukuDipinjam = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         tBukuBelumKembali = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         tTotalBuku = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
@@ -93,11 +95,21 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         getContentPane().add(tBukuDipinjam);
         tBukuDipinjam.setBounds(693, 200, 140, 120);
 
+        jLabel1.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
+        jLabel1.setText("Bulan Ini");
+        getContentPane().add(jLabel1);
+        jLabel1.setBounds(800, 330, 60, 17);
+
         tBukuBelumKembali.setFont(new java.awt.Font("Calisto MT", 0, 90)); // NOI18N
         tBukuBelumKembali.setForeground(new java.awt.Color(51, 51, 51));
         tBukuBelumKembali.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         getContentPane().add(tBukuBelumKembali);
         tBukuBelumKembali.setBounds(917, 200, 140, 120);
+
+        jLabel2.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
+        jLabel2.setText("Bulan Ini");
+        getContentPane().add(jLabel2);
+        jLabel2.setBounds(1020, 330, 60, 17);
 
         tTotalBuku.setFont(new java.awt.Font("Calisto MT", 0, 90)); // NOI18N
         tTotalBuku.setForeground(new java.awt.Color(51, 51, 51));
@@ -161,6 +173,8 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel tBukuBelumKembali;
     private javax.swing.JLabel tBukuDipinjam;
     private javax.swing.JLabel tJam;

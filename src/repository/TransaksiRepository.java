@@ -26,7 +26,7 @@ public class TransaksiRepository implements Repository<Transaksi> {
     private static String tableName = Transaksi.tableName;
 
     public List<Transaksi> get() {
-        String sql = "SELECT * FROM " + tableName;
+        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas IS NOT NULL";
         List<Transaksi> transaksis = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -90,7 +90,7 @@ public class TransaksiRepository implements Repository<Transaksi> {
 
     public List<Transaksi> search(Map<String, Object> values) {
         int iterate = 0;
-        String sql = "SELECT * FROM " + tableName + " WHERE ";
+        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas IS NOT NULL AND ";
         List<Transaksi> transaksis = new ArrayList<>();
 
         for (String valueKey : values.keySet()) {
@@ -150,6 +150,7 @@ public class TransaksiRepository implements Repository<Transaksi> {
             stmt.setInt(4, trans.getTotal_pinjam());
             stmt.setInt(5, trans.getTotal_denda());
             stmt.setInt(6, trans.getPetugas().getId());
+            stmt.setInt(7, trans.getKode_transaksi());
 
             stmt.executeUpdate();
             return stmt.getUpdateCount() > 0;

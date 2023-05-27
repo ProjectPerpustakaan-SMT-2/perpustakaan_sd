@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import util.Database;
 import entity.TransaksiSiswa;
+import java.sql.Types;
 
 /**
  *
@@ -25,7 +26,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
     private static String tableName = TransaksiSiswa.tableName;
 
     public List<TransaksiSiswa> get() {
-        String sql = "SELECT * FROM " + tableName;
+        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas IS NULL";
         List<TransaksiSiswa> detailTransaksis = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -42,7 +43,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
     }
 
     public TransaksiSiswa get(Integer id) {
-        String sql = "SELECT * FROM " + tableName + " WHERE kode_detailTransaksi = ?";
+        String sql = "SELECT * FROM " + tableName + " WHERE kode_transaksi = ?";
         TransaksiSiswa detailTransaksi = new TransaksiSiswa();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -89,7 +90,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
 
     public List<TransaksiSiswa> search(Map<String, Object> values) {
         int iterate = 0;
-        String sql = "SELECT * FROM " + tableName + " WHERE ";
+        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas IS NULL AND ";
         List<TransaksiSiswa> detailTransaksis = new ArrayList<>();
 
         for (String valueKey : values.keySet()) {
@@ -116,7 +117,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
     }
 
     public Integer add(TransaksiSiswa trans) {
-        String sql = "INSERT INTO " + tableName + " (`nama_peminjam`, `kelas`, `status`, `total_pinjam`, `total_denda`) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + tableName + " (`nama_peminjam`, `kelas`, `status`, `total_pinjam`, `total_denda`, `kode_petugas`) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, trans.getNama_peminjam());
@@ -124,6 +125,14 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
             stmt.setString(3, trans.getStatus().toString());
             stmt.setInt(4, trans.getTotal_pinjam());
             stmt.setInt(5, trans.getTotal_denda());
+            stmt.setInt(6, trans.getKode_petugas().getId());
+
+            Integer id = trans.getKode_petugas() != null ? trans.getKode_petugas().getId() : null;
+            if (id != null) {
+                stmt.setInt(6, id);
+            } else {
+                stmt.setNull(6, Types.INTEGER);
+            }
 
             stmt.executeUpdate();
 
@@ -139,7 +148,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
     }
 
     public boolean update(TransaksiSiswa trans) {
-        String sql = "UPDATE " + tableName + " SET nama_peminjam = ?, kelas = ?, status = ?, total_pinjam = ?, total_denda = ? WHERE kode_detailTransaksi = ?";
+        String sql = "UPDATE " + tableName + " SET nama_peminjam = ?, kelas = ?, status = ?, total_pinjam = ?, total_denda = ?, kode_petugas = ? WHERE kode_transaksi = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, trans.getNama_peminjam());
@@ -147,6 +156,8 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
             stmt.setString(3, trans.getStatus().toString());
             stmt.setInt(4, trans.getTotal_pinjam());
             stmt.setInt(5, trans.getTotal_denda());
+            stmt.setInt(6, trans.getKode_petugas() != null ? trans.getKode_petugas().getId() : null);
+            stmt.setInt(7, trans.getKode_transaksi());
 
             stmt.executeUpdate();
             return stmt.getUpdateCount() > 0;
@@ -158,7 +169,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
     }
 
     public boolean delete(int id) {
-        String sql = "DELETE FROM " + tableName + " WHERE kode_detailTransaksi = ?";
+        String sql = "DELETE FROM " + tableName + " WHERE kode_transaksi = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -180,10 +191,11 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
                 result.getString("kelas"),
                 TransaksiStatus.valueOf(result.getString("status")),
                 result.getInt("total_pinjam"),
-                result.getInt("total_denda")
+                result.getInt("total_denda"),
+                new PetugasRepository().get(ptgId)
         );
 
-        detailTransaksi.setKode_transaksi(result.getInt("kode_detailTransaksi"));
+        detailTransaksi.setKode_transaksi(result.getInt("kode_transaksi"));
         return detailTransaksi;
     }
 }

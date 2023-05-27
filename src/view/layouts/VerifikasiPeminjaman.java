@@ -13,22 +13,30 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksiSiswa;
+import entity.DetailTransaksiSiswa;
 import entity.Petugas;
+import entity.Transaksi;
 import entity.TransaksiSiswa;
 import jakarta.validation.ConstraintViolation;
 import java.awt.Color;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import repository.Repository;
 import repository.BukuRepository;
 import repository.DetailTransaksiRepositorySiswa;
 import repository.PetugasRepository;
+import static repository.Repository.conn;
 import repository.TransaksiRepositorySiswa;
 import service.TransaksiValidasi;
 import util.SearchableComboBox;
@@ -40,14 +48,19 @@ import view.popup.PopupViewDataGagal;
  *
  * @author Hafidz Fadhillah
  */
-public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
+public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
-    private Repository<Buku> bukuRepo = new BukuRepository();
+    private String username;
+
+    private TransaksiSiswa transaksi;
+    private DetailTransaksiSiswa detailTransaksi;
+
     private Repository<Petugas> ptgRepo = new PetugasRepository();
+    private Repository<Buku> bukuRepo = new BukuRepository();
     private Repository<TransaksiSiswa> transRepo = new TransaksiRepositorySiswa();
     private Repository<DetailTransaksiSiswa> detailTransRepo = new DetailTransaksiRepositorySiswa();
 
-    private List<DetailTransaksiSiswa> details = new ArrayList<>();
+    private List<DetailTransaksiSiswa> details, deleteDetails = new ArrayList<>();
     private Integer activeDetail, totalPinjam;
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -55,17 +68,60 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     /**
      * Creates new form TambahBuku
      */
-    public TambahPinjamanSiswa() {
+    public VerifikasiPeminjaman(TransaksiSiswa transaksi) {
+        this.transaksi = transaksi;
+
+        this.details = detailTransRepo.get(new HashMap<>() {
+            {
+                put("kode_transaksi", transaksi.getKode_transaksi());
+            }
+        });
+
         fillComboBox();
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
+
+        tNamaPetugas.setVisible(false);
+
+        fillInput();
         loadTable();
         customColumnTable();
 
         customJDateChooser();
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+
+        if (username != null) {
+            username = username.trim();
+            // Split the username into words
+            String[] words = username.split("\\s+");
+            // Get the first word
+            String firstWord = words[0];
+            // Capitalize the first letter of the first word
+            String capitalizedFirstWord = firstWord.substring(0, 1).toUpperCase() + firstWord.substring(1);
+            tUserLogin.setText("Selamat Datang " + capitalizedFirstWord + " !");
+
+            // Get Kode Petugas From Name User Login
+            String sql = "SELECT kode_petugas FROM petugas WHERE nama = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, this.username);
+
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    tNamaPetugas.setText(rs.getString("kode_petugas"));
+                }
+
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void fillComboBox() {
@@ -81,7 +137,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         bukuInput = new SearchableComboBox(items);
         bukuInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
         bukuInput.setBorder(null);
-        bukuInput.setBounds(469, 281, 450, 35);
+        bukuInput.setBounds(469, 335, 490, 37);
         bukuInput.setBackground(new Color(0, 0, 0, 0));
 
         getContentPane().add(bukuInput);
@@ -125,15 +181,19 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        tJam = new javax.swing.JLabel();
+        tNamaPetugas = new javax.swing.JLabel();
+        tUserLogin = new javax.swing.JLabel();
+        tKodeBarcode = new javax.swing.JTextField();
         tPeminjam = new javax.swing.JTextField();
         tKelas = new javax.swing.JTextField();
         tJumlahBuku = new javax.swing.JTextField();
-        tKalender = new com.toedter.calendar.JDateChooser();
+        tKembali = new com.toedter.calendar.JDateChooser();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
         btnTambah = new javax.swing.JLabel();
         btnHapus = new javax.swing.JLabel();
-        btnReset = new javax.swing.JLabel();
+        btnHapusData = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
@@ -141,25 +201,41 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         setPreferredSize(new java.awt.Dimension(1366, 768));
         getContentPane().setLayout(null);
 
+        tJam.setFont(new java.awt.Font("Calisto MT", 1, 20)); // NOI18N
+        getContentPane().add(tJam);
+        tJam.setBounds(670, 8, 110, 40);
+        getContentPane().add(tNamaPetugas);
+        tNamaPetugas.setBounds(980, 17, 100, 20);
+
+        tUserLogin.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        getContentPane().add(tUserLogin);
+        tUserLogin.setBounds(1105, 15, 200, 23);
+
+        tKodeBarcode.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKodeBarcode.setBorder(null);
+        getContentPane().add(tKodeBarcode);
+        tKodeBarcode.setBounds(469, 176, 765, 35);
+
         tPeminjam.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tPeminjam.setBorder(null);
         getContentPane().add(tPeminjam);
-        tPeminjam.setBounds(469, 202, 588, 35);
+        tPeminjam.setBounds(469, 257, 585, 35);
 
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
-        tKelas.setBounds(1082, 202, 160, 35);
+        tKelas.setBounds(1082, 257, 160, 35);
 
         tJumlahBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJumlahBuku.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tJumlahBuku.setBorder(null);
         getContentPane().add(tJumlahBuku);
-        tJumlahBuku.setBounds(1112, 548, 130, 35);
+        tJumlahBuku.setBounds(1112, 604, 130, 35);
 
-        tKalender.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        getContentPane().add(tKalender);
-        tKalender.setBounds(951, 281, 286, 36);
+        tKembali.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        getContentPane().add(tKembali);
+        tKembali.setBounds(988, 335, 250, 37);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -180,7 +256,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(469, 365, 770, 157);
+        jScrollPane2.setBounds(469, 420, 770, 157);
 
         btnTambah.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTambah.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -189,7 +265,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnTambah);
-        btnTambah.setBounds(470, 554, 90, 26);
+        btnTambah.setBounds(470, 609, 90, 26);
 
         btnHapus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -198,16 +274,16 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnHapus);
-        btnHapus.setBounds(587, 553, 90, 26);
+        btnHapus.setBounds(587, 609, 90, 26);
 
-        btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnHapusData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHapusData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnResetMouseClicked(evt);
+                btnHapusDataMouseClicked(evt);
             }
         });
-        getContentPane().add(btnReset);
-        btnReset.setBounds(468, 624, 135, 37);
+        getContentPane().add(btnHapusData);
+        btnHapusData.setBounds(468, 680, 135, 37);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -216,9 +292,9 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1100, 624, 138, 36);
+        btnSimpan.setBounds(1090, 680, 150, 36);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Peminjaman Siswa.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Form Verifikasi.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -227,62 +303,33 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
-        ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
+        transaksi.setNama_peminjam(tPeminjam.getText());
+        transaksi.setKelas(tKelas.getText());
+        transaksi.setStatus(TransaksiStatus.dipinjam);
+        transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
+        transaksi.setTotal_denda(0);
+        transaksi.setKode_petugas(ptgRepo.get(Integer.valueOf(tNamaPetugas.getText())));
 
-        Integer kode_petugas = null;
+        manageDetail();
 
-        TransaksiSiswa transaksiSiswa = new TransaksiSiswa(
-                tPeminjam.getText(),
-                tKelas.getText(),
-                TransaksiStatus.dipinjam,
-                Integer.valueOf(tJumlahBuku.getText()),
-                0,
-                ptgRepo.get(kode_petugas)
-        );
+        transRepo.update(transaksi);
 
-        TransaksiValidasi comboValidasi = new TransaksiValidasi(buku);
-
-        Set<ConstraintViolation<TransaksiSiswa>> transaksiSiswaValidasi = ValidasiUtil.validate(transaksiSiswa);
-
-        Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
-
-        Set<ConstraintViolation<?>> allViolations = new HashSet<>();
-        allViolations.addAll(comboItemValidasi);
-        allViolations.addAll(transaksiSiswaValidasi);
-
-        if (allViolations.size() > 0) {
-            Set<String> errorMessages = new HashSet<>();
-
-            for (ConstraintViolation<?> violation : allViolations) {
-                errorMessages.add(violation.getMessage());
-            }
-
-            new PopupViewDataGagal().setVisible(true);
-            String errorMessageString = String.join("\n", errorMessages);
-            JOptionPane.showMessageDialog(this, errorMessageString);
-            return;
-        }
-
-        int id = transRepo.add(transaksiSiswa);
-        transaksiSiswa.setKode_transaksi(id);
-        addDetails(transaksiSiswa);
+        DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
+        daftarPeminjaman.setUsername(username);
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(daftarPeminjaman);
+        daftarPeminjaman.setVisible(true);
 
         new PopupViewDataBerhasil().setVisible(true);
+
+        this.dispose();
         resetPinjamBuku();
     }//GEN-LAST:event_btnSimpanMouseClicked
 
-    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+    private void btnHapusDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusDataMouseClicked
         // TODO add your handling code here:
-        tPeminjam.setText("");
-        tKelas.setText("");
-        tKalender.setDate(Calendar.getInstance().getTime());
-        bukuInput.setSelectedIndex(0);
-        tJumlahBuku.setText("");
 
-        DefaultTableModel model = (DefaultTableModel) Tabel.getModel();
-        model.setRowCount(0);
-        details.clear();
-    }//GEN-LAST:event_btnResetMouseClicked
+    }//GEN-LAST:event_btnHapusDataMouseClicked
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
@@ -295,7 +342,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
                 detail.getKode_buku().getJudul_buku()
         ));
 
-        tKalender.setDate(detail.getTgl_kembali());
+        tKembali.setDate(detail.getTgl_kembali());
     }//GEN-LAST:event_TabelMouseClicked
 
     private void btnTambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahMouseClicked
@@ -303,15 +350,17 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         DetailTransaksiSiswa detail = (activeDetail == null) ? new DetailTransaksiSiswa() : details.get(activeDetail);
         ComboItem bukuComboItem = (ComboItem) bukuInput.getSelectedItem();
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
-        Date tglKembali = tKalender.getDate();
+        Date tglPinjam = tKembali.getDate();
+        Date tglKembali = tKembali.getDate();
         int jumlah = 1;
         int denda = 0;
 
         detail.setKode_buku(buku);
-        detail.setTgl_pinjam(new Date());
+        detail.setTgl_pinjam(tglPinjam);
         detail.setTgl_kembali(tglKembali);
         detail.setJumlah(jumlah);
         detail.setNominal_denda(denda);
+        detail.setKode_transaksi(transRepo.get(transaksi.getKode_transaksi()));
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);
 
         Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
@@ -352,6 +401,12 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
             return;
         }
 
+        DetailTransaksiSiswa detail = details.get(activeDetail);
+
+        if (detail.getKode_Detailtransaksi() != null) {
+            deleteDetails.add(detail);
+        }
+
         details.remove((int) activeDetail);
         activeDetail = null;
 
@@ -360,15 +415,40 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         resetBuku();
     }//GEN-LAST:event_btnHapusMouseClicked
 
+    private void fillInput() {
+        tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
+        tPeminjam.setText(transaksi.getNama_peminjam());
+        tKelas.setText(transaksi.getKelas());
+
+    }
+
+    private void manageDetail() {
+        // Edit or add details
+        for (DetailTransaksiSiswa detail : details) {
+            if (detail.getKode_Detailtransaksi() == null) {
+                detail.setKode_transaksi(transaksi);
+                detailTransRepo.add(detail);
+                continue;
+            }
+
+            detailTransRepo.update(detail);
+        }
+
+        // Delete details
+        for (DetailTransaksiSiswa detail : deleteDetails) {
+            detailTransRepo.delete(detail.getKode_Detailtransaksi());
+        }
+    }
+
     private void resetBuku() {
-        tKalender.setDate(Calendar.getInstance().getTime());
+        tKembali.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
     }
 
     private void resetPinjamBuku() {
-        tPeminjam.setText("");
+        tKodeBarcode.setText("");
         tKelas.setText("");
-        tKalender.setDate(Calendar.getInstance().getTime());
+        tKembali.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
 
@@ -378,31 +458,24 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     }
 
     private void customJDateChooser() {
-        tKalender.setDateFormatString("dd-MM-yyyy");
+        tKembali.setDateFormatString("dd-MM-yyyy");
 
         // Set Now Date
-        tKalender.setDate(Calendar.getInstance().getTime());
+        tKembali.setDate(Calendar.getInstance().getTime());
 
         // Add minimum days selected
         Date date = new Date();
-        tKalender.setMinSelectableDate(date);
+        tKembali.setMinSelectableDate(date);
 
         // Add 3 days to the current date
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 3);
         Date maxDate = calendar.getTime();
-        tKalender.setMaxSelectableDate(maxDate);
+        tKembali.setMaxSelectableDate(maxDate);
     }
 
     private void customColumnTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
-    }
-
-    private void addDetails(TransaksiSiswa transaksiSiswa) {
-        for (DetailTransaksiSiswa detail : details) {
-            detail.setKode_transaksi(transaksiSiswa);
-            detailTransRepo.add(detail);
-        }
     }
 
     private javax.swing.JComboBox bukuInput;
@@ -410,13 +483,17 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnHapus;
-    private javax.swing.JLabel btnReset;
+    private javax.swing.JLabel btnHapusData;
     private javax.swing.JLabel btnSimpan;
     private javax.swing.JLabel btnTambah;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJumlahBuku;
-    private com.toedter.calendar.JDateChooser tKalender;
     private javax.swing.JTextField tKelas;
+    private com.toedter.calendar.JDateChooser tKembali;
+    private javax.swing.JTextField tKodeBarcode;
+    private javax.swing.JLabel tNamaPetugas;
     private javax.swing.JTextField tPeminjam;
+    private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }
