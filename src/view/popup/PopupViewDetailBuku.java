@@ -7,11 +7,13 @@ package view.popup;
 import entity.Buku;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
+
 /**
  *
  * @author Hafidz Fadhillah
  */
 public class PopupViewDetailBuku extends javax.swing.JFrame {
+
     private Buku buku;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 
@@ -20,10 +22,10 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
      */
     public PopupViewDetailBuku(Buku buku) {
         initComponents();
-        this.setBackground(new Color(0,0,0,0));
-        
+        this.setBackground(new Color(0, 0, 0, 0));
+
         this.buku = buku;
-        
+
         fillForm();
     }
 
@@ -36,10 +38,17 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tTahun.setText(sdf.format(buku.getPenerbit().getTahun_tebit()));
         tSumber.setText(buku.getSumber());
         tHalaman.setText(String.valueOf(buku.getHalaman()));
+
+        if (buku.getJumlah() > 0) {
+            tStatusBuku.setText("Tersedia");
+        } else {
+            tStatusBuku.setText(String.valueOf(buku.getBukuStatus()));
+        }
+
         tJumlah.setText(String.valueOf(buku.getJumlah()));
         tKlasifikasi.setText(buku.getKlasifikasi().getNama_klasifikasi());
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -58,6 +67,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tSumber = new javax.swing.JTextField();
         tJumlah = new javax.swing.JTextField();
         tHalaman = new javax.swing.JTextField();
+        tStatusBuku = new javax.swing.JTextField();
         tKlasifikasi = new javax.swing.JTextField();
         btnReset = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
@@ -120,7 +130,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tSumber.setBorder(null);
         tSumber.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tSumber);
-        tSumber.setBounds(266, 413, 840, 35);
+        tSumber.setBounds(266, 413, 400, 35);
 
         tJumlah.setEditable(false);
         tJumlah.setBackground(new java.awt.Color(255, 255, 255));
@@ -136,7 +146,15 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tHalaman.setBorder(null);
         tHalaman.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tHalaman);
-        tHalaman.setBounds(266, 493, 404, 35);
+        tHalaman.setBounds(703, 413, 404, 35);
+
+        tStatusBuku.setEditable(false);
+        tStatusBuku.setBackground(new java.awt.Color(255, 255, 255));
+        tStatusBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tStatusBuku.setBorder(null);
+        tStatusBuku.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        getContentPane().add(tStatusBuku);
+        tStatusBuku.setBounds(266, 493, 404, 35);
 
         tKlasifikasi.setEditable(false);
         tKlasifikasi.setBackground(new java.awt.Color(255, 255, 255));
@@ -175,7 +193,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -215,6 +233,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
     private javax.swing.JTextField tKota;
     private javax.swing.JTextField tPenerbit;
     private javax.swing.JTextField tPengarang;
+    private javax.swing.JTextField tStatusBuku;
     private javax.swing.JTextField tSumber;
     private javax.swing.JTextField tTahun;
     // End of variables declaration//GEN-END:variables

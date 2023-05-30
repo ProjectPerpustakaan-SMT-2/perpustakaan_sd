@@ -4,6 +4,7 @@
  */
 package view.layouts;
 
+import data.BukuStatus;
 import data.ComboItem;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 import entity.Buku;
 import entity.Klasifikasi;
 import entity.Penerbit;
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 import util.ValidasiUtil;
 import repository.Repository;
@@ -91,6 +93,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tNamaPengarang = new javax.swing.JTextField();
         tSumber = new javax.swing.JTextField();
         tHalaman = new javax.swing.JTextField();
+        tStatus = new javax.swing.JComboBox<>();
         tJumlah = new javax.swing.JTextField();
         btnHapus = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
@@ -127,12 +130,19 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tSumber.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tSumber.setBorder(null);
         getContentPane().add(tSumber);
-        tSumber.setBounds(447, 429, 840, 35);
+        tSumber.setBounds(447, 429, 405, 35);
 
         tHalaman.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tHalaman.setBorder(null);
         getContentPane().add(tHalaman);
-        tHalaman.setBounds(447, 510, 404, 35);
+        tHalaman.setBounds(882, 429, 404, 35);
+
+        tStatus.setBackground(new Color(0,0,0,0));
+        tStatus.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Layak", "Dipinjam", "Rusak", "Hilang" }));
+        tStatus.setBorder(null);
+        getContentPane().add(tStatus);
+        tStatus.setBounds(447, 510, 404, 35);
 
         tJumlah.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJumlah.setBorder(null);
@@ -175,6 +185,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         buku.setPenerbit(pnbtRepo.get(pnbtItem.getKey()));
         buku.setSumber(tSumber.getText());
         buku.setHalaman(Integer.valueOf(tHalaman.getText()));
+        buku.setBukuStatus(BukuStatus.valueOf(tStatus.getSelectedItem().toString()));
         buku.setJumlah(Integer.valueOf(tJumlah.getText()));
         buku.setKlasifikasi(klsfRepo.get(kodeDDCItem.getKey()));
 
@@ -232,6 +243,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tNamaPengarang.setText(buku.getNama_pengarang());
         tSumber.setText(buku.getSumber());
         tHalaman.setText(String.valueOf(buku.getHalaman()));
+        tStatus.setSelectedItem(String.valueOf(buku.getBukuStatus()));
         tJumlah.setText(String.valueOf(buku.getJumlah()));
 
         penerbitInput.setSelectedItem(new ComboItem(
@@ -328,6 +340,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
     private javax.swing.JTextField tJudulBuku;
     private javax.swing.JTextField tJumlah;
     private javax.swing.JTextField tNamaPengarang;
+    private javax.swing.JComboBox<String> tStatus;
     private javax.swing.JTextField tSumber;
     private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables

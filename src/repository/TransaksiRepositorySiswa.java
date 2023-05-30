@@ -125,7 +125,6 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
             stmt.setString(3, trans.getStatus().toString());
             stmt.setInt(4, trans.getTotal_pinjam());
             stmt.setInt(5, trans.getTotal_denda());
-            stmt.setInt(6, trans.getKode_petugas().getId());
 
             Integer id = trans.getKode_petugas() != null ? trans.getKode_petugas().getId() : null;
             if (id != null) {

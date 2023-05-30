@@ -23,17 +23,18 @@ import view.popup.PopupViewDetailBuku;
  * @author Hafidz Fadhillah
  */
 public class DaftarBukuSiswa extends javax.swing.JInternalFrame {
+
     private Repository<Buku> bkuRepo = new BukuRepository();
-    
+
     /**
      * Creates new form TambahBuku
      */
     public DaftarBukuSiswa() {
         initComponents();
-        this.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
-        
+
         loadDataTable(bkuRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
@@ -96,21 +97,23 @@ public class DaftarBukuSiswa extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Buku> bukus = bkuRepo.search(new HashMap<>() {{
-            put("isbn", value);
-            put("judul_buku", value);
-            put("nama_pengarang", value);
-        }});
-        
+        List<Buku> bukus = bkuRepo.search(new HashMap<>() {
+            {
+                put("isbn", value);
+                put("judul_buku", value);
+                put("nama_pengarang", value);
+            }
+        });
+
         loadDataTable(bukus);
     }//GEN-LAST:event_tCariKeyReleased
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
         int row = Tabel.getSelectedRow();
-        String value = Tabel.getModel().getValueAt(row, 7).toString();
+        String value = Tabel.getModel().getValueAt(row, 6).toString();
         Buku buku = bkuRepo.get(Integer.valueOf(value));
-        
+
         new PopupViewDetailBuku(buku).setVisible(true);
     }//GEN-LAST:event_TabelMouseClicked
 
@@ -122,36 +125,34 @@ public class DaftarBukuSiswa extends javax.swing.JInternalFrame {
                 return false; // Disable cell editing
             }
         };
-        
+
         model.addColumn("No");
         model.addColumn("ISBN");
         model.addColumn("Judul Buku");
         model.addColumn("Nama Pengarang");
-        model.addColumn("Sumber");
         model.addColumn("Halaman");
         model.addColumn("Jumlah");
         model.addColumn("ID");
-        
-        for (Buku buku: bukus) {
-            
-            model.addRow(new Object[] {
+
+        for (Buku buku : bukus) {
+
+            model.addRow(new Object[]{
                 no++,
                 buku.getIsbn(),
                 buku.getJudul_buku(),
                 buku.getNama_pengarang(),
-                buku.getSumber(),
                 buku.getHalaman(),
                 buku.getJumlah(),
                 buku.getKode_buku()
             });
         }
-        
+
         Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 7);
+        ViewUtil.hideTableColumn(Tabel, 6);
         customStyleTable();
     }
-    
-    private void customStyleTable() {        
+
+    private void customStyleTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
 

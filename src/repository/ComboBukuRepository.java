@@ -21,12 +21,12 @@ import entity.Buku;
  *
  * @author Hafidz Fadhillah
  */
-public class BukuRepository implements Repository<Buku> {
+public class ComboBukuRepository implements Repository<Buku> {
 
     private static String tableName = Buku.tableName;
 
     public List<Buku> get() {
-        String sql = "SELECT * FROM " + tableName;
+        String sql = "SELECT * FROM " + tableName + " WHERE buku.status = 'Layak' OR buku.status = 'Dipinjam' AND jumlah > 0";
         List<Buku> bukus = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {

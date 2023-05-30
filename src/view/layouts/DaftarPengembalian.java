@@ -14,35 +14,34 @@ import java.util.HashMap;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-import entity.Buku;
+import entity.Transaksi;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
-import repository.BukuRepository;
+import repository.TransaksiRepository;
 import repository.Repository;
 import util.ViewUtil;
-import view.popup.PopupViewDetailBuku;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class ManajemenBuku extends javax.swing.JInternalFrame {
+public class DaftarPengembalian extends javax.swing.JInternalFrame {
 
     private String username;
 
-    private Repository<Buku> bkuRepo = new BukuRepository();
+    private Repository<Transaksi> transRepo = new TransaksiRepository();
 
     /**
-     * Creates new form TambahBuku
+     * Creates new form TambahPeminjamanPetugas
      */
-    public ManajemenBuku() {
+    public DaftarPengembalian() {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
 
         jam();
-        loadDataTable(bkuRepo.get());
+        loadDataTable(transRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
@@ -72,10 +71,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
 
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
-        btnTambahBuku = new javax.swing.JLabel();
-        btnKlasifikasi = new javax.swing.JLabel();
-        btnPenerbit = new javax.swing.JLabel();
-        btnStatus = new javax.swing.JLabel();
+        btnTambahPeminjaman = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -94,41 +90,14 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         getContentPane().add(tUserLogin);
         tUserLogin.setBounds(1105, 15, 200, 23);
 
-        btnTambahBuku.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnTambahBuku.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnTambahPeminjaman.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnTambahPeminjaman.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnTambahBukuMouseClicked(evt);
+                btnTambahPeminjamanMouseClicked(evt);
             }
         });
-        getContentPane().add(btnTambahBuku);
-        btnTambahBuku.setBounds(433, 150, 150, 33);
-
-        btnKlasifikasi.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnKlasifikasi.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnKlasifikasiMouseClicked(evt);
-            }
-        });
-        getContentPane().add(btnKlasifikasi);
-        btnKlasifikasi.setBounds(605, 150, 102, 33);
-
-        btnPenerbit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnPenerbit.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnPenerbitMouseClicked(evt);
-            }
-        });
-        getContentPane().add(btnPenerbit);
-        btnPenerbit.setBounds(732, 150, 102, 33);
-
-        btnStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnStatus.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnStatusMouseClicked(evt);
-            }
-        });
-        getContentPane().add(btnStatus);
-        btnStatus.setBounds(858, 150, 82, 33);
+        getContentPane().add(btnTambahPeminjaman);
+        btnTambahPeminjaman.setBounds(443, 148, 265, 34);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -138,7 +107,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(988, 145, 280, 40);
+        tCari.setBounds(970, 145, 280, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -158,9 +127,9 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(437, 210, 887, 495);
+        jScrollPane2.setBounds(437, 210, 860, 495);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Management Buku.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Pengembalian.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -170,22 +139,20 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<Buku> bukus = bkuRepo.search(new HashMap<>() {
+        List<Transaksi> trans = transRepo.search(new HashMap<>() {
             {
-                put("isbn", value);
-                put("judul_buku", value);
-                put("nama_pengarang", value);
+                put("nama_peminjam", value);
             }
         });
 
-        loadDataTable(bukus);
+        loadDataTable(trans);
     }//GEN-LAST:event_tCariKeyReleased
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
         int row = Tabel.getSelectedRow();
-        String value = Tabel.getModel().getValueAt(row, 7).toString();
-        Buku buku = bkuRepo.get(Integer.valueOf(value));
+        String value = Tabel.getModel().getValueAt(row, 5).toString();
+        Transaksi transaksi = transRepo.get(Integer.valueOf(value));
 
         int choice = JOptionPane.showOptionDialog(
                 this,
@@ -199,61 +166,30 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         );
 
         if (choice == 0) {
-            new PopupViewDetailBuku(buku).setVisible(true);
+
         } else if (choice == 1) {
-            EditBuku editBuku = new EditBuku(buku);
-            editBuku.setUsername(username);
+            EditPinjamanPetugas editPinjamanPetugas = new EditPinjamanPetugas(transaksi);
+            editPinjamanPetugas.setUsername(username);
             JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(editBuku);
-            editBuku.setVisible(true);
+            desktopPane.add(editPinjamanPetugas);
+            editPinjamanPetugas.setVisible(true);
 
             this.dispose();
         }
     }//GEN-LAST:event_TabelMouseClicked
 
-    private void btnTambahBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahBukuMouseClicked
+    private void btnTambahPeminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahPeminjamanMouseClicked
         // TODO add your handling code here:
-        TambahBuku tambahBuku = new TambahBuku();
-        tambahBuku.setUsername(username);
+        TambahPengembalian tambahPengembalian = new TambahPengembalian();
+        tambahPengembalian.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(tambahBuku);
-        tambahBuku.setVisible(true);
+        desktopPane.add(tambahPengembalian);
+        tambahPengembalian.setVisible(true);
 
         this.dispose();
-    }//GEN-LAST:event_btnTambahBukuMouseClicked
+    }//GEN-LAST:event_btnTambahPeminjamanMouseClicked
 
-    private void btnKlasifikasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKlasifikasiMouseClicked
-        // TODO add your handling code here:
-        DaftarKlasifikasi daftarKlasifikasi = new DaftarKlasifikasi();
-        daftarKlasifikasi.setUsername(username);
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarKlasifikasi);
-        daftarKlasifikasi.setVisible(true);
-
-        this.dispose();
-    }//GEN-LAST:event_btnKlasifikasiMouseClicked
-
-    private void btnPenerbitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPenerbitMouseClicked
-        // TODO add your handling code here:
-        DaftarPenerbit daftarPenerbit = new DaftarPenerbit();
-        daftarPenerbit.setUsername(username);
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarPenerbit);
-        daftarPenerbit.setVisible(true);
-
-        this.dispose();
-    }//GEN-LAST:event_btnPenerbitMouseClicked
-
-    private void btnStatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStatusMouseClicked
-        // TODO add your handling code here:
-        DaftarStatusBuku daftarStatusBuku = new DaftarStatusBuku();
-        daftarStatusBuku.setUsername(username);
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarStatusBuku);
-        daftarStatusBuku.setVisible(true);
-    }//GEN-LAST:event_btnStatusMouseClicked
-
-    private void loadDataTable(List<Buku> bukus) {
+    private void loadDataTable(List<Transaksi> trans) {
         int no = 1;
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -263,30 +199,26 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         };
 
         model.addColumn("No");
-        model.addColumn("ISBN");
-        model.addColumn("Judul Buku");
-        model.addColumn("Nama Pengarang");
-        model.addColumn("Sumber");
-        model.addColumn("Halaman");
-        model.addColumn("Jumlah");
+        model.addColumn("Nama Peminjam");
+        model.addColumn("Kelas");
+        model.addColumn("Total Buku Yang Dipinjam");
+        model.addColumn("Nominal Denda");
         model.addColumn("ID");
 
-        for (Buku buku : bukus) {
+        for (Transaksi transaksi : trans) {
 
             model.addRow(new Object[]{
                 no++,
-                buku.getIsbn(),
-                buku.getJudul_buku(),
-                buku.getNama_pengarang(),
-                buku.getSumber(),
-                buku.getHalaman(),
-                buku.getJumlah(),
-                buku.getKode_buku()
+                transaksi.getNama_peminjam(),
+                transaksi.getKelas(),
+                transaksi.getTotal_pinjam(),
+                transaksi.getTotal_denda(),
+                transaksi.getKode_transaksi()
             });
         }
 
         Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 7);
+        ViewUtil.hideTableColumn(Tabel, 5);
         customStyleTable();
     }
 
@@ -337,10 +269,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
-    private javax.swing.JLabel btnKlasifikasi;
-    private javax.swing.JLabel btnPenerbit;
-    private javax.swing.JLabel btnStatus;
-    private javax.swing.JLabel btnTambahBuku;
+    private javax.swing.JLabel btnTambahPeminjaman;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;

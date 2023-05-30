@@ -13,20 +13,20 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksi;
+import entity.Kerusakan;
 import entity.Petugas;
 import entity.Transaksi;
 import jakarta.validation.ConstraintViolation;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
@@ -35,33 +35,32 @@ import repository.Repository;
 import repository.BukuRepository;
 import repository.ComboBukuRepository;
 import repository.DetailTransaksiRepository;
+import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepository;
 import service.TransaksiValidasi;
 import util.SearchableComboBox;
 import util.ValidasiUtil;
-import util.ViewUtil;
 import view.popup.PopupViewDataBerhasil;
-import view.popup.PopupViewHapusData;
+import view.popup.PopupViewDataGagal;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
+public class TambahPengembalian extends javax.swing.JInternalFrame {
 
     private String username;
-
-    private Transaksi transaksi;
 
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     private Repository<Buku> bukuRepo = new BukuRepository();
     private Repository<Buku> comboBukuRepo = new ComboBukuRepository();
+    private Repository<Kerusakan> kerusakanRepo = new KerusakanRepository();
     private Repository<Transaksi> transRepo = new TransaksiRepository();
     private Repository<DetailTransaksi> detailTransRepo = new DetailTransaksiRepository();
 
-    private List<DetailTransaksi> details, deleteDetails = new ArrayList<>();
+    private List<DetailTransaksi> details = new ArrayList<>();
     private Integer activeDetail, totalPinjam;
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -69,14 +68,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
     /**
      * Creates new form TambahBuku
      */
-    public EditPinjamanPetugas(Transaksi transaksi) {
-        this.transaksi = transaksi;
-        this.details = detailTransRepo.get(new HashMap<>() {
-            {
-                put("kode_transaksi", transaksi.getKode_transaksi());
-            }
-        });
-
+    public TambahPengembalian() {
         fillComboBox();
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -84,12 +76,12 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         BUI.setNorthPane(null);
 
         tNamaPetugas.setVisible(false);
+        tNominalDenda.setText("0");
 
-        fillInput();
         loadTable();
+        setNominal();
         customColumnTable();
 
-        customJDateChooser();
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
@@ -127,6 +119,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
     private void fillComboBox() {
         ComboItem[] items;
         List<Buku> bukus = comboBukuRepo.get();
+        List<Kerusakan> kerusakans = kerusakanRepo.get();
 
         items = new ComboItem[bukus.size()];
         for (int i = 0; i < bukus.size(); i++) {
@@ -137,28 +130,35 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         bukuInput = new SearchableComboBox(items);
         bukuInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
         bukuInput.setBorder(null);
-        bukuInput.setBounds(469, 281, 450, 35);
+        bukuInput.setBounds(469, 265, 373, 35);
         bukuInput.setBackground(new Color(0, 0, 0, 0));
 
+        items = new ComboItem[kerusakans.size()];
+        for (int i = 0; i < kerusakans.size(); i++) {
+            Kerusakan kerusakan = kerusakans.get(i);
+            items[i] = new ComboItem(kerusakan.getKode_kerusakan(), kerusakan.getJenis_kerusakan());
+        }
+
+        kerusakanInput = new SearchableComboBox(items);
+        kerusakanInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
+        kerusakanInput.setBorder(null);
+        kerusakanInput.setBounds(867, 265, 175, 35);
+        kerusakanInput.setBackground(new Color(0, 0, 0, 0));
+
+        getContentPane().add(kerusakanInput);
         getContentPane().add(bukuInput);
     }
 
     private void loadTable() {
         int no = 1;
         int totalPinjam = 0;
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Disable cell editing
-            }
-        };
+        DefaultTableModel model = new DefaultTableModel();
 
         model.addColumn("No");
         model.addColumn("Nama Buku");
         model.addColumn("Tanggal Pinjam");
         model.addColumn("Tanggal Kembali");
         model.addColumn("Jumlah");
-        model.addColumn("ID");
 
         for (DetailTransaksi detail : details) {
             int jumlahPinjam = detail.getJumlah();
@@ -169,15 +169,13 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
                 detail.getKode_buku().getJudul_buku(),
                 sdf.format(detail.getTgl_pinjam()),
                 sdf.format(detail.getTgl_kembali()),
-                detail.getJumlah(),
-                detail.getKode_Detailtransaksi()
+                detail.getJumlah()
             });
         }
 
         this.totalPinjam = totalPinjam;
         Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 5);
-        tJumlahBuku.setText(String.valueOf(totalPinjam));
+        tJumlahDenda.setText(String.valueOf(totalPinjam));
     }
 
     /**
@@ -194,13 +192,14 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         tUserLogin = new javax.swing.JLabel();
         tPeminjam = new javax.swing.JTextField();
         tKelas = new javax.swing.JTextField();
-        tJumlahBuku = new javax.swing.JTextField();
-        tKalender = new com.toedter.calendar.JDateChooser();
+        tRp = new javax.swing.JTextField();
+        tNominalDenda = new javax.swing.JTextField();
+        tJumlahDenda = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
         btnTambah = new javax.swing.JLabel();
         btnHapus = new javax.swing.JLabel();
-        btnHapusData = new javax.swing.JLabel();
+        btnReset = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
@@ -222,22 +221,29 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         tPeminjam.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tPeminjam.setBorder(null);
         getContentPane().add(tPeminjam);
-        tPeminjam.setBounds(469, 202, 588, 35);
+        tPeminjam.setBounds(469, 186, 588, 35);
 
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
-        tKelas.setBounds(1082, 202, 160, 35);
+        tKelas.setBounds(1082, 186, 160, 35);
 
-        tJumlahBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tJumlahBuku.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        tJumlahBuku.setBorder(null);
-        getContentPane().add(tJumlahBuku);
-        tJumlahBuku.setBounds(1112, 548, 130, 35);
+        tRp.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tRp.setText("Rp. ");
+        tRp.setBorder(null);
+        getContentPane().add(tRp);
+        tRp.setBounds(1070, 265, 30, 35);
 
-        tKalender.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        getContentPane().add(tKalender);
-        tKalender.setBounds(951, 281, 286, 36);
+        tNominalDenda.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tNominalDenda.setBorder(null);
+        getContentPane().add(tNominalDenda);
+        tNominalDenda.setBounds(1100, 265, 140, 35);
+
+        tJumlahDenda.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tJumlahDenda.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tJumlahDenda.setBorder(null);
+        getContentPane().add(tJumlahDenda);
+        tJumlahDenda.setBounds(1112, 533, 130, 35);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -258,7 +264,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(469, 365, 770, 157);
+        jScrollPane2.setBounds(469, 350, 770, 157);
 
         btnTambah.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTambah.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -267,7 +273,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnTambah);
-        btnTambah.setBounds(470, 554, 90, 26);
+        btnTambah.setBounds(470, 538, 90, 26);
 
         btnHapus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -276,16 +282,16 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnHapus);
-        btnHapus.setBounds(587, 553, 90, 26);
+        btnHapus.setBounds(587, 538, 90, 26);
 
-        btnHapusData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnHapusData.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnHapusDataMouseClicked(evt);
+                btnResetMouseClicked(evt);
             }
         });
-        getContentPane().add(btnHapusData);
-        btnHapusData.setBounds(468, 624, 135, 37);
+        getContentPane().add(btnReset);
+        btnReset.setBounds(468, 610, 135, 37);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -294,9 +300,9 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1100, 624, 138, 36);
+        btnSimpan.setBounds(1100, 610, 138, 36);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Edit Peminjaman Petugas.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Pengembalian.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -307,27 +313,41 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
 
-        transaksi.setNama_peminjam(tPeminjam.getText());
-        transaksi.setKelas(tKelas.getText());
-        transaksi.setStatus(TransaksiStatus.dipinjam);
-        transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
-        transaksi.setTotal_denda(0);
-        transaksi.setPetugas(ptgRepo.get(Integer.valueOf(tNamaPetugas.getText())));
+        Transaksi transaksiSiswa = new Transaksi(
+                tPeminjam.getText(),
+                tKelas.getText(),
+                TransaksiStatus.dipinjam,
+                Integer.valueOf(tJumlahDenda.getText()),
+                0,
+                ptgRepo.get(Integer.valueOf(tNamaPetugas.getText()))
+        );
 
-        manageDetail();
+        TransaksiValidasi comboValidasi = new TransaksiValidasi(buku);
 
-        transRepo.update(transaksi);
+        Set<ConstraintViolation<Transaksi>> transaksiSiswaValidasi = ValidasiUtil.validate(transaksiSiswa);
 
-        String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
+        Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, TransaksiStatus.dipinjam.toString());
-            stmt.setInt(2, buku.getKey());
+        Set<ConstraintViolation<?>> allViolations = new HashSet<>();
+        allViolations.addAll(comboItemValidasi);
+        allViolations.addAll(transaksiSiswaValidasi);
 
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (allViolations.size() > 0) {
+            Set<String> errorMessages = new HashSet<>();
+
+            for (ConstraintViolation<?> violation : allViolations) {
+                errorMessages.add(violation.getMessage());
+            }
+
+            new PopupViewDataGagal().setVisible(true);
+            String errorMessageString = String.join("\n", errorMessages);
+            JOptionPane.showMessageDialog(this, errorMessageString);
+            return;
         }
+
+        int id = transRepo.add(transaksiSiswa);
+        transaksiSiswa.setKode_transaksi(id);
+        addDetails(transaksiSiswa);
 
         DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
         daftarPeminjaman.setUsername(username);
@@ -341,34 +361,18 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         resetPinjamBuku();
     }//GEN-LAST:event_btnSimpanMouseClicked
 
-    private void btnHapusDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusDataMouseClicked
+    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         // TODO add your handling code here:
-        int clicked = JOptionPane.showOptionDialog(
-                this, // Parent component
-                "Apakah Anda yakin ?",
-                "Konfirmasi",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[]{"Ya", "Tidak"},
-                "Tidak"
-        );
+        tPeminjam.setText("");
+        tKelas.setText("");
 
-        if (clicked == JOptionPane.YES_OPTION) {
-            detailTransRepo.delete(transaksi.getKode_transaksi());
-            transRepo.delete(transaksi.getKode_transaksi());
+        bukuInput.setSelectedIndex(0);
+        tJumlahDenda.setText("");
 
-            DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
-            daftarPeminjaman.setUsername(username);
-            JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarPeminjaman);
-            daftarPeminjaman.setVisible(true);
-
-            this.dispose();
-
-            new PopupViewHapusData().setVisible(true);
-        }
-    }//GEN-LAST:event_btnHapusDataMouseClicked
+        DefaultTableModel model = (DefaultTableModel) Tabel.getModel();
+        model.setRowCount(0);
+        details.clear();
+    }//GEN-LAST:event_btnResetMouseClicked
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
@@ -380,27 +384,23 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
                 detail.getKode_buku().getKode_buku(),
                 detail.getKode_buku().getJudul_buku()
         ));
-
-        tKalender.setDate(detail.getTgl_kembali());
     }//GEN-LAST:event_TabelMouseClicked
 
     private void btnTambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahMouseClicked
         // TODO add your handling code here:
-        Map<Integer, DetailTransaksi> validasiItems = new HashMap<>();
-
         DetailTransaksi detail = (activeDetail == null) ? new DetailTransaksi() : details.get(activeDetail);
         ComboItem bukuComboItem = (ComboItem) bukuInput.getSelectedItem();
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
-        Date tglKembali = tKalender.getDate();
+
+        ComboItem kerusComboItem = (ComboItem) kerusakanInput.getSelectedItem();
+        Kerusakan kerusakan = kerusakanRepo.get(kerusComboItem.getKey());
+
         int jumlah = 1;
-        int denda = 0;
+        int denda = kerusakan.getNominal_denda();
 
         detail.setKode_buku(buku);
-        detail.setTgl_pinjam(new Date());
-        detail.setTgl_kembali(tglKembali);
         detail.setJumlah(jumlah);
         detail.setNominal_denda(denda);
-        detail.setKode_transaksi(transRepo.get(transaksi.getKode_transaksi()));
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);
 
         Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
@@ -425,36 +425,13 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
 
         if (activeDetail == null) {
             details.add(detail);
-
-            for (int i = 0; i < details.size(); i++) {
-                DetailTransaksi dts = details.get(i);
-
-                if (i > 0 && validasiItems.containsKey(dts.getKode_buku().getKode_buku())) {
-                    DetailTransaksi availableDts = validasiItems.get(dts.getKode_buku().getKode_buku());
-
-                    int jumlahBuku = availableDts.getJumlah() + dts.getJumlah();
-
-                    if (jumlahBuku > detail.getKode_buku().getJumlah()) {
-                        JOptionPane.showMessageDialog(this, "Stok Buku Tidak Tersedia");
-                        continue;
-                    }
-
-                    validasiItems.get(dts.getKode_buku().getKode_buku()).setJumlah(availableDts.getJumlah() + dts.getJumlah());
-
-                    continue;
-                }
-
-                validasiItems.put(dts.getKode_buku().getKode_buku(), dts);
-            }
-
-            details = new ArrayList<>(validasiItems.values());
-
         }
 
         activeDetail = null;
 
         loadTable();
         customColumnTable();
+        resetBuku();
     }//GEN-LAST:event_btnTambahMouseClicked
 
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
@@ -464,90 +441,71 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
             return;
         }
 
-        DetailTransaksi detail = details.get(activeDetail);
-
-        if (detail.getKode_Detailtransaksi() != null) {
-            deleteDetails.add(detail);
-        }
-
         details.remove((int) activeDetail);
         activeDetail = null;
 
         loadTable();
         customColumnTable();
+        resetBuku();
     }//GEN-LAST:event_btnHapusMouseClicked
 
-    private void fillInput() {
-        tPeminjam.setText(transaksi.getNama_peminjam());
-        tKelas.setText(transaksi.getKelas());
-    }
+    private void resetBuku() {
 
-    private void manageDetail() {
-        // Edit or add details
-        for (DetailTransaksi detail : details) {
-            if (detail.getKode_Detailtransaksi() == null) {
-                detail.setKode_transaksi(transaksi);
-                detailTransRepo.add(detail);
-                continue;
-            }
-
-            detailTransRepo.update(detail);
-        }
-
-        // Delete details
-        for (DetailTransaksi detail : deleteDetails) {
-            detailTransRepo.delete(detail.getKode_Detailtransaksi());
-        }
+        bukuInput.setSelectedIndex(0);
     }
 
     private void resetPinjamBuku() {
         tPeminjam.setText("");
         tKelas.setText("");
-        tKalender.setDate(Calendar.getInstance().getTime());
+
         bukuInput.setSelectedIndex(0);
-        tJumlahBuku.setText("");
+        tJumlahDenda.setText("");
 
         DefaultTableModel model = (DefaultTableModel) Tabel.getModel();
         model.setRowCount(0);
         details.clear();
     }
 
-    private void customJDateChooser() {
-        tKalender.setDateFormatString("dd-MM-yyyy");
+    private void setNominal() {
+        kerusakanInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ComboItem kerusComboItem = (ComboItem) kerusakanInput.getSelectedItem();
+                Kerusakan kerusakan = kerusakanRepo.get(kerusComboItem.getKey());
 
-        // Set Now Date
-        tKalender.setDate(Calendar.getInstance().getTime());
-
-        // Add minimum days selected
-        Date date = new Date();
-        tKalender.setMinSelectableDate(date);
-
-        // Add 3 days to the current date
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 3);
-        Date maxDate = calendar.getTime();
-        tKalender.setMaxSelectableDate(maxDate);
+                tNominalDenda.setText(String.valueOf(kerusakan.getNominal_denda()));
+            }
+        });
     }
 
     private void customColumnTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
 
+    private void addDetails(Transaksi transaksiSiswa) {
+        for (DetailTransaksi detail : details) {
+            detail.setKode_transaksi(transaksiSiswa);
+            detailTransRepo.add(detail);
+        }
+    }
+
     private javax.swing.JComboBox bukuInput;
+    private javax.swing.JComboBox kerusakanInput;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnHapus;
-    private javax.swing.JLabel btnHapusData;
+    private javax.swing.JLabel btnReset;
     private javax.swing.JLabel btnSimpan;
     private javax.swing.JLabel btnTambah;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel tJam;
-    private javax.swing.JTextField tJumlahBuku;
-    private com.toedter.calendar.JDateChooser tKalender;
+    private javax.swing.JTextField tJumlahDenda;
     private javax.swing.JTextField tKelas;
     private javax.swing.JLabel tNamaPetugas;
+    private javax.swing.JTextField tNominalDenda;
     private javax.swing.JTextField tPeminjam;
+    private javax.swing.JTextField tRp;
     private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }
