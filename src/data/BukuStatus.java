@@ -12,5 +12,6 @@ public enum BukuStatus {
     Dipinjam,
     Hilang,
     Rusak,
-    Layak
+    Layak,
+    Diganti
 }

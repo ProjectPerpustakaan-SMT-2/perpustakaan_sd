@@ -5,6 +5,7 @@
 package view.layouts;
 
 import customUI.TableCustom;
+import data.BukuStatus;
 import data.ComboItem;
 import data.TransaksiStatus;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksiSiswa;
+import entity.Kerusakan;
 import entity.Petugas;
 import entity.TransaksiSiswa;
 import jakarta.validation.ConstraintViolation;
@@ -33,6 +35,7 @@ import repository.Repository;
 import repository.BukuRepository;
 import repository.ComboBukuRepository;
 import repository.DetailTransaksiRepositorySiswa;
+import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepositorySiswa;
@@ -51,6 +54,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     private Repository<Buku> bukuRepo = new BukuRepository();
     private Repository<Buku> comboBukuRepo = new ComboBukuRepository();
     private Repository<Petugas> ptgRepo = new PetugasRepository();
+    private Repository<Kerusakan> kerusakanRepo = new KerusakanRepository();
     private Repository<TransaksiSiswa> transRepo = new TransaksiRepositorySiswa();
     private Repository<DetailTransaksiSiswa> detailTransRepo = new DetailTransaksiRepositorySiswa();
 
@@ -240,6 +244,10 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        if (tJumlahBuku.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mohon Pilih Buku Terlebih Dahulu !");
+        }
+
         ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
 
         Integer kode_petugas = null;
@@ -280,16 +288,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         transaksiSiswa.setKode_transaksi(id);
         addDetails(transaksiSiswa);
 
-        String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, TransaksiStatus.dipinjam.toString());
-            stmt.setInt(2, buku.getKey());
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        setStatusBuku();
 
         new PopupViewDataBerhasil().setVisible(true);
         resetPinjamBuku();
@@ -331,12 +330,14 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
         Date tglKembali = tKalender.getDate();
         int jumlah = 1;
+        Integer kode_kerusakan = null;
         int denda = 0;
 
         detail.setKode_buku(buku);
         detail.setTgl_pinjam(new Date());
         detail.setTgl_kembali(tglKembali);
         detail.setJumlah(jumlah);
+        detail.setKodeKerusakan(kerusakanRepo.get(kode_kerusakan));
         detail.setNominal_denda(denda);
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);
 
@@ -447,6 +448,22 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
             detail.setKode_transaksi(transaksiSiswa);
 
             detailTransRepo.add(detail);
+        }
+    }
+
+    private void setStatusBuku() {
+        for (DetailTransaksiSiswa detail : details) {
+
+            String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, BukuStatus.Dipinjam.toString());
+                stmt.setInt(2, detail.getKode_buku().getKode_buku());
+
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

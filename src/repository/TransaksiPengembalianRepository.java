@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import util.Database;
-import entity.Transaksi;
+import entity.TransaksiPengembalian;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -22,20 +22,19 @@ import java.util.Date;
  *
  * @author Hafidz Fadhillah
  */
-public class TransaksiRepository implements Repository<Transaksi> {
+public class TransaksiPengembalianRepository implements Repository<TransaksiPengembalian> {
 
-    private static String tableName = Transaksi.tableName;
-
+    private static String tableName = TransaksiPengembalian.tableName;
     private static Calendar cal = Calendar.getInstance();
 
-    public List<Transaksi> get() {
+    public List<TransaksiPengembalian> get() {
         cal.setTime(new Date());
 
         String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM " + tableName
                 + " INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                + "WHERE kode_petugas IS NOT NULL AND transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali >= ?";
+                + "WHERE transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali < ?";
 
-        List<Transaksi> transaksis = new ArrayList<>();
+        List<TransaksiPengembalian> transaksis = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setDate(1, new java.sql.Date(cal.getTime().getTime()));
@@ -45,15 +44,15 @@ public class TransaksiRepository implements Repository<Transaksi> {
                 transaksis.add(mapToEntity(results));
             }
         } catch (SQLException e) {
-
+            System.out.println(e);
         }
 
         return transaksis;
     }
 
-    public Transaksi get(Integer id) {
+    public TransaksiPengembalian get(Integer id) {
         String sql = "SELECT * FROM " + tableName + " WHERE kode_transaksi = ?";
-        Transaksi transaksi = new Transaksi();
+        TransaksiPengembalian transaksi = new TransaksiPengembalian();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -69,10 +68,10 @@ public class TransaksiRepository implements Repository<Transaksi> {
         return transaksi;
     }
 
-    public List<Transaksi> get(Map<String, Object> values) {
+    public List<TransaksiPengembalian> get(Map<String, Object> values) {
         int iterate = 0;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
-        List<Transaksi> transaksis = new ArrayList<>();
+        List<TransaksiPengembalian> transaksis = new ArrayList<>();
 
         for (String valueKey : values.keySet()) {
             if (iterate > 0) {
@@ -97,15 +96,15 @@ public class TransaksiRepository implements Repository<Transaksi> {
         return transaksis;
     }
 
-    public List<Transaksi> search(Map<String, Object> values) {
+    public List<TransaksiPengembalian> search(Map<String, Object> values) {
         int iterate = 0;
         cal.setTime(new Date());
 
         String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM " + tableName
                 + " INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                + "WHERE kode_petugas IS NOT NULL AND transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali >= ? AND ";
+                + "WHERE transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali < ? AND ";
 
-        List<Transaksi> transaksis = new ArrayList<>();
+        List<TransaksiPengembalian> transaksis = new ArrayList<>();
 
         List<String> valueKeys = new ArrayList<>(values.keySet());
         int totalKeys = valueKeys.size();
@@ -136,13 +135,13 @@ public class TransaksiRepository implements Repository<Transaksi> {
                 transaksis.add(mapToEntity(rs));
             }
         } catch (SQLException e) {
-
+            System.out.println(e);
         }
 
         return transaksis;
     }
 
-    public Integer add(Transaksi trans) {
+    public Integer add(TransaksiPengembalian trans) {
         String sql = "INSERT INTO " + tableName + " (`nama_peminjam`, `kelas`, `status`, `total_pinjam`, `total_denda`, `kode_petugas`) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -166,7 +165,7 @@ public class TransaksiRepository implements Repository<Transaksi> {
         return 0;
     }
 
-    public boolean update(Transaksi trans) {
+    public boolean update(TransaksiPengembalian trans) {
         String sql = "UPDATE " + tableName + " SET nama_peminjam = ?, kelas = ?, status = ?, total_pinjam = ?, total_denda = ?, kode_petugas = ? WHERE kode_transaksi = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -202,10 +201,10 @@ public class TransaksiRepository implements Repository<Transaksi> {
         return false;
     }
 
-    private Transaksi mapToEntity(ResultSet result) throws SQLException {
+    private TransaksiPengembalian mapToEntity(ResultSet result) throws SQLException {
         int ptgId = result.getInt("kode_petugas");
 
-        Transaksi transaksi = new Transaksi(
+        TransaksiPengembalian transaksi = new TransaksiPengembalian(
                 result.getString("nama_peminjam"),
                 result.getString("kelas"),
                 TransaksiStatus.valueOf(result.getString("status")),

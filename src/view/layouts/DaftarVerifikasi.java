@@ -16,9 +16,9 @@ import javax.swing.table.DefaultTableModel;
 
 import entity.TransaksiSiswa;
 import javax.swing.JDesktopPane;
-import javax.swing.JOptionPane;
 import repository.Repository;
 import repository.TransaksiRepositorySiswa;
+import view.layouts.TambahVerifikasiPeminjaman;
 import util.ViewUtil;
 
 /**
@@ -72,6 +72,7 @@ public class DaftarVerifikasi extends javax.swing.JInternalFrame {
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
         btnTambahPeminjaman = new javax.swing.JLabel();
+        btnVerifikasiPeminjaman = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -98,6 +99,15 @@ public class DaftarVerifikasi extends javax.swing.JInternalFrame {
         });
         getContentPane().add(btnTambahPeminjaman);
         btnTambahPeminjaman.setBounds(434, 148, 150, 34);
+
+        btnVerifikasiPeminjaman.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVerifikasiPeminjaman.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnVerifikasiPeminjamanMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btnVerifikasiPeminjaman);
+        btnVerifikasiPeminjaman.setBounds(600, 148, 217, 34);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -173,6 +183,17 @@ public class DaftarVerifikasi extends javax.swing.JInternalFrame {
 
         this.dispose();
     }//GEN-LAST:event_btnTambahPeminjamanMouseClicked
+
+    private void btnVerifikasiPeminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVerifikasiPeminjamanMouseClicked
+        // TODO add your handling code here:
+        TambahVerifikasiPeminjaman verifikasiPeminjaman = new TambahVerifikasiPeminjaman();
+        verifikasiPeminjaman.setUsername(username);
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(verifikasiPeminjaman);
+        verifikasiPeminjaman.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_btnVerifikasiPeminjamanMouseClicked
 
     private void loadDataTable(List<TransaksiSiswa> trans) {
         int no = 1;
@@ -253,6 +274,7 @@ public class DaftarVerifikasi extends javax.swing.JInternalFrame {
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnTambahPeminjaman;
+    private javax.swing.JLabel btnVerifikasiPeminjaman;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;

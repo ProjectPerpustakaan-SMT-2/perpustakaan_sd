@@ -11,27 +11,26 @@ import java.util.Date;
  *
  * @author Hafidz Fadhillah
  */
-public class DetailTransaksi implements Entity {
+public class DetailTransaksiPengembalian implements Entity {
 
     public final static String tableName = "detail_transaksi";
 
     private Integer kode_detail_transaksi;
     private Buku kode_buku;
     private Date tgl_pinjam;
-
-    @NotNull(message = "Pilih Tanggal Pengembalian Buku")
     private Date tgl_kembali;
 
+    @NotNull(message = "Pilih Jenis Kerusakan Buku")
     private Kerusakan kode_kerusakan;
     private Integer jumlah;
     private Integer nominal_denda;
-    private Transaksi kode_transaksi;
+    private TransaksiPengembalian kode_transaksi;
 
-    public DetailTransaksi() {
+    public DetailTransaksiPengembalian() {
 
     }
 
-    public DetailTransaksi(Buku kode_buku, Date tgl_pinjam, Date tgl_kembali, Integer jumlah, Kerusakan kode_kerusakan, Integer nominal_denda, Transaksi kode_transaksi) {
+    public DetailTransaksiPengembalian(Buku kode_buku, Date tgl_pinjam, Date tgl_kembali, Integer jumlah, Kerusakan kode_kerusakan, Integer nominal_denda, TransaksiPengembalian kode_transaksi) {
         this.kode_buku = kode_buku;
         this.tgl_pinjam = tgl_pinjam;
         this.tgl_kembali = tgl_kembali;
@@ -97,11 +96,11 @@ public class DetailTransaksi implements Entity {
         this.nominal_denda = nominal_denda;
     }
 
-    public Transaksi getKode_transaksi() {
+    public TransaksiPengembalian getKode_transaksi() {
         return kode_transaksi;
     }
 
-    public void setKode_transaksi(Transaksi kode_transaksi) {
+    public void setKode_transaksi(TransaksiPengembalian kode_transaksi) {
         this.kode_transaksi = kode_transaksi;
     }
 }

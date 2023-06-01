@@ -17,21 +17,22 @@ public class Buku implements Entity {
     private Integer kode_buku;
     private String judul_buku;
     private String nama_pengarang;
-    private Integer isbn;
+    private Long isbn;
     private Penerbit penerbit;
     private String sumber;
     private Integer halaman;
     private BukuStatus bukuStatus;
     private Integer jumlah;
+    private String note;
     private Klasifikasi klasifikasi;
 
     public Buku() {
 
     }
 
-    public Buku(String judul_buku, String nama_pengarang, Integer isbn,
+    public Buku(String judul_buku, String nama_pengarang, Long isbn,
             Penerbit penerbit, String sumber, Integer halaman, BukuStatus bukuStatus,
-            Integer jumlah, Klasifikasi klasifikasi) {
+            Integer jumlah, String note, Klasifikasi klasifikasi) {
         this.judul_buku = judul_buku;
         this.nama_pengarang = nama_pengarang;
         this.isbn = isbn;
@@ -40,6 +41,7 @@ public class Buku implements Entity {
         this.halaman = halaman;
         this.bukuStatus = bukuStatus;
         this.jumlah = jumlah;
+        this.note = note;
         this.klasifikasi = klasifikasi;
     }
 
@@ -67,11 +69,11 @@ public class Buku implements Entity {
         this.nama_pengarang = nama_pengarang;
     }
 
-    public Integer getIsbn() {
+    public Long getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(Integer isbn) {
+    public void setIsbn(Long isbn) {
         this.isbn = isbn;
     }
 
@@ -113,6 +115,14 @@ public class Buku implements Entity {
 
     public void setJumlah(Integer jumlah) {
         this.jumlah = jumlah;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setCatatan(String note) {
+        this.note = note;
     }
 
     public Klasifikasi getKlasifikasi() {

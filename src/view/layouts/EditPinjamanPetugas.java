@@ -5,6 +5,7 @@
 package view.layouts;
 
 import customUI.TableCustom;
+import data.BukuStatus;
 import data.ComboItem;
 import data.TransaksiStatus;
 import java.util.List;
@@ -13,6 +14,8 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksi;
+import entity.DetailTransaksiSiswa;
+import entity.Kerusakan;
 import entity.Petugas;
 import entity.Transaksi;
 import jakarta.validation.ConstraintViolation;
@@ -35,6 +38,7 @@ import repository.Repository;
 import repository.BukuRepository;
 import repository.ComboBukuRepository;
 import repository.DetailTransaksiRepository;
+import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepository;
@@ -58,6 +62,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     private Repository<Buku> bukuRepo = new BukuRepository();
     private Repository<Buku> comboBukuRepo = new ComboBukuRepository();
+    private Repository<Kerusakan> kerusakanRepo = new KerusakanRepository();
     private Repository<Transaksi> transRepo = new TransaksiRepository();
     private Repository<DetailTransaksi> detailTransRepo = new DetailTransaksiRepository();
 
@@ -318,16 +323,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
 
         transRepo.update(transaksi);
 
-        String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, TransaksiStatus.dipinjam.toString());
-            stmt.setInt(2, buku.getKey());
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        setStatusBuku();
 
         DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
         daftarPeminjaman.setUsername(username);
@@ -393,12 +389,14 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
         Date tglKembali = tKalender.getDate();
         int jumlah = 1;
+        Integer kode_kerusakan = null;
         int denda = 0;
 
         detail.setKode_buku(buku);
         detail.setTgl_pinjam(new Date());
         detail.setTgl_kembali(tglKembali);
         detail.setJumlah(jumlah);
+        detail.setKodeKerusakan(kerusakanRepo.get(kode_kerusakan));
         detail.setNominal_denda(denda);
         detail.setKode_transaksi(transRepo.get(transaksi.getKode_transaksi()));
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);
@@ -531,6 +529,22 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
 
     private void customColumnTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
+    }
+
+    private void setStatusBuku() {
+        for (DetailTransaksi detail : details) {
+
+            String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, BukuStatus.Dipinjam.toString());
+                stmt.setInt(2, detail.getKode_buku().getKode_buku());
+
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private javax.swing.JComboBox bukuInput;

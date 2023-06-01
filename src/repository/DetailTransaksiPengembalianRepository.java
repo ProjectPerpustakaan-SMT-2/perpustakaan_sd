@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import util.Database;
-import entity.DetailTransaksiSiswa;
+import entity.DetailTransaksiPengembalian;
+import entity.Kerusakan;
+import entity.TransaksiPengembalian;
 import java.sql.Date;
 import java.sql.Types;
 
@@ -21,13 +23,13 @@ import java.sql.Types;
  *
  * @author Hafidz Fadhillah
  */
-public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaksiSiswa> {
+public class DetailTransaksiPengembalianRepository implements Repository<DetailTransaksiPengembalian> {
 
-    private static String tableName = DetailTransaksiSiswa.tableName;
+    private static String tableName = DetailTransaksiPengembalian.tableName;
 
-    public List<DetailTransaksiSiswa> get() {
+    public List<DetailTransaksiPengembalian> get() {
         String sql = "SELECT * FROM " + tableName;
-        List<DetailTransaksiSiswa> detailTransaksis = new ArrayList<>();
+        List<DetailTransaksiPengembalian> detailTransaksis = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             ResultSet results = statement.executeQuery();
@@ -42,9 +44,9 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return detailTransaksis;
     }
 
-    public DetailTransaksiSiswa get(Integer id) {
+    public DetailTransaksiPengembalian get(Integer id) {
         String sql = "SELECT * FROM " + tableName + " WHERE kode_detail_transaksi = ?";
-        DetailTransaksiSiswa detailTransaksi = new DetailTransaksiSiswa();
+        DetailTransaksiPengembalian detailTransaksi = new DetailTransaksiPengembalian();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -60,10 +62,10 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return detailTransaksi;
     }
 
-    public List<DetailTransaksiSiswa> get(Map<String, Object> values) {
+    public List<DetailTransaksiPengembalian> get(Map<String, Object> values) {
         int iterate = 0;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
-        List<DetailTransaksiSiswa> detailTransaksis = new ArrayList<>();
+        List<DetailTransaksiPengembalian> detailTransaksis = new ArrayList<>();
 
         for (String valueKey : values.keySet()) {
             if (iterate > 0) {
@@ -88,10 +90,10 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return detailTransaksis;
     }
 
-    public List<DetailTransaksiSiswa> search(Map<String, Object> values) {
+    public List<DetailTransaksiPengembalian> search(Map<String, Object> values) {
         int iterate = 0;
         String sql = "SELECT * FROM " + tableName + " WHERE ";
-        List<DetailTransaksiSiswa> detailTransaksis = new ArrayList<>();
+        List<DetailTransaksiPengembalian> detailTransaksis = new ArrayList<>();
 
         for (String valueKey : values.keySet()) {
             if (iterate > 0) {
@@ -116,7 +118,7 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return detailTransaksis;
     }
 
-    public Integer add(DetailTransaksiSiswa detTrans) {
+    public Integer add(DetailTransaksiPengembalian detTrans) {
         String sql = "INSERT INTO " + tableName + " (`kode_buku`, `tgl_pinjam`, `tgl_kembali`, `jumlah`, `kode_kerusakan`, `nominal_denda`, `kode_transaksi`) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -148,7 +150,7 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return 0;
     }
 
-    public boolean update(DetailTransaksiSiswa detTrans) {
+    public boolean update(DetailTransaksiPengembalian detTrans) {
         String sql = "UPDATE " + tableName + " SET kode_buku = ?, tgl_pinjam = ?, tgl_kembali = ?, jumlah = ?, kode_kerusakan = ?,nominal_denda = ?, kode_transaksi = ? WHERE kode_detail_transaksi = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -192,8 +194,8 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return false;
     }
 
-    public List<DetailTransaksiSiswa> customQuery(String query, List<Object> values) {
-        List<DetailTransaksiSiswa> detailTransaksis = new ArrayList<>();
+    public List<DetailTransaksiPengembalian> customQuery(String query, List<Object> values) {
+        List<DetailTransaksiPengembalian> detailTransaksis = new ArrayList<>();
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             Database.prepareStmt(stmt, values);
@@ -209,22 +211,22 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
         return detailTransaksis;
     }
 
-    private DetailTransaksiSiswa mapToEntity(ResultSet result) throws SQLException {
+    private DetailTransaksiPengembalian mapToEntity(ResultSet result) throws SQLException {
         int bukuId = result.getInt("kode_buku");
         int kerusakanId = result.getInt("kode_kerusakan");
         int transaksiId = result.getInt("kode_transaksi");
 
-        DetailTransaksiSiswa detailTransaksi = new DetailTransaksiSiswa(
+        DetailTransaksiPengembalian detailTransaksiPengembalian = new DetailTransaksiPengembalian(
                 new BukuRepository().get(bukuId),
                 result.getDate("tgl_pinjam"),
                 result.getDate("tgl_kembali"),
                 result.getInt("jumlah"),
                 new KerusakanRepository().get(kerusakanId),
                 result.getInt("nominal_denda"),
-                new TransaksiRepositorySiswa().get(transaksiId)
+                new TransaksiPengembalianRepository().get(transaksiId)
         );
 
-        detailTransaksi.setKode_Detailtransaksi(result.getInt("kode_detail_transaksi"));
-        return detailTransaksi;
+        detailTransaksiPengembalian.setKode_Detailtransaksi(result.getInt("kode_detail_transaksi"));
+        return detailTransaksiPengembalian;
     }
 }

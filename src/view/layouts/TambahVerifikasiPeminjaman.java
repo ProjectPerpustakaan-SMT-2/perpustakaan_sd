@@ -13,13 +13,14 @@ import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
-import entity.DetailTransaksi;
 import entity.DetailTransaksiSiswa;
 import entity.Kerusakan;
 import entity.Petugas;
-import entity.Transaksi;
+import entity.TransaksiSiswa;
 import jakarta.validation.ConstraintViolation;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,37 +34,40 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import repository.Repository;
 import repository.BukuRepository;
 import repository.ComboBukuRepository;
-import repository.DetailTransaksiRepository;
+import repository.DetailTransaksiRepositorySiswa;
 import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
-import repository.TransaksiRepository;
+import repository.TransaksiRepositorySiswa;
 import service.TransaksiValidasi;
 import util.SearchableComboBox;
 import util.ValidasiUtil;
 import view.popup.PopupViewDataBerhasil;
 import view.popup.PopupViewDataGagal;
+import view.popup.PopupViewHapusData;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
+public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private String username;
+    private TransaksiSiswa transaksi;
 
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     private Repository<Buku> bukuRepo = new BukuRepository();
     private Repository<Buku> comboBukuRepo = new ComboBukuRepository();
     private Repository<Kerusakan> kerusakanRepo = new KerusakanRepository();
-    private Repository<Transaksi> transRepo = new TransaksiRepository();
-    private Repository<DetailTransaksi> detailTransRepo = new DetailTransaksiRepository();
+    private Repository<TransaksiSiswa> transRepo = new TransaksiRepositorySiswa();
+    private Repository<DetailTransaksiSiswa> detailTransRepo = new DetailTransaksiRepositorySiswa();
 
-    private List<DetailTransaksi> details = new ArrayList<>();
+    private List<DetailTransaksiSiswa> details = new ArrayList<>();
     private Integer activeDetail, totalPinjam;
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -71,7 +75,7 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
     /**
      * Creates new form TambahBuku
      */
-    public TambahPinjamanPetugas() {
+    public TambahVerifikasiPeminjaman() {
         fillComboBox();
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -79,6 +83,8 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         BUI.setNorthPane(null);
 
         tNamaPetugas.setVisible(false);
+
+        setLoadData();
 
         loadTable();
         customColumnTable();
@@ -131,7 +137,7 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         bukuInput = new SearchableComboBox(items);
         bukuInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
         bukuInput.setBorder(null);
-        bukuInput.setBounds(469, 281, 450, 35);
+        bukuInput.setBounds(469, 335, 490, 37);
         bukuInput.setBackground(new Color(0, 0, 0, 0));
 
         getContentPane().add(bukuInput);
@@ -153,7 +159,7 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         model.addColumn("Tanggal Kembali");
         model.addColumn("Jumlah");
 
-        for (DetailTransaksi detail : details) {
+        for (DetailTransaksiSiswa detail : details) {
             int jumlahPinjam = detail.getJumlah();
             totalPinjam += jumlahPinjam;
 
@@ -162,7 +168,8 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
                 detail.getKode_buku().getJudul_buku(),
                 sdf.format(detail.getTgl_pinjam()),
                 sdf.format(detail.getTgl_kembali()),
-                detail.getJumlah()
+                detail.getJumlah(),
+                detail.getKode_Detailtransaksi()
             });
         }
 
@@ -183,15 +190,16 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         tJam = new javax.swing.JLabel();
         tNamaPetugas = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
+        tKodeBarcode = new javax.swing.JTextField();
         tPeminjam = new javax.swing.JTextField();
         tKelas = new javax.swing.JTextField();
         tJumlahBuku = new javax.swing.JTextField();
-        tKalender = new com.toedter.calendar.JDateChooser();
+        tKembali = new com.toedter.calendar.JDateChooser();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
         btnTambah = new javax.swing.JLabel();
         btnHapus = new javax.swing.JLabel();
-        btnReset = new javax.swing.JLabel();
+        btnHapusData = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
@@ -210,25 +218,35 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(tUserLogin);
         tUserLogin.setBounds(1105, 15, 200, 23);
 
+        tKodeBarcode.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKodeBarcode.setBorder(null);
+        tKodeBarcode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tKodeBarcodeKeyReleased(evt);
+            }
+        });
+        getContentPane().add(tKodeBarcode);
+        tKodeBarcode.setBounds(469, 176, 765, 35);
+
         tPeminjam.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tPeminjam.setBorder(null);
         getContentPane().add(tPeminjam);
-        tPeminjam.setBounds(469, 202, 588, 35);
+        tPeminjam.setBounds(469, 257, 585, 35);
 
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
-        tKelas.setBounds(1082, 202, 160, 35);
+        tKelas.setBounds(1082, 257, 160, 35);
 
         tJumlahBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJumlahBuku.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tJumlahBuku.setBorder(null);
         getContentPane().add(tJumlahBuku);
-        tJumlahBuku.setBounds(1112, 548, 130, 35);
+        tJumlahBuku.setBounds(1112, 604, 130, 35);
 
-        tKalender.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        getContentPane().add(tKalender);
-        tKalender.setBounds(951, 281, 286, 36);
+        tKembali.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        getContentPane().add(tKembali);
+        tKembali.setBounds(988, 335, 250, 37);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -249,7 +267,7 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(469, 365, 770, 157);
+        jScrollPane2.setBounds(469, 420, 770, 157);
 
         btnTambah.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTambah.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -258,7 +276,7 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnTambah);
-        btnTambah.setBounds(470, 554, 90, 26);
+        btnTambah.setBounds(470, 609, 90, 26);
 
         btnHapus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -267,16 +285,16 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnHapus);
-        btnHapus.setBounds(587, 553, 90, 26);
+        btnHapus.setBounds(587, 609, 90, 26);
 
-        btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnHapusData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHapusData.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnResetMouseClicked(evt);
+                btnHapusDataMouseClicked(evt);
             }
         });
-        getContentPane().add(btnReset);
-        btnReset.setBounds(468, 624, 135, 37);
+        getContentPane().add(btnHapusData);
+        btnHapusData.setBounds(468, 680, 135, 37);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -285,9 +303,9 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1100, 624, 138, 36);
+        btnSimpan.setBounds(1090, 680, 150, 36);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Peminjaman Petugas.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Form Verifikasi.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -296,25 +314,20 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
-        ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
+        if (tKodeBarcode.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mohon Masukan Kode Transaksi!");
+        }
 
-        Transaksi transaksiSiswa = new Transaksi(
-                tPeminjam.getText(),
-                tKelas.getText(),
-                TransaksiStatus.dipinjam,
-                Integer.valueOf(tJumlahBuku.getText()),
-                0,
-                ptgRepo.get(Integer.valueOf(tNamaPetugas.getText()))
-        );
+        transaksi.setNama_peminjam(tPeminjam.getText());
+        transaksi.setKelas(tKelas.getText());
+        transaksi.setStatus(TransaksiStatus.dipinjam);
+        transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
+        transaksi.setTotal_denda(0);
+        transaksi.setKode_petugas(ptgRepo.get(Integer.valueOf(tNamaPetugas.getText())));
 
-        TransaksiValidasi comboValidasi = new TransaksiValidasi(buku);
-
-        Set<ConstraintViolation<Transaksi>> transaksiSiswaValidasi = ValidasiUtil.validate(transaksiSiswa);
-
-        Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
+        Set<ConstraintViolation<TransaksiSiswa>> transaksiSiswaValidasi = ValidasiUtil.validate(transaksi);
 
         Set<ConstraintViolation<?>> allViolations = new HashSet<>();
-        allViolations.addAll(comboItemValidasi);
         allViolations.addAll(transaksiSiswaValidasi);
 
         if (allViolations.size() > 0) {
@@ -330,9 +343,9 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
             return;
         }
 
-        int id = transRepo.add(transaksiSiswa);
-        transaksiSiswa.setKode_transaksi(id);
-        addDetails(transaksiSiswa);
+        manageDetail();
+
+        transRepo.update(transaksi);
 
         setStatusBuku();
 
@@ -348,23 +361,38 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         resetPinjamBuku();
     }//GEN-LAST:event_btnSimpanMouseClicked
 
-    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+    private void btnHapusDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusDataMouseClicked
         // TODO add your handling code here:
-        tPeminjam.setText("");
-        tKelas.setText("");
-        tKalender.setDate(Calendar.getInstance().getTime());
-        bukuInput.setSelectedIndex(0);
-        tJumlahBuku.setText("");
+        int clicked = JOptionPane.showOptionDialog(
+                this, // Parent component
+                "Apakah Anda yakin ?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Ya", "Tidak"},
+                "Tidak"
+        );
 
-        DefaultTableModel model = (DefaultTableModel) Tabel.getModel();
-        model.setRowCount(0);
-        details.clear();
-    }//GEN-LAST:event_btnResetMouseClicked
+        if (clicked == JOptionPane.YES_OPTION) {
+            transRepo.delete(transaksi.getKode_transaksi());
+
+            DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
+            daftarPeminjaman.setUsername(username);
+            JDesktopPane desktopPane = getDesktopPane();
+            desktopPane.add(daftarPeminjaman);
+            daftarPeminjaman.setVisible(true);
+
+            this.dispose();
+
+            new PopupViewHapusData().setVisible(true);
+        }
+    }//GEN-LAST:event_btnHapusDataMouseClicked
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
         // TODO add your handling code here:
         int index = Tabel.rowAtPoint(evt.getPoint());
-        DetailTransaksi detail = details.get(index);
+        DetailTransaksiSiswa detail = details.get(index);
         activeDetail = index;
 
         bukuInput.setSelectedItem(new ComboItem(
@@ -372,17 +400,17 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
                 detail.getKode_buku().getJudul_buku()
         ));
 
-        tKalender.setDate(detail.getTgl_kembali());
+        tKembali.setDate(detail.getTgl_kembali());
     }//GEN-LAST:event_TabelMouseClicked
 
     private void btnTambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahMouseClicked
         // TODO add your handling code here:
-        Map<Integer, DetailTransaksi> validasiItems = new HashMap<>();
+        Map<Integer, DetailTransaksiSiswa> validasiItems = new HashMap<>();
 
-        DetailTransaksi detail = (activeDetail == null) ? new DetailTransaksi() : details.get(activeDetail);
+        DetailTransaksiSiswa detail = (activeDetail == null) ? new DetailTransaksiSiswa() : details.get(activeDetail);
         ComboItem bukuComboItem = (ComboItem) bukuInput.getSelectedItem();
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
-        Date tglKembali = tKalender.getDate();
+        Date tglKembali = tKembali.getDate();
         int jumlah = 1;
         Integer kode_kerusakan = null;
         int denda = 0;
@@ -393,11 +421,12 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         detail.setJumlah(jumlah);
         detail.setKodeKerusakan(kerusakanRepo.get(kode_kerusakan));
         detail.setNominal_denda(denda);
+        detail.setKode_transaksi(transRepo.get(transaksi.getKode_transaksi()));
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);
 
         Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
 
-        Set<ConstraintViolation<DetailTransaksi>> detailTransaksi = ValidasiUtil.validate(detail);
+        Set<ConstraintViolation<DetailTransaksiSiswa>> detailTransaksi = ValidasiUtil.validate(detail);
 
         Set<ConstraintViolation<?>> allViolations = new HashSet<>();
         allViolations.addAll(comboItemValidasi);
@@ -419,10 +448,10 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
             details.add(detail);
 
             for (int i = 0; i < details.size(); i++) {
-                DetailTransaksi dts = details.get(i);
+                DetailTransaksiSiswa dts = details.get(i);
 
                 if (i > 0 && validasiItems.containsKey(dts.getKode_buku().getKode_buku())) {
-                    DetailTransaksi availableDts = validasiItems.get(dts.getKode_buku().getKode_buku());
+                    DetailTransaksiSiswa availableDts = validasiItems.get(dts.getKode_buku().getKode_buku());
 
                     int jumlahBuku = availableDts.getJumlah() + dts.getJumlah();
 
@@ -449,11 +478,19 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         customColumnTable();
     }//GEN-LAST:event_btnTambahMouseClicked
 
+    List<DetailTransaksiSiswa> deleteDetails = new ArrayList<>();
+
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         // TODO add your handling code here:
         if (activeDetail == null) {
             JOptionPane.showMessageDialog(this, "Pilih Data Terlebih Dahulu");
             return;
+        }
+
+        DetailTransaksiSiswa detail = details.get(activeDetail);
+
+        if (detail.getKode_Detailtransaksi() != null) {
+            deleteDetails.add(detail);
         }
 
         details.remove((int) activeDetail);
@@ -463,10 +500,135 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
         customColumnTable();
     }//GEN-LAST:event_btnHapusMouseClicked
 
+    private void setLoadData() {
+        final String kode_transaksi = tKodeBarcode.getText();
+
+        Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
+                        + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                        + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_transaksi = ?";
+
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setInt(1, Integer.parseInt(kode_transaksi));
+                    ResultSet results = statement.executeQuery();
+
+                    if (results.next()) {
+                        transaksi = mapToEntity(results);
+                        details = detailTransRepo.get(new HashMap<>() {
+                            {
+                                put("kode_transaksi", transaksi.getKode_transaksi());
+                            }
+                        });
+
+                        tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
+                        tPeminjam.setText(transaksi.getNama_peminjam());
+                        tKelas.setText(transaksi.getKelas());
+
+                        loadTable();
+                        customColumnTable();
+                    } else {
+                        tKodeBarcode.setText("");
+                        resetPinjamBuku();
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex);
+                }
+            }
+        });
+
+        // Start the timer
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    private void tKodeBarcodeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tKodeBarcodeKeyReleased
+        // TODO add your handling code here:
+        final String kode_transaksi = tKodeBarcode.getText();
+
+        if ("".equals(kode_transaksi)) {
+            resetPinjamBuku();
+        } else {
+            Timer timer = new Timer(500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
+                            + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                            + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_transaksi = ?";
+
+                    try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                        statement.setInt(1, Integer.parseInt(kode_transaksi));
+                        ResultSet results = statement.executeQuery();
+
+                        if (results.next()) {
+                            transaksi = mapToEntity(results);
+                            details = detailTransRepo.get(new HashMap<>() {
+                                {
+                                    put("kode_transaksi", transaksi.getKode_transaksi());
+                                }
+                            });
+
+                            tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
+                            tPeminjam.setText(transaksi.getNama_peminjam());
+                            tKelas.setText(transaksi.getKelas());
+
+                            loadTable();
+                            customColumnTable();
+                        } else {
+                            tKodeBarcode.setText("");
+                            resetPinjamBuku();
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex);
+                    }
+                }
+            });
+
+            // Start the timer
+            timer.setRepeats(false);
+            timer.start();
+        }
+    }//GEN-LAST:event_tKodeBarcodeKeyReleased
+
+    private TransaksiSiswa mapToEntity(ResultSet result) throws SQLException {
+        int ptgId = result.getInt("kode_petugas");
+
+        TransaksiSiswa transaksiSiswa = new TransaksiSiswa(
+                result.getString("nama_peminjam"),
+                result.getString("kelas"),
+                TransaksiStatus.valueOf(result.getString("status")),
+                result.getInt("total_pinjam"),
+                result.getInt("total_denda"),
+                new PetugasRepository().get(ptgId)
+        );
+
+        transaksiSiswa.setKode_transaksi(result.getInt("kode_transaksi"));
+        return transaksiSiswa;
+    }
+
+    private void manageDetail() {
+        // Edit or add details
+        for (DetailTransaksiSiswa detail : details) {
+            if (detail.getKode_Detailtransaksi() == null) {
+                detail.setKode_transaksi(transaksi);
+                detailTransRepo.add(detail);
+                continue;
+            }
+
+            detailTransRepo.update(detail);
+        }
+
+        // Delete details
+        for (DetailTransaksiSiswa detail : deleteDetails) {
+            detailTransRepo.delete(detail.getKode_Detailtransaksi());
+        }
+    }
+
     private void resetPinjamBuku() {
-        tPeminjam.setText("");
+        tKodeBarcode.setText("");
         tKelas.setText("");
-        tKalender.setDate(Calendar.getInstance().getTime());
+        tKembali.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
 
@@ -476,36 +638,28 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
     }
 
     private void customJDateChooser() {
-        tKalender.setDateFormatString("dd-MM-yyyy");
+        tKembali.setDateFormatString("dd-MM-yyyy");
 
         // Set Now Date
-        tKalender.setDate(Calendar.getInstance().getTime());
+        tKembali.setDate(Calendar.getInstance().getTime());
 
         // Add minimum days selected
         Date date = new Date();
-        tKalender.setMinSelectableDate(date);
+        tKembali.setMinSelectableDate(date);
 
         // Add 3 days to the current date
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 3);
         Date maxDate = calendar.getTime();
-        tKalender.setMaxSelectableDate(maxDate);
+        tKembali.setMaxSelectableDate(maxDate);
     }
 
     private void customColumnTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
     }
 
-    private void addDetails(Transaksi transaksiSiswa) {
-        for (DetailTransaksi detail : details) {
-            detail.setKode_transaksi(transaksiSiswa);
-
-            detailTransRepo.add(detail);
-        }
-    }
-
     private void setStatusBuku() {
-        for (DetailTransaksi detail : details) {
+        for (DetailTransaksiSiswa detail : details) {
 
             String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
 
@@ -525,14 +679,15 @@ public class TambahPinjamanPetugas extends javax.swing.JInternalFrame {
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnHapus;
-    private javax.swing.JLabel btnReset;
+    private javax.swing.JLabel btnHapusData;
     private javax.swing.JLabel btnSimpan;
     private javax.swing.JLabel btnTambah;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJumlahBuku;
-    private com.toedter.calendar.JDateChooser tKalender;
     private javax.swing.JTextField tKelas;
+    private com.toedter.calendar.JDateChooser tKembali;
+    private javax.swing.JTextField tKodeBarcode;
     private javax.swing.JLabel tNamaPetugas;
     private javax.swing.JTextField tPeminjam;
     private javax.swing.JLabel tUserLogin;

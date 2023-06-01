@@ -13,6 +13,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksiSiswa;
+import entity.Kerusakan;
 import entity.Petugas;
 import entity.TransaksiSiswa;
 import jakarta.validation.ConstraintViolation;
@@ -35,6 +36,7 @@ import repository.Repository;
 import repository.BukuRepository;
 import repository.ComboBukuRepository;
 import repository.DetailTransaksiRepositorySiswa;
+import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepositorySiswa;
@@ -58,6 +60,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     private Repository<Buku> bukuRepo = new BukuRepository();
     private Repository<Buku> comboBukuRepo = new ComboBukuRepository();
+    private Repository<Kerusakan> kerusakanRepo = new KerusakanRepository();
     private Repository<TransaksiSiswa> transRepo = new TransaksiRepositorySiswa();
     private Repository<DetailTransaksiSiswa> detailTransRepo = new DetailTransaksiRepositorySiswa();
 
@@ -401,12 +404,14 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
         Date tglKembali = tKembali.getDate();
         int jumlah = 1;
+        Integer kode_kerusakan = null;
         int denda = 0;
 
         detail.setKode_buku(buku);
         detail.setTgl_pinjam(new Date());
         detail.setTgl_kembali(tglKembali);
         detail.setJumlah(jumlah);
+        detail.setKodeKerusakan(kerusakanRepo.get(kode_kerusakan));
         detail.setNominal_denda(denda);
         detail.setKode_transaksi(transRepo.get(transaksi.getKode_transaksi()));
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);

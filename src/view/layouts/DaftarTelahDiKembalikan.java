@@ -9,15 +9,20 @@ import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 import entity.TransaksiPengembalian;
+import java.util.ArrayList;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import repository.Repository;
+import static repository.Repository.conn;
 import repository.TransaksiPengembalianRepository;
 import util.NumberFormatUtil;
 import util.ViewUtil;
@@ -27,7 +32,7 @@ import view.popup.PopupViewDetailPengembalian;
  *
  * @author Hafidz Fadhillah
  */
-public class DaftarPengembalian extends javax.swing.JInternalFrame {
+public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
 
     private String username;
 
@@ -36,14 +41,14 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
     /**
      * Creates new form TambahPeminjamanPetugas
      */
-    public DaftarPengembalian() {
+    public DaftarTelahDiKembalikan() {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
 
         jam();
-        loadDataTable(transRepo.get());
+        loadData();
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
 
@@ -74,7 +79,6 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
         btnTambahPeminjaman = new javax.swing.JLabel();
-        btnTelahDikembalikan = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -100,16 +104,7 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnTambahPeminjaman);
-        btnTambahPeminjaman.setBounds(443, 157, 265, 34);
-
-        btnTelahDikembalikan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnTelahDikembalikan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnTelahDikembalikanMouseClicked(evt);
-            }
-        });
-        getContentPane().add(btnTelahDikembalikan);
-        btnTelahDikembalikan.setBounds(720, 157, 177, 34);
+        btnTambahPeminjaman.setBounds(443, 148, 175, 34);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -119,7 +114,7 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(980, 155, 270, 40);
+        tCari.setBounds(980, 145, 270, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -139,9 +134,9 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(437, 210, 860, 510);
+        jScrollPane2.setBounds(437, 200, 860, 520);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Pengembalian.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Buku Yang Telah Dikembalikan.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -151,13 +146,33 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
-        List<TransaksiPengembalian> trans = transRepo.search(new HashMap<>() {
-            {
-                put("nama_peminjam", value);
-            }
-        });
 
-        loadDataTable(trans);
+        String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
+                + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "WHERE transaksi.status = 'dikembalikan' AND transaksi.nama_peminjam LIKE ?";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, "%" + value + "%");
+            ResultSet results = statement.executeQuery();
+
+            List<TransaksiPengembalian> transList = new ArrayList<>();
+
+            while (results.next()) {
+                TransaksiPengembalian transaksiPengembalian = new TransaksiPengembalian();
+
+                transaksiPengembalian.setNama_peminjam(results.getString("nama_peminjam"));
+                transaksiPengembalian.setKelas(results.getString("kelas"));
+                transaksiPengembalian.setTotal_pinjam(results.getInt("total_pinjam"));
+                transaksiPengembalian.setTotal_denda(results.getInt("total_denda"));
+                transaksiPengembalian.setKode_transaksi(results.getInt("kode_transaksi"));
+
+                transList.add(transaksiPengembalian);
+            }
+
+            loadDataTable(transList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_tCariKeyReleased
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
@@ -166,51 +181,47 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
         String value = Tabel.getModel().getValueAt(row, 5).toString();
         TransaksiPengembalian transaksi = transRepo.get(Integer.valueOf(value));
 
-        int choice = JOptionPane.showOptionDialog(
-                this,
-                "Pilih Opsi Yang Akan Anda Lakukan!",
-                "Konfirmasi",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[]{"Detail", "Edit", "Cancel"},
-                "Detail"
-        );
-
-        if (choice == 0) {
-            new PopupViewDetailPengembalian(transaksi).setVisible(true);
-        } else if (choice == 1) {
-            EditPengembalian editPengembalian = new EditPengembalian(transaksi);
-            editPengembalian.setUsername(username);
-            JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(editPengembalian);
-            editPengembalian.setVisible(true);
-
-            this.dispose();
-        }
+        new PopupViewDetailPengembalian(transaksi).setVisible(true);
     }//GEN-LAST:event_TabelMouseClicked
 
     private void btnTambahPeminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahPeminjamanMouseClicked
         // TODO add your handling code here:
-        TambahPengembalian tambahPengembalian = new TambahPengembalian();
-        tambahPengembalian.setUsername(username);
+        DaftarPengembalian daftarPengembalian = new DaftarPengembalian();
+        daftarPengembalian.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(tambahPengembalian);
-        tambahPengembalian.setVisible(true);
+        desktopPane.add(daftarPengembalian);
+        daftarPengembalian.setVisible(true);
 
         this.dispose();
     }//GEN-LAST:event_btnTambahPeminjamanMouseClicked
 
-    private void btnTelahDikembalikanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTelahDikembalikanMouseClicked
-        // TODO add your handling code here:
-        DaftarTelahDiKembalikan daftarTelahDiKembalikan = new DaftarTelahDiKembalikan();
-        daftarTelahDiKembalikan.setUsername(username);
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarTelahDiKembalikan);
-        daftarTelahDiKembalikan.setVisible(true);
+    private void loadData() {
+        String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
+                + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "WHERE transaksi.status = 'dikembalikan'";
 
-        this.dispose();
-    }//GEN-LAST:event_btnTelahDikembalikanMouseClicked
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            ResultSet results = statement.executeQuery();
+
+            List<TransaksiPengembalian> transList = new ArrayList<>();
+
+            while (results.next()) {
+                TransaksiPengembalian transaksiPengembalian = new TransaksiPengembalian();
+
+                transaksiPengembalian.setNama_peminjam(results.getString("nama_peminjam"));
+                transaksiPengembalian.setKelas(results.getString("kelas"));
+                transaksiPengembalian.setTotal_pinjam(results.getInt("total_pinjam"));
+                transaksiPengembalian.setTotal_denda(results.getInt("total_denda"));
+                transaksiPengembalian.setKode_transaksi(results.getInt("kode_transaksi"));
+
+                transList.add(transaksiPengembalian); // Add the buku object to the list
+            }
+
+            loadDataTable(transList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void loadDataTable(List<TransaksiPengembalian> trans) {
         int no = 1;
@@ -293,7 +304,6 @@ public class DaftarPengembalian extends javax.swing.JInternalFrame {
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnTambahPeminjaman;
-    private javax.swing.JLabel btnTelahDikembalikan;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;

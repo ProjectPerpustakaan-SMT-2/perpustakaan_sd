@@ -38,6 +38,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tTahun.setText(sdf.format(buku.getPenerbit().getTahun_tebit()));
         tSumber.setText(buku.getSumber());
         tHalaman.setText(String.valueOf(buku.getHalaman()));
+        tCatatan.setText(buku.getNote());
 
         if (buku.getJumlah() > 0) {
             tStatusBuku.setText("Tersedia");
@@ -69,6 +70,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tHalaman = new javax.swing.JTextField();
         tStatusBuku = new javax.swing.JTextField();
         tKlasifikasi = new javax.swing.JTextField();
+        tCatatan = new javax.swing.JTextField();
         btnReset = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
@@ -82,7 +84,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tJudul.setBorder(null);
         tJudul.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tJudul);
-        tJudul.setBounds(266, 169, 403, 35);
+        tJudul.setBounds(266, 142, 403, 35);
 
         tPengarang.setEditable(false);
         tPengarang.setBackground(new java.awt.Color(255, 255, 255));
@@ -90,7 +92,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tPengarang.setBorder(null);
         tPengarang.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tPengarang);
-        tPengarang.setBounds(703, 169, 403, 35);
+        tPengarang.setBounds(703, 142, 403, 35);
 
         tISBN.setEditable(false);
         tISBN.setBackground(new java.awt.Color(255, 255, 255));
@@ -98,7 +100,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tISBN.setBorder(null);
         tISBN.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tISBN);
-        tISBN.setBounds(266, 250, 840, 35);
+        tISBN.setBounds(266, 222, 840, 35);
 
         tKota.setEditable(false);
         tKota.setBackground(new java.awt.Color(255, 255, 255));
@@ -106,7 +108,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tKota.setBorder(null);
         tKota.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tKota);
-        tKota.setBounds(557, 331, 260, 35);
+        tKota.setBounds(557, 304, 260, 35);
 
         tTahun.setEditable(false);
         tTahun.setBackground(new java.awt.Color(255, 255, 255));
@@ -114,7 +116,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tTahun.setBorder(null);
         tTahun.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tTahun);
-        tTahun.setBounds(847, 331, 260, 35);
+        tTahun.setBounds(847, 304, 260, 35);
 
         tPenerbit.setEditable(false);
         tPenerbit.setBackground(new java.awt.Color(255, 255, 255));
@@ -122,7 +124,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tPenerbit.setBorder(null);
         tPenerbit.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tPenerbit);
-        tPenerbit.setBounds(265, 331, 260, 35);
+        tPenerbit.setBounds(265, 304, 260, 35);
 
         tSumber.setEditable(false);
         tSumber.setBackground(new java.awt.Color(255, 255, 255));
@@ -130,7 +132,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tSumber.setBorder(null);
         tSumber.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tSumber);
-        tSumber.setBounds(266, 413, 400, 35);
+        tSumber.setBounds(266, 384, 400, 35);
 
         tJumlah.setEditable(false);
         tJumlah.setBackground(new java.awt.Color(255, 255, 255));
@@ -138,7 +140,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tJumlah.setBorder(null);
         tJumlah.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tJumlah);
-        tJumlah.setBounds(703, 493, 404, 35);
+        tJumlah.setBounds(703, 465, 404, 35);
 
         tHalaman.setEditable(false);
         tHalaman.setBackground(new java.awt.Color(255, 255, 255));
@@ -146,7 +148,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tHalaman.setBorder(null);
         tHalaman.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tHalaman);
-        tHalaman.setBounds(703, 413, 404, 35);
+        tHalaman.setBounds(703, 384, 404, 35);
 
         tStatusBuku.setEditable(false);
         tStatusBuku.setBackground(new java.awt.Color(255, 255, 255));
@@ -154,14 +156,21 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tStatusBuku.setBorder(null);
         tStatusBuku.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tStatusBuku);
-        tStatusBuku.setBounds(266, 493, 404, 35);
+        tStatusBuku.setBounds(266, 465, 404, 35);
 
         tKlasifikasi.setEditable(false);
         tKlasifikasi.setBackground(new java.awt.Color(255, 255, 255));
         tKlasifikasi.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKlasifikasi.setBorder(null);
         getContentPane().add(tKlasifikasi);
-        tKlasifikasi.setBounds(266, 575, 840, 35);
+        tKlasifikasi.setBounds(266, 547, 840, 35);
+
+        tCatatan.setEditable(false);
+        tCatatan.setBackground(new java.awt.Color(255, 255, 255));
+        tCatatan.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tCatatan.setBorder(null);
+        getContentPane().add(tCatatan);
+        tCatatan.setBounds(266, 628, 840, 35);
 
         btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -170,7 +179,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
             }
         });
         getContentPane().add(btnReset);
-        btnReset.setBounds(620, 640, 130, 43);
+        btnReset.setBounds(620, 680, 130, 43);
 
         background.setBackground(new java.awt.Color(255, 255, 255));
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Detail Data Buku.png"))); // NOI18N
@@ -225,6 +234,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnReset;
+    private javax.swing.JTextField tCatatan;
     private javax.swing.JTextField tHalaman;
     private javax.swing.JTextField tISBN;
     private javax.swing.JTextField tJudul;

@@ -200,7 +200,7 @@ public class DaftarStatusBuku extends javax.swing.JInternalFrame {
             while (results.next()) {
                 Buku buku = new Buku();
 
-                buku.setIsbn(results.getInt("isbn"));
+                buku.setIsbn(results.getLong("isbn"));
                 buku.setJudul_buku(results.getString("judul_buku"));
                 buku.setNama_pengarang(results.getString("nama_pengarang"));
                 buku.setSumber(results.getString("sumber"));

@@ -167,7 +167,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
         SideBar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Sidebar.png"))); // NOI18N
         panelSideBar.add(SideBar);
-        SideBar.setBounds(0, 0, 352, 777);
+        SideBar.setBounds(0, 0, 352, 768);
 
         getContentPane().add(panelSideBar);
         panelSideBar.setBounds(0, 0, 350, 768);

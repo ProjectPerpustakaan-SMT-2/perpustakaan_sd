@@ -16,6 +16,7 @@ import java.util.Map;
 import util.Database;
 
 import entity.Buku;
+import java.sql.Types;
 
 /**
  *
@@ -117,18 +118,26 @@ public class BukuRepository implements Repository<Buku> {
     }
 
     public Integer add(Buku bku) {
-        String sql = "INSERT INTO " + tableName + " (`judul_buku`, `nama_pengarang`, `isbn`, `kode_penerbit`, `sumber`, `halaman`, `status`, `jumlah`, `kode_ddc`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + tableName + " (`judul_buku`, `nama_pengarang`, `isbn`, `kode_penerbit`, `sumber`, `halaman`, `status`, `jumlah`, `note`, `kode_ddc`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, bku.getJudul_buku());
             stmt.setString(2, bku.getNama_pengarang());
-            stmt.setInt(3, bku.getIsbn());
+            stmt.setLong(3, bku.getIsbn());
             stmt.setInt(4, bku.getPenerbit().getKode_penerbit());
             stmt.setString(5, bku.getSumber());
             stmt.setInt(6, bku.getHalaman());
             stmt.setString(7, bku.getBukuStatus().toString());
             stmt.setInt(8, bku.getJumlah());
-            stmt.setInt(9, bku.getKlasifikasi().getId_klasifikasi());
+
+            String note = bku.getNote() != null ? bku.getNote() : null;
+            if (note != null) {
+                stmt.setString(9, bku.getNote());
+            } else {
+                stmt.setNull(9, Types.CLOB);
+            }
+
+            stmt.setInt(10, bku.getKlasifikasi().getId_klasifikasi());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -143,19 +152,27 @@ public class BukuRepository implements Repository<Buku> {
     }
 
     public boolean update(Buku bku) {
-        String sql = "UPDATE " + tableName + " SET judul_buku = ?, nama_pengarang = ?, isbn = ?, kode_penerbit = ?, sumber = ?, halaman = ?, status = ?, jumlah = ?, kode_ddc = ? WHERE kode_buku = ?";
+        String sql = "UPDATE " + tableName + " SET judul_buku = ?, nama_pengarang = ?, isbn = ?, kode_penerbit = ?, sumber = ?, halaman = ?, status = ?, jumlah = ?, note = ?, kode_ddc = ? WHERE kode_buku = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bku.getJudul_buku());
             stmt.setString(2, bku.getNama_pengarang());
-            stmt.setInt(3, bku.getIsbn());
+            stmt.setLong(3, bku.getIsbn());
             stmt.setInt(4, bku.getPenerbit().getKode_penerbit());
             stmt.setString(5, bku.getSumber());
             stmt.setInt(6, bku.getHalaman());
             stmt.setString(7, bku.getBukuStatus().toString());
             stmt.setInt(8, bku.getJumlah());
-            stmt.setInt(9, bku.getKlasifikasi().getId_klasifikasi());
-            stmt.setInt(10, bku.getKode_buku());
+
+            String note = bku.getNote() != null ? bku.getNote() : null;
+            if (note != null) {
+                stmt.setString(9, bku.getNote());
+            } else {
+                stmt.setNull(9, Types.CLOB);
+            }
+
+            stmt.setInt(10, bku.getKlasifikasi().getId_klasifikasi());
+            stmt.setInt(11, bku.getKode_buku());
 
             stmt.executeUpdate();
             return stmt.getUpdateCount() > 0;
@@ -188,12 +205,13 @@ public class BukuRepository implements Repository<Buku> {
         Buku buku = new Buku(
                 result.getString("judul_buku"),
                 result.getString("nama_pengarang"),
-                result.getInt("isbn"),
+                result.getLong("isbn"),
                 new PenerbitRepository().get(pnbtId),
                 result.getString("sumber"),
                 result.getInt("halaman"),
                 BukuStatus.valueOf(result.getString("status")),
                 result.getInt("jumlah"),
+                result.getString("note"),
                 new KlasifikasiRepository().get(klsfId)
         );
 

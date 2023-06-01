@@ -155,7 +155,14 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
             stmt.setString(3, trans.getStatus().toString());
             stmt.setInt(4, trans.getTotal_pinjam());
             stmt.setInt(5, trans.getTotal_denda());
-            stmt.setInt(6, trans.getKode_petugas() != null ? trans.getKode_petugas().getId() : null);
+
+            Integer id = trans.getKode_petugas() != null ? trans.getKode_petugas().getId() : null;
+            if (id != null) {
+                stmt.setInt(6, id);
+            } else {
+                stmt.setNull(6, Types.INTEGER);
+            }
+
             stmt.setInt(7, trans.getKode_transaksi());
 
             stmt.executeUpdate();
@@ -185,7 +192,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
     private TransaksiSiswa mapToEntity(ResultSet result) throws SQLException {
         int ptgId = result.getInt("kode_petugas");
 
-        TransaksiSiswa detailTransaksi = new TransaksiSiswa(
+        TransaksiSiswa transaksiSiswa = new TransaksiSiswa(
                 result.getString("nama_peminjam"),
                 result.getString("kelas"),
                 TransaksiStatus.valueOf(result.getString("status")),
@@ -194,7 +201,7 @@ public class TransaksiRepositorySiswa implements Repository<TransaksiSiswa> {
                 new PetugasRepository().get(ptgId)
         );
 
-        detailTransaksi.setKode_transaksi(result.getInt("kode_transaksi"));
-        return detailTransaksi;
+        transaksiSiswa.setKode_transaksi(result.getInt("kode_transaksi"));
+        return transaksiSiswa;
     }
 }

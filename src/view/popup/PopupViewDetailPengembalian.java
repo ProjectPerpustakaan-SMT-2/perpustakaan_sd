@@ -5,37 +5,38 @@
 package view.popup;
 
 import customUI.TableCustom;
-import entity.DetailTransaksi;
-import entity.Transaksi;
+import entity.DetailTransaksiPengembalian;
+import entity.TransaksiPengembalian;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import repository.DetailTransaksiRepository;
+import repository.DetailTransaksiPengembalianRepository;
 import repository.Repository;
+import util.NumberFormatUtil;
 import util.ViewUtil;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class PopupViewDetailPeminjaman extends javax.swing.JFrame {
+public class PopupViewDetailPengembalian extends javax.swing.JFrame {
 
-    private Transaksi transaksi;
+    private TransaksiPengembalian transaksi;
 
-    private Repository<DetailTransaksi> detailTransRepo = new DetailTransaksiRepository();
+    private Repository<DetailTransaksiPengembalian> detailTransRepo = new DetailTransaksiPengembalianRepository();
 
-    private List<DetailTransaksi> details, deleteDetails = new ArrayList<>();
-    private Integer totalPinjam;
+    private List<DetailTransaksiPengembalian> details, deleteDetails = new ArrayList<>();
+    private Integer totalDenda;
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
     /**
      * Creates new form PopupViewDetailBuku
      */
-    public PopupViewDetailPeminjaman(Transaksi transaksi) {
+    public PopupViewDetailPengembalian(TransaksiPengembalian transaksi) {
         this.transaksi = transaksi;
         this.details = detailTransRepo.get(new HashMap<>() {
             {
@@ -60,7 +61,7 @@ public class PopupViewDetailPeminjaman extends javax.swing.JFrame {
 
     private void loadTable() {
         int no = 1;
-        int totalPinjam = 0;
+        int totalDenda = 0;
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -70,29 +71,30 @@ public class PopupViewDetailPeminjaman extends javax.swing.JFrame {
 
         model.addColumn("No");
         model.addColumn("Nama Buku");
-        model.addColumn("Tanggal Pinjam");
-        model.addColumn("Tanggal Kembali");
-        model.addColumn("Jumlah");
-        model.addColumn("ID");
+        model.addColumn("Tgl Pinjam");
+        model.addColumn("Tgl Kembali");
+        model.addColumn("Kerusakan Buku");
+        model.addColumn("Jumlah Denda");
+        model.addColumn("Jumlah Buku");
 
-        for (DetailTransaksi detail : details) {
-            int jumlahPinjam = detail.getJumlah();
-            totalPinjam += jumlahPinjam;
+        for (DetailTransaksiPengembalian detail : details) {
+            int jumlahDenda = detail.getNominal_denda();
+            totalDenda += jumlahDenda;
 
             model.addRow(new Object[]{
                 no++,
                 detail.getKode_buku().getJudul_buku(),
                 sdf.format(detail.getTgl_pinjam()),
                 sdf.format(detail.getTgl_kembali()),
-                detail.getJumlah(),
-                detail.getKode_Detailtransaksi()
+                detail.getKodeKerusakan().getJenis_kerusakan(),
+                "Rp. " + NumberFormatUtil.formatDec(detail.getNominal_denda()),
+                detail.getJumlah()
             });
         }
 
-        this.totalPinjam = totalPinjam;
+        this.totalDenda = totalDenda;
         Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 5);
-        tJumlah.setText(String.valueOf(totalPinjam));
+        tJumlah.setText("Rp. " + String.valueOf(NumberFormatUtil.formatDec(totalDenda)));
     }
 
     /**
@@ -155,7 +157,7 @@ public class PopupViewDetailPeminjaman extends javax.swing.JFrame {
         tJumlah.setBorder(null);
         tJumlah.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         getContentPane().add(tJumlah);
-        tJumlah.setBounds(935, 503, 130, 35);
+        tJumlah.setBounds(925, 503, 140, 35);
 
         btnTutup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTutup.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -167,7 +169,7 @@ public class PopupViewDetailPeminjaman extends javax.swing.JFrame {
         btnTutup.setBounds(620, 595, 130, 43);
 
         background.setBackground(new java.awt.Color(255, 255, 255));
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Detail Peminjaman.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Detail Pengembalian.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -201,22 +203,24 @@ public class PopupViewDetailPeminjaman extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PopupViewDetailPeminjaman.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopupViewDetailPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PopupViewDetailPeminjaman.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopupViewDetailPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PopupViewDetailPeminjaman.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopupViewDetailPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PopupViewDetailPeminjaman.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PopupViewDetailPengembalian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Transaksi transaksi = new Transaksi();
-                new PopupViewDetailPeminjaman(transaksi).setVisible(true);
+                TransaksiPengembalian transaksi = new TransaksiPengembalian();
+                new PopupViewDetailPengembalian(transaksi).setVisible(true);
             }
         });
     }
