@@ -15,6 +15,7 @@ import java.util.Map;
 import util.Database;
 
 import entity.Kerusakan;
+import java.sql.Types;
 
 /**
  *
@@ -46,7 +47,12 @@ public class KerusakanRepository implements Repository<Kerusakan> {
         Kerusakan kerusakan = new Kerusakan();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            if (id != null) {
+                stmt.setInt(1, id);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {

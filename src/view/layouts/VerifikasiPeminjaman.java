@@ -13,9 +13,8 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksiSiswa;
-import entity.DetailTransaksiSiswa;
+import entity.Kerusakan;
 import entity.Petugas;
-import entity.Transaksi;
 import entity.TransaksiSiswa;
 import jakarta.validation.ConstraintViolation;
 import java.awt.Color;
@@ -28,21 +27,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import repository.Repository;
 import repository.BukuRepository;
+import repository.ComboBukuRepository;
 import repository.DetailTransaksiRepositorySiswa;
+import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepositorySiswa;
 import service.TransaksiValidasi;
 import util.SearchableComboBox;
 import util.ValidasiUtil;
+import util.ViewUtil;
 import view.popup.PopupViewDataBerhasil;
-import view.popup.PopupViewDataGagal;
+import view.popup.PopupViewHapusData;
 
 /**
  *
@@ -53,10 +56,11 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private String username;
 
     private TransaksiSiswa transaksi;
-    private DetailTransaksiSiswa detailTransaksi;
 
     private Repository<Petugas> ptgRepo = new PetugasRepository();
     private Repository<Buku> bukuRepo = new BukuRepository();
+    private Repository<Buku> comboBukuRepo = new ComboBukuRepository();
+    private Repository<Kerusakan> kerusakanRepo = new KerusakanRepository();
     private Repository<TransaksiSiswa> transRepo = new TransaksiRepositorySiswa();
     private Repository<DetailTransaksiSiswa> detailTransRepo = new DetailTransaksiRepositorySiswa();
 
@@ -126,7 +130,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void fillComboBox() {
         ComboItem[] items;
-        List<Buku> bukus = bukuRepo.get();
+        List<Buku> bukus = comboBukuRepo.get();
 
         items = new ComboItem[bukus.size()];
         for (int i = 0; i < bukus.size(); i++) {
@@ -146,13 +150,19 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private void loadTable() {
         int no = 1;
         int totalPinjam = 0;
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Disable cell editing
+            }
+        };
 
         model.addColumn("No");
         model.addColumn("Nama Buku");
         model.addColumn("Tanggal Pinjam");
         model.addColumn("Tanggal Kembali");
         model.addColumn("Jumlah");
+        model.addColumn("ID");
 
         for (DetailTransaksiSiswa detail : details) {
             int jumlahPinjam = detail.getJumlah();
@@ -163,12 +173,14 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
                 detail.getKode_buku().getJudul_buku(),
                 sdf.format(detail.getTgl_pinjam()),
                 sdf.format(detail.getTgl_kembali()),
-                detail.getJumlah()
+                detail.getJumlah(),
+                detail.getKode_Detailtransaksi()
             });
         }
 
         this.totalPinjam = totalPinjam;
         Tabel.setModel(model);
+        ViewUtil.hideTableColumn(Tabel, 5);
         tJumlahBuku.setText(String.valueOf(totalPinjam));
     }
 
@@ -303,6 +315,8 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
+
         transaksi.setNama_peminjam(tPeminjam.getText());
         transaksi.setKelas(tKelas.getText());
         transaksi.setStatus(TransaksiStatus.dipinjam);
@@ -313,6 +327,17 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         manageDetail();
 
         transRepo.update(transaksi);
+
+        String sql = "UPDATE buku SET status = ? WHERE kode_buku = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, TransaksiStatus.dipinjam.toString());
+            stmt.setInt(2, buku.getKey());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
         daftarPeminjaman.setUsername(username);
@@ -328,7 +353,32 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void btnHapusDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusDataMouseClicked
         // TODO add your handling code here:
+        int clicked = JOptionPane.showOptionDialog(
+                this, // Parent component
+                "Apakah Anda yakin ?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Ya", "Tidak"},
+                "Tidak"
+        );
 
+        if (clicked == JOptionPane.YES_OPTION) {
+//            transRepo.delete(transaksi.getKode_transaksi());
+
+            System.out.println(transaksi.getKode_transaksi());
+
+            DaftarPeminjaman daftarPeminjaman = new DaftarPeminjaman();
+            daftarPeminjaman.setUsername(username);
+            JDesktopPane desktopPane = getDesktopPane();
+            desktopPane.add(daftarPeminjaman);
+            daftarPeminjaman.setVisible(true);
+
+            this.dispose();
+
+            new PopupViewHapusData().setVisible(true);
+        }
     }//GEN-LAST:event_btnHapusDataMouseClicked
 
     private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
@@ -347,18 +397,21 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void btnTambahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahMouseClicked
         // TODO add your handling code here:
+        Map<Integer, DetailTransaksiSiswa> validasiItems = new HashMap<>();
+
         DetailTransaksiSiswa detail = (activeDetail == null) ? new DetailTransaksiSiswa() : details.get(activeDetail);
         ComboItem bukuComboItem = (ComboItem) bukuInput.getSelectedItem();
         Buku buku = bukuRepo.get(bukuComboItem.getKey());
-        Date tglPinjam = tKembali.getDate();
         Date tglKembali = tKembali.getDate();
         int jumlah = 1;
+        Integer kode_kerusakan = null;
         int denda = 0;
 
         detail.setKode_buku(buku);
-        detail.setTgl_pinjam(tglPinjam);
+        detail.setTgl_pinjam(new Date());
         detail.setTgl_kembali(tglKembali);
         detail.setJumlah(jumlah);
+        detail.setKodeKerusakan(kerusakanRepo.get(kode_kerusakan));
         detail.setNominal_denda(denda);
         detail.setKode_transaksi(transRepo.get(transaksi.getKode_transaksi()));
         TransaksiValidasi comboValidasi = new TransaksiValidasi(bukuComboItem);
@@ -385,13 +438,36 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
         if (activeDetail == null) {
             details.add(detail);
+
+            for (int i = 0; i < details.size(); i++) {
+                DetailTransaksiSiswa dts = details.get(i);
+
+                if (i > 0 && validasiItems.containsKey(dts.getKode_buku().getKode_buku())) {
+                    DetailTransaksiSiswa availableDts = validasiItems.get(dts.getKode_buku().getKode_buku());
+
+                    int jumlahBuku = availableDts.getJumlah() + dts.getJumlah();
+
+                    if (jumlahBuku > detail.getKode_buku().getJumlah()) {
+                        JOptionPane.showMessageDialog(this, "Stok Buku Tidak Tersedia");
+                        continue;
+                    }
+
+                    validasiItems.get(dts.getKode_buku().getKode_buku()).setJumlah(availableDts.getJumlah() + dts.getJumlah());
+
+                    continue;
+                }
+
+                validasiItems.put(dts.getKode_buku().getKode_buku(), dts);
+            }
+
+            details = new ArrayList<>(validasiItems.values());
+
         }
 
         activeDetail = null;
 
         loadTable();
         customColumnTable();
-        resetBuku();
     }//GEN-LAST:event_btnTambahMouseClicked
 
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
@@ -412,14 +488,12 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
         loadTable();
         customColumnTable();
-        resetBuku();
     }//GEN-LAST:event_btnHapusMouseClicked
 
     private void fillInput() {
         tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
         tPeminjam.setText(transaksi.getNama_peminjam());
         tKelas.setText(transaksi.getKelas());
-
     }
 
     private void manageDetail() {
@@ -438,11 +512,6 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         for (DetailTransaksiSiswa detail : deleteDetails) {
             detailTransRepo.delete(detail.getKode_Detailtransaksi());
         }
-    }
-
-    private void resetBuku() {
-        tKembali.setDate(Calendar.getInstance().getTime());
-        bukuInput.setSelectedIndex(0);
     }
 
     private void resetPinjamBuku() {

@@ -65,6 +65,7 @@ public class DashboardPRespository {
         cal.setTime(date);
 
         int totalBelumKembali = 0;
+
         String sql = "SELECT SUM(jumlah) AS jumlahPinjam FROM detail_transaksi "
                 + "INNER JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
                 + "WHERE transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali < ? "

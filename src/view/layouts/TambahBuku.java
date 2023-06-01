@@ -4,6 +4,7 @@
  */
 package view.layouts;
 
+import data.BukuStatus;
 import data.ComboItem;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -19,7 +20,11 @@ import javax.swing.JOptionPane;
 import entity.Buku;
 import entity.Klasifikasi;
 import entity.Penerbit;
+import java.awt.Color;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import util.ValidasiUtil;
 import repository.Repository;
 import repository.BukuRepository;
@@ -84,7 +89,8 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         penerbitInput = new SearchableComboBox(items);
         penerbitInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
         penerbitInput.setBorder(null);
-        penerbitInput.setBounds(448, 349, 403, 35);
+        penerbitInput.setBounds(448, 346, 403, 35);
+        penerbitInput.setBackground(new Color(0, 0, 0, 0));
 
         items = new ComboItem[klasifikasis.size()];
         for (int i = 0; i < klasifikasis.size(); i++) {
@@ -95,7 +101,8 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         klasifikasiInput = new SearchableComboBox(items);
         klasifikasiInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
         klasifikasiInput.setBorder(null);
-        klasifikasiInput.setBounds(883, 349, 404, 35);
+        klasifikasiInput.setBounds(883, 346, 404, 35);
+        klasifikasiInput.setBackground(new Color(0, 0, 0, 0));
 
         getContentPane().add(penerbitInput);
         getContentPane().add(klasifikasiInput);
@@ -117,7 +124,9 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         tNamaPengarang = new javax.swing.JTextField();
         tSumber = new javax.swing.JTextField();
         tHalaman = new javax.swing.JTextField();
+        tStatus = new javax.swing.JComboBox<>();
         tJumlah = new javax.swing.JTextField();
+        tCatatan = new javax.swing.JTextField();
         btnReset = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
@@ -138,32 +147,45 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         tISBN.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tISBN.setBorder(null);
         getContentPane().add(tISBN);
-        tISBN.setBounds(447, 186, 840, 35);
+        tISBN.setBounds(447, 183, 840, 35);
 
         tJudulBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJudulBuku.setBorder(null);
         getContentPane().add(tJudulBuku);
-        tJudulBuku.setBounds(447, 267, 403, 35);
+        tJudulBuku.setBounds(447, 264, 403, 35);
 
         tNamaPengarang.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tNamaPengarang.setBorder(null);
         getContentPane().add(tNamaPengarang);
-        tNamaPengarang.setBounds(882, 267, 403, 35);
+        tNamaPengarang.setBounds(882, 264, 403, 35);
 
         tSumber.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tSumber.setBorder(null);
         getContentPane().add(tSumber);
-        tSumber.setBounds(447, 429, 840, 35);
+        tSumber.setBounds(447, 426, 405, 35);
 
         tHalaman.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tHalaman.setBorder(null);
         getContentPane().add(tHalaman);
-        tHalaman.setBounds(447, 510, 404, 35);
+        tHalaman.setBounds(882, 426, 405, 35);
+
+        tStatus.setBackground(new Color(0,0,0,0));
+        tStatus.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Layak", "Dipinjam", "Rusak", "Hilang" }));
+        tStatus.setSelectedIndex(-1);
+        tStatus.setBorder(null);
+        getContentPane().add(tStatus);
+        tStatus.setBounds(447, 507, 404, 35);
 
         tJumlah.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJumlah.setBorder(null);
         getContentPane().add(tJumlah);
-        tJumlah.setBounds(882, 510, 404, 35);
+        tJumlah.setBounds(882, 507, 404, 35);
+
+        tCatatan.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tCatatan.setBorder(null);
+        getContentPane().add(tCatatan);
+        tCatatan.setBounds(450, 595, 835, 60);
 
         btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -172,7 +194,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnReset);
-        btnReset.setBounds(443, 595, 130, 40);
+        btnReset.setBounds(443, 675, 130, 40);
 
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSimpan.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -181,7 +203,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnSimpan);
-        btnSimpan.setBounds(1160, 595, 130, 40);
+        btnSimpan.setBounds(1160, 675, 130, 40);
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Tambah Buku.png"))); // NOI18N
         getContentPane().add(background);
@@ -195,14 +217,23 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         ComboItem pnbtItem = (ComboItem) penerbitInput.getSelectedItem();
         ComboItem kodeDDCItem = (ComboItem) klasifikasiInput.getSelectedItem();
 
+        String catatan;
+        if (tCatatan.getText().equals("")) {
+            catatan = null;
+        } else {
+            catatan = tCatatan.getText();
+        }
+
         Buku buku = new Buku(
                 tJudulBuku.getText(),
                 tNamaPengarang.getText(),
-                Integer.valueOf(tISBN.getText()),
+                Long.valueOf(tISBN.getText()),
                 pnbtRepo.get(pnbtItem.getKey()),
                 tSumber.getText(),
                 Integer.valueOf(tHalaman.getText()),
+                BukuStatus.valueOf(tStatus.getSelectedItem().toString()),
                 Integer.valueOf(tJumlah.getText()),
+                catatan,
                 klsfRepo.get(kodeDDCItem.getKey())
         );
 
@@ -235,6 +266,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         klasifikasiInput.setSelectedIndex(0);
         tSumber.setText("");
         tHalaman.setText("");
+        tStatus.setSelectedIndex(-1);
         tJumlah.setText("");
     }//GEN-LAST:event_btnResetMouseClicked
 
@@ -284,12 +316,14 @@ public class TambahBuku extends javax.swing.JInternalFrame {
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnReset;
     private javax.swing.JLabel btnSimpan;
+    private javax.swing.JTextField tCatatan;
     private javax.swing.JTextField tHalaman;
     private javax.swing.JTextField tISBN;
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJudulBuku;
     private javax.swing.JTextField tJumlah;
     private javax.swing.JTextField tNamaPengarang;
+    private javax.swing.JComboBox<String> tStatus;
     private javax.swing.JTextField tSumber;
     private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables

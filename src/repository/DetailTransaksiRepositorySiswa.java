@@ -15,6 +15,7 @@ import java.util.Map;
 import util.Database;
 import entity.DetailTransaksiSiswa;
 import java.sql.Date;
+import java.sql.Types;
 
 /**
  *
@@ -116,15 +117,23 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
     }
 
     public Integer add(DetailTransaksiSiswa detTrans) {
-        String sql = "INSERT INTO " + tableName + " (`kode_buku`, `tgl_pinjam`, `tgl_kembali`, `jumlah`, `nominal_denda`, `kode_transaksi`) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + tableName + " (`kode_buku`, `tgl_pinjam`, `tgl_kembali`, `jumlah`, `kode_kerusakan`, `nominal_denda`, `kode_transaksi`) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, detTrans.getKode_buku().getKode_buku());
             stmt.setDate(2, new Date(detTrans.getTgl_pinjam().getTime()));
             stmt.setDate(3, new Date(detTrans.getTgl_kembali().getTime()));
             stmt.setInt(4, detTrans.getJumlah());
-            stmt.setInt(5, detTrans.getNominal_denda());
-            stmt.setInt(6, detTrans.getKode_transaksi().getKode_transaksi());
+
+            Integer id = detTrans.getKodeKerusakan() != null ? detTrans.getKodeKerusakan().getKode_kerusakan() : null;
+            if (id != null) {
+                stmt.setInt(5, id);
+            } else {
+                stmt.setNull(5, Types.INTEGER);
+            }
+
+            stmt.setInt(6, detTrans.getNominal_denda());
+            stmt.setInt(7, detTrans.getKode_transaksi().getKode_transaksi());
 
             stmt.executeUpdate();
 
@@ -140,16 +149,24 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
     }
 
     public boolean update(DetailTransaksiSiswa detTrans) {
-        String sql = "UPDATE " + tableName + " SET kode_buku = ?, tgl_pinjam = ?, tgl_kembali = ?, jumlah = ?, nominal_denda = ?, kode_transaksi = ? WHERE kode_detail_transaksi = ?";
+        String sql = "UPDATE " + tableName + " SET kode_buku = ?, tgl_pinjam = ?, tgl_kembali = ?, jumlah = ?, kode_kerusakan = ?,nominal_denda = ?, kode_transaksi = ? WHERE kode_detail_transaksi = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, detTrans.getKode_buku().getKode_buku());
             stmt.setDate(2, new Date(detTrans.getTgl_pinjam().getTime()));
             stmt.setDate(3, new Date(detTrans.getTgl_kembali().getTime()));
             stmt.setInt(4, detTrans.getJumlah());
-            stmt.setInt(5, detTrans.getNominal_denda());
-            stmt.setInt(6, detTrans.getKode_transaksi().getKode_transaksi());
-            stmt.setInt(7, detTrans.getKode_Detailtransaksi());
+
+            Integer id = detTrans.getKodeKerusakan() != null ? detTrans.getKodeKerusakan().getKode_kerusakan() : null;
+            if (id != null) {
+                stmt.setInt(5, id);
+            } else {
+                stmt.setNull(5, Types.INTEGER);
+            }
+
+            stmt.setInt(6, detTrans.getNominal_denda());
+            stmt.setInt(7, detTrans.getKode_transaksi().getKode_transaksi());
+            stmt.setInt(8, detTrans.getKode_Detailtransaksi());
 
             stmt.executeUpdate();
             return stmt.getUpdateCount() > 0;
@@ -194,6 +211,7 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
 
     private DetailTransaksiSiswa mapToEntity(ResultSet result) throws SQLException {
         int bukuId = result.getInt("kode_buku");
+        int kerusakanId = result.getInt("kode_kerusakan");
         int transaksiId = result.getInt("kode_transaksi");
 
         DetailTransaksiSiswa detailTransaksi = new DetailTransaksiSiswa(
@@ -201,6 +219,7 @@ public class DetailTransaksiRepositorySiswa implements Repository<DetailTransaks
                 result.getDate("tgl_pinjam"),
                 result.getDate("tgl_kembali"),
                 result.getInt("jumlah"),
+                new KerusakanRepository().get(kerusakanId),
                 result.getInt("nominal_denda"),
                 new TransaksiRepositorySiswa().get(transaksiId)
         );

@@ -22,6 +22,7 @@ public class DetailTransaksiSiswa implements Entity {
     @NotNull(message = "Pilih Tanggal Pengembalian Buku")
     private Date tgl_kembali;
 
+    private Kerusakan kode_kerusakan;
     private Integer jumlah;
     private Integer nominal_denda;
     private TransaksiSiswa kode_transaksi;
@@ -30,11 +31,12 @@ public class DetailTransaksiSiswa implements Entity {
 
     }
 
-    public DetailTransaksiSiswa(Buku kode_buku, Date tgl_pinjam, Date tgl_kembali, Integer jumlah, Integer nominal_denda, TransaksiSiswa kode_transaksi) {
+    public DetailTransaksiSiswa(Buku kode_buku, Date tgl_pinjam, Date tgl_kembali, Integer jumlah, Kerusakan kode_kerusakan, Integer nominal_denda, TransaksiSiswa kode_transaksi) {
         this.kode_buku = kode_buku;
         this.tgl_pinjam = tgl_pinjam;
         this.tgl_kembali = tgl_kembali;
         this.jumlah = jumlah;
+        this.kode_kerusakan = kode_kerusakan;
         this.nominal_denda = nominal_denda;
         this.kode_transaksi = kode_transaksi;
     }
@@ -77,6 +79,14 @@ public class DetailTransaksiSiswa implements Entity {
 
     public void setJumlah(Integer jumlah) {
         this.jumlah = jumlah;
+    }
+
+    public Kerusakan getKodeKerusakan() {
+        return kode_kerusakan;
+    }
+
+    public void setKodeKerusakan(Kerusakan kode_kerusakan) {
+        this.kode_kerusakan = kode_kerusakan;
     }
 
     public Integer getNominal_denda() {

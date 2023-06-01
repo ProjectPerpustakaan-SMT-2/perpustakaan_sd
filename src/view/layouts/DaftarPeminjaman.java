@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import repository.TransaksiRepository;
 import repository.Repository;
 import util.ViewUtil;
+import view.popup.PopupViewDetailPeminjaman;
 
 /**
  *
@@ -176,7 +177,7 @@ public class DaftarPeminjaman extends javax.swing.JInternalFrame {
         );
 
         if (choice == 0) {
-
+            new PopupViewDetailPeminjaman(transaksi).setVisible(true);
         } else if (choice == 1) {
             EditPinjamanPetugas editPinjamanPetugas = new EditPinjamanPetugas(transaksi);
             editPinjamanPetugas.setUsername(username);

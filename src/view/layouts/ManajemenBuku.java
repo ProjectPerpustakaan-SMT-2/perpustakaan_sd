@@ -75,6 +75,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         btnTambahBuku = new javax.swing.JLabel();
         btnKlasifikasi = new javax.swing.JLabel();
         btnPenerbit = new javax.swing.JLabel();
+        btnStatus = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -120,6 +121,15 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         getContentPane().add(btnPenerbit);
         btnPenerbit.setBounds(732, 150, 102, 33);
 
+        btnStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnStatus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnStatusMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btnStatus);
+        btnStatus.setBounds(858, 150, 82, 33);
+
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
         tCari.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -128,7 +138,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(988, 147, 280, 40);
+        tCari.setBounds(988, 145, 280, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -234,6 +244,15 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
         this.dispose();
     }//GEN-LAST:event_btnPenerbitMouseClicked
 
+    private void btnStatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnStatusMouseClicked
+        // TODO add your handling code here:
+        DaftarStatusBuku daftarStatusBuku = new DaftarStatusBuku();
+        daftarStatusBuku.setUsername(username);
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(daftarStatusBuku);
+        daftarStatusBuku.setVisible(true);
+    }//GEN-LAST:event_btnStatusMouseClicked
+
     private void loadDataTable(List<Buku> bukus) {
         int no = 1;
         DefaultTableModel model = new DefaultTableModel() {
@@ -320,6 +339,7 @@ public class ManajemenBuku extends javax.swing.JInternalFrame {
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnKlasifikasi;
     private javax.swing.JLabel btnPenerbit;
+    private javax.swing.JLabel btnStatus;
     private javax.swing.JLabel btnTambahBuku;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;

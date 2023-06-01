@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 import util.Database;
 import entity.Transaksi;
-import entity.Petugas;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -25,11 +26,19 @@ public class TransaksiRepository implements Repository<Transaksi> {
 
     private static String tableName = Transaksi.tableName;
 
+    private static Calendar cal = Calendar.getInstance();
+
     public List<Transaksi> get() {
-        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas IS NOT NULL";
+        cal.setTime(new Date());
+
+        String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM " + tableName
+                + " INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "WHERE kode_petugas IS NOT NULL AND transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali >= ?";
+
         List<Transaksi> transaksis = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setDate(1, new java.sql.Date(cal.getTime().getTime()));
             ResultSet results = statement.executeQuery();
 
             while (results.next()) {
@@ -90,20 +99,37 @@ public class TransaksiRepository implements Repository<Transaksi> {
 
     public List<Transaksi> search(Map<String, Object> values) {
         int iterate = 0;
-        String sql = "SELECT * FROM " + tableName + " WHERE kode_petugas IS NOT NULL AND ";
+        cal.setTime(new Date());
+
+        String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM " + tableName
+                + " INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "WHERE kode_petugas IS NOT NULL AND transaksi.status = 'dipinjam' AND detail_transaksi.tgl_kembali >= ? AND ";
+
         List<Transaksi> transaksis = new ArrayList<>();
 
-        for (String valueKey : values.keySet()) {
+        List<String> valueKeys = new ArrayList<>(values.keySet());
+        int totalKeys = valueKeys.size();
+
+        for (int i = 0; i < totalKeys; i++) {
+            String valueKey = valueKeys.get(i);
+
             if (iterate > 0) {
                 sql += " OR ";
             }
-            sql += valueKey + " LIKE CONCAT( '%',?,'%')";
 
+            sql += valueKey + " LIKE CONCAT('%', ?, '%')";
             iterate++;
         }
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            Database.prepareStmt(stmt, values);
+            stmt.setDate(1, new java.sql.Date(cal.getTime().getTime()));
+
+            for (int i = 0; i < totalKeys; i++) {
+                String valueKey = valueKeys.get(i);
+                String value = (String) values.get(valueKey);
+                stmt.setString(i + 2, value);
+            }
+
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {

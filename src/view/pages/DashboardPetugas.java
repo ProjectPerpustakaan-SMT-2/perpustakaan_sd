@@ -14,6 +14,7 @@ import static repository.Repository.conn;
 import view.layouts.DaftarPetugas;
 import view.layouts.DaftarKerusakan;
 import view.layouts.DaftarPeminjaman;
+import view.layouts.DaftarPengembalian;
 import view.layouts.DashboardPetugasView;
 import view.layouts.ManajemenBuku;
 
@@ -166,7 +167,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
         SideBar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Sidebar.png"))); // NOI18N
         panelSideBar.add(SideBar);
-        SideBar.setBounds(0, 0, 352, 777);
+        SideBar.setBounds(0, 0, 352, 768);
 
         getContentPane().add(panelSideBar);
         panelSideBar.setBounds(0, 0, 350, 768);
@@ -261,6 +262,11 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnManajemen.setIcon(null);
         btnSanksi.setIcon(null);
         btnLaporan.setIcon(null);
+
+        jDesktopPane1.removeAll();
+        DaftarPengembalian dp = new DaftarPengembalian();
+        dp.setUsername(tUsername.getText());
+        jDesktopPane1.add(dp).setVisible(true);
     }//GEN-LAST:event_btnPengembalianMouseClicked
 
     private void btnManajemenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenMouseClicked
