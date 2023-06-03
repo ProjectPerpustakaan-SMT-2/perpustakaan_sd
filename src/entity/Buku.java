@@ -117,7 +117,7 @@ public class Buku implements Entity {
         this.jumlah = jumlah;
     }
 
-    public String getNote() {
+    public String getCatatan() {
         return note;
     }
 

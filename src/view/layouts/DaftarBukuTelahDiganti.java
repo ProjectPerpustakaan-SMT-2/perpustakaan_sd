@@ -4,42 +4,44 @@
  */
 package view.layouts;
 
-import customUI.TableCustom;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.util.Calendar;
-import java.util.List;
+import javax.swing.JDesktopPane;
 import javax.swing.table.DefaultTableModel;
 
-import entity.TransaksiPengembalian;
-import java.util.ArrayList;
-import javax.swing.JDesktopPane;
+import entity.Kerusakan;
+import customUI.TableCustom;
+import entity.Transaksi;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import repository.Repository;
 import static repository.Repository.conn;
-import repository.TransaksiPengembalianRepository;
-import util.NumberFormatUtil;
+import repository.TransaksiRepository;
+
 import util.ViewUtil;
-import view.popup.PopupViewDetailPengembalian;
+import view.popup.PopupViewDetailBukuTelahDiganti;
 
 /**
  *
  * @author Hafidz Fadhillah
  */
-public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
+public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
 
     private String username;
 
-    private Repository<TransaksiPengembalian> transRepo = new TransaksiPengembalianRepository();
+    private Repository<Transaksi> transRepo = new TransaksiRepository();
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
     /**
-     * Creates new form TambahPeminjamanPetugas
+     * Creates new form TambahBuku
      */
-    public DaftarTelahDiKembalikan() {
+    public DaftarBukuTelahDiganti() {
         initComponents();
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
@@ -76,7 +78,7 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
 
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
-        btnTambahPeminjaman = new javax.swing.JLabel();
+        btnDaftarKerusakan = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -95,14 +97,14 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
         getContentPane().add(tUserLogin);
         tUserLogin.setBounds(1105, 15, 200, 23);
 
-        btnTambahPeminjaman.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnTambahPeminjaman.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnDaftarKerusakan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDaftarKerusakan.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnTambahPeminjamanMouseClicked(evt);
+                btnDaftarKerusakanMouseClicked(evt);
             }
         });
-        getContentPane().add(btnTambahPeminjaman);
-        btnTambahPeminjaman.setBounds(443, 148, 175, 34);
+        getContentPane().add(btnDaftarKerusakan);
+        btnDaftarKerusakan.setBounds(443, 150, 177, 30);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -112,7 +114,7 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(980, 145, 270, 40);
+        tCari.setBounds(995, 145, 290, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -132,7 +134,7 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
         jScrollPane2.setViewportView(Tabel);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(437, 200, 860, 520);
+        jScrollPane2.setBounds(437, 205, 890, 500);
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Buku Yang Telah Dikembalikan.png"))); // NOI18N
         getContentPane().add(background);
@@ -141,87 +143,21 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
         setBounds(0, 0, 1366, 768);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnDaftarKerusakanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDaftarKerusakanMouseClicked
+        // TODO add your handling code here:
+        DaftarBukuHilang daftarBukuHilang = new DaftarBukuHilang();
+        daftarBukuHilang.setUsername(username);
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(daftarBukuHilang);
+        daftarBukuHilang.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_btnDaftarKerusakanMouseClicked
+
     private void tCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tCariKeyReleased
         // TODO add your handling code here:
         String value = tCari.getText();
 
-        String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
-                + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                + "WHERE transaksi.status = 'dikembalikan' AND transaksi.nama_peminjam LIKE ?";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setString(1, "%" + value + "%");
-            ResultSet results = statement.executeQuery();
-
-            List<TransaksiPengembalian> transList = new ArrayList<>();
-
-            while (results.next()) {
-                TransaksiPengembalian transaksiPengembalian = new TransaksiPengembalian();
-
-                transaksiPengembalian.setNama_peminjam(results.getString("nama_peminjam"));
-                transaksiPengembalian.setKelas(results.getString("kelas"));
-                transaksiPengembalian.setTotal_pinjam(results.getInt("total_pinjam"));
-                transaksiPengembalian.setTotal_denda(results.getInt("total_denda"));
-                transaksiPengembalian.setKode_transaksi(results.getInt("kode_transaksi"));
-
-                transList.add(transaksiPengembalian);
-            }
-
-            loadDataTable(transList);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_tCariKeyReleased
-
-    private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
-        // TODO add your handling code here:
-        int row = Tabel.getSelectedRow();
-        String value = Tabel.getModel().getValueAt(row, 5).toString();
-        TransaksiPengembalian transaksi = transRepo.get(Integer.valueOf(value));
-
-        new PopupViewDetailPengembalian(transaksi).setVisible(true);
-    }//GEN-LAST:event_TabelMouseClicked
-
-    private void btnTambahPeminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTambahPeminjamanMouseClicked
-        // TODO add your handling code here:
-        DaftarPengembalian daftarPengembalian = new DaftarPengembalian();
-        daftarPengembalian.setUsername(username);
-        JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarPengembalian);
-        daftarPengembalian.setVisible(true);
-
-        this.dispose();
-    }//GEN-LAST:event_btnTambahPeminjamanMouseClicked
-
-    private void loadData() {
-        String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
-                + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                + "WHERE transaksi.status = 'dikembalikan'";
-
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            ResultSet results = statement.executeQuery();
-
-            List<TransaksiPengembalian> transList = new ArrayList<>();
-
-            while (results.next()) {
-                TransaksiPengembalian transaksiPengembalian = new TransaksiPengembalian();
-
-                transaksiPengembalian.setNama_peminjam(results.getString("nama_peminjam"));
-                transaksiPengembalian.setKelas(results.getString("kelas"));
-                transaksiPengembalian.setTotal_pinjam(results.getInt("total_pinjam"));
-                transaksiPengembalian.setTotal_denda(results.getInt("total_denda"));
-                transaksiPengembalian.setKode_transaksi(results.getInt("kode_transaksi"));
-
-                transList.add(transaksiPengembalian); // Add the buku object to the list
-            }
-
-            loadDataTable(transList);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadDataTable(List<TransaksiPengembalian> trans) {
         int no = 1;
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -233,25 +169,94 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
         model.addColumn("No");
         model.addColumn("Nama Peminjam");
         model.addColumn("Kelas");
-        model.addColumn("Total Denda");
-        model.addColumn("Total Buku Yang Dipinjam");
+        model.addColumn("Buku");
+        model.addColumn("Tgl Kembali");
+        model.addColumn("Catatan");
         model.addColumn("ID");
 
-        for (TransaksiPengembalian transaksi : trans) {
+        String sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
+                + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
+                + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                + "WHERE buku.status = 'Diganti' AND kerusakan.jenis_kerusakan = 'Hilang' AND transaksi.nama_peminjam LIKE ? ORDER BY transaksi.kode_transaksi ASC";
 
-            model.addRow(new Object[]{
-                no++,
-                transaksi.getNama_peminjam(),
-                transaksi.getKelas(),
-                "Rp. " + NumberFormatUtil.formatDec(transaksi.getTotal_denda()),
-                transaksi.getTotal_pinjam(),
-                transaksi.getKode_transaksi()
-            });
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, "%" + value + "%");
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    results.getString("nama_peminjam"),
+                    results.getString("kelas"),
+                    results.getString("judul_buku"),
+                    sdf.format(results.getDate("tgl_kembali")),
+                    results.getString("note"),
+                    results.getInt("kode_transaksi")
+                });
+            }
+
+            Tabel.setModel(model);
+            ViewUtil.hideTableColumn(Tabel, 6);
+            customStyleTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }//GEN-LAST:event_tCariKeyReleased
 
-        Tabel.setModel(model);
-        ViewUtil.hideTableColumn(Tabel, 5);
-        customStyleTable();
+    private void TabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelMouseClicked
+        // TODO add your handling code here:
+        int row = Tabel.getSelectedRow();
+        String value = Tabel.getModel().getValueAt(row, 6).toString();
+        Transaksi transaksi = transRepo.get(Integer.valueOf(value));
+
+        new PopupViewDetailBukuTelahDiganti(transaksi).setVisible(true);
+    }//GEN-LAST:event_TabelMouseClicked
+
+    private void loadData() {
+        int no = 1;
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Disable cell editing
+            }
+        };
+
+        model.addColumn("No");
+        model.addColumn("Nama Peminjam");
+        model.addColumn("Kelas");
+        model.addColumn("Buku");
+        model.addColumn("Tgl Kembali");
+        model.addColumn("Catatan");
+        model.addColumn("ID");
+
+        String sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
+                + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
+                + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                + "WHERE buku.status = 'Diganti' AND kerusakan.jenis_kerusakan = 'Hilang' ORDER BY transaksi.kode_transaksi ASC";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    results.getString("nama_peminjam"),
+                    results.getString("kelas"),
+                    results.getString("judul_buku"),
+                    sdf.format(results.getDate("tgl_kembali")),
+                    results.getString("note"),
+                    results.getInt("kode_transaksi")
+                });
+            }
+
+            Tabel.setModel(model);
+            ViewUtil.hideTableColumn(Tabel, 6);
+            customStyleTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void customStyleTable() {
@@ -260,37 +265,35 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
 
     private void jam() {
         try {
-            ActionListener taskPerformer = new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    String finalJam;
-                    String noljam = "";
-                    String nolmenit = "";
-                    String noldetik = "";
-                    Calendar dt = Calendar.getInstance();
+            ActionListener taskPerformer = (ActionEvent ae) -> {
+                String finalJam;
+                String noljam = "";
+                String nolmenit = "";
+                String noldetik = "";
+                Calendar dt = Calendar.getInstance();
 
-                    int jam = dt.get(Calendar.HOUR_OF_DAY);
-                    int menit = dt.get(Calendar.MINUTE);
-                    int detik = dt.get(Calendar.SECOND);
+                int jam = dt.get(Calendar.HOUR_OF_DAY);
+                int menit = dt.get(Calendar.MINUTE);
+                int detik = dt.get(Calendar.SECOND);
 
-                    if (jam < 10) {
-                        noljam = "0";
-                    }
-
-                    if (menit < 10) {
-                        nolmenit = "0";
-                    }
-
-                    if (detik < 10) {
-                        noldetik = "0";
-                    }
-
-                    String Sjam = noljam + Integer.toString(jam);
-                    String Smenit = nolmenit + Integer.toString(menit);
-                    String Sdetik = noldetik + Integer.toString(detik);
-                    finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
-
-                    tJam.setText(finalJam);
+                if (jam < 10) {
+                    noljam = "0";
                 }
+
+                if (menit < 10) {
+                    nolmenit = "0";
+                }
+
+                if (detik < 10) {
+                    noldetik = "0";
+                }
+
+                String Sjam = noljam + Integer.toString(jam);
+                String Smenit = nolmenit + Integer.toString(menit);
+                String Sdetik = noldetik + Integer.toString(detik);
+                finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
+
+                tJam.setText(finalJam);
             };
             new javax.swing.Timer(1000, taskPerformer).start();
         } catch (Exception e) {
@@ -301,7 +304,7 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
-    private javax.swing.JLabel btnTambahPeminjaman;
+    private javax.swing.JLabel btnDaftarKerusakan;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
     private javax.swing.JLabel tJam;

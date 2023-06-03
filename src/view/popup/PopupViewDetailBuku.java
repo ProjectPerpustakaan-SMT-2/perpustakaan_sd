@@ -38,7 +38,7 @@ public class PopupViewDetailBuku extends javax.swing.JFrame {
         tTahun.setText(sdf.format(buku.getPenerbit().getTahun_tebit()));
         tSumber.setText(buku.getSumber());
         tHalaman.setText(String.valueOf(buku.getHalaman()));
-        tCatatan.setText(buku.getNote());
+        tCatatan.setText(buku.getCatatan());
 
         if (buku.getJumlah() > 0) {
             tStatusBuku.setText("Tersedia");
