@@ -259,7 +259,7 @@ public class EditBuku extends javax.swing.JInternalFrame {
         tHalaman.setText(String.valueOf(buku.getHalaman()));
         tStatus.setSelectedItem(String.valueOf(buku.getBukuStatus()));
         tJumlah.setText(String.valueOf(buku.getJumlah()));
-        tCatatan.setText(buku.getNote());
+        tCatatan.setText(buku.getCatatan());
 
         penerbitInput.setSelectedItem(new ComboItem(
                 buku.getPenerbit().getKode_penerbit(),

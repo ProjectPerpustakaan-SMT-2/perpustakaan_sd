@@ -130,9 +130,9 @@ public class BukuRepository implements Repository<Buku> {
             stmt.setString(7, bku.getBukuStatus().toString());
             stmt.setInt(8, bku.getJumlah());
 
-            String note = bku.getNote() != null ? bku.getNote() : null;
+            String note = bku.getCatatan() != null ? bku.getCatatan() : null;
             if (note != null) {
-                stmt.setString(9, bku.getNote());
+                stmt.setString(9, bku.getCatatan());
             } else {
                 stmt.setNull(9, Types.CLOB);
             }
@@ -164,9 +164,9 @@ public class BukuRepository implements Repository<Buku> {
             stmt.setString(7, bku.getBukuStatus().toString());
             stmt.setInt(8, bku.getJumlah());
 
-            String note = bku.getNote() != null ? bku.getNote() : null;
+            String note = bku.getCatatan() != null ? bku.getCatatan() : null;
             if (note != null) {
-                stmt.setString(9, bku.getNote());
+                stmt.setString(9, bku.getCatatan());
             } else {
                 stmt.setNull(9, Types.CLOB);
             }
