@@ -6,6 +6,7 @@ package view.pages;
 
 import javax.swing.ImageIcon;
 import view.layouts.DaftarBukuSiswa;
+import view.layouts.DashboardSiswaView;
 import view.layouts.TambahPinjamanSiswa;
 
 /**
@@ -116,6 +117,10 @@ public class DashboardSiswa extends javax.swing.JFrame {
         btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
         btnDaftarBuku.setIcon(null);
         btnPinjamBuku.setIcon(null);
+
+        jDesktopPane1.removeAll();
+        DashboardSiswaView dsv = new DashboardSiswaView();
+        jDesktopPane1.add(dsv).setVisible(true);
     }//GEN-LAST:event_btnDashboardMouseClicked
 
     private void btnDaftarBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDaftarBukuMouseClicked
@@ -187,6 +192,9 @@ public class DashboardSiswa extends javax.swing.JFrame {
     private void menuAktifPertama() {
         btnDashboard.setIcon(new ImageIcon(getClass().getResource("/assets/layouts/Menu Dashboard.png")));
 
+        jDesktopPane1.removeAll();
+        DashboardSiswaView dsv = new DashboardSiswaView();
+        jDesktopPane1.add(dsv).setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
