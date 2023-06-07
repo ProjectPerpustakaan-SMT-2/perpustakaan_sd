@@ -140,15 +140,13 @@ public class LoginView extends javax.swing.JFrame {
 
     private void btnLoginRFIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginRFIDActionPerformed
         // TODO add your handling code here:
-        String codeRFID = "3960060473";
-
-        if (tUsername.getText().equals(codeRFID)) {
+        if (!new AuthService().loginRFID(tUsername.getText())) {
+            new PopupViewLoginError().setVisible(true);
+        } else {
             PopupViewLoginSucces loginSucces = new PopupViewLoginSucces();
             loginSucces.setUsername(tUsername.getText());
             loginSucces.setVisible(true);
             this.dispose();
-        } else {
-            new PopupViewLoginError().setVisible(true);
         }
     }//GEN-LAST:event_btnLoginRFIDActionPerformed
 
