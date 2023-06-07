@@ -158,8 +158,8 @@ public class TambahKerusakan extends javax.swing.JInternalFrame {
 
             new PopupViewDataBerhasil().setVisible(true);
         } else {
-            new PopupViewDataGagal().setVisible(true);
             JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
+            new PopupViewDataGagal().setVisible(true);
         }
     }//GEN-LAST:event_btnSimpanMouseClicked
 

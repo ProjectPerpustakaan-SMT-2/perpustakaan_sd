@@ -4,12 +4,15 @@
  */
 package repository;
 
+import data.ChartData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import util.Database;
 
 /**
@@ -102,5 +105,33 @@ public class DashboardPRespository {
         }
 
         return totalBuku;
+    }
+
+    public List<ChartData> getChartData() {
+        List<ChartData> data = new ArrayList<>();
+
+        String sql = "SELECT DATE_FORMAT(tgl_pinjam, '%M') AS MONTH, "
+                + "SUM(jumlah) AS buku, "
+                + "COUNT(DISTINCT transaksi.nama_peminjam) AS peminjam "
+                + "FROM detail_transaksi "
+                + "JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "GROUP BY YEAR(tgl_pinjam), MONTH(tgl_pinjam), tgl_pinjam LIMIT 5";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                data.add(new ChartData(
+                        rs.getString("month"),
+                        rs.getInt("buku"),
+                        rs.getInt("peminjam")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return data;
     }
 }

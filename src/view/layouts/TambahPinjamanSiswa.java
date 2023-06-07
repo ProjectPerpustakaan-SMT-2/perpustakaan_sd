@@ -278,9 +278,10 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
                 errorMessages.add(violation.getMessage());
             }
 
-            new PopupViewDataGagal().setVisible(true);
             String errorMessageString = String.join("\n", errorMessages);
             JOptionPane.showMessageDialog(this, errorMessageString);
+
+            new PopupViewDataGagal().setVisible(true);
             return;
         }
 

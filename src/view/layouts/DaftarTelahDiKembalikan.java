@@ -112,7 +112,7 @@ public class DaftarTelahDiKembalikan extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(980, 145, 270, 40);
+        tCari.setBounds(980, 145, 280, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
