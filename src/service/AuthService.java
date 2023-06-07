@@ -37,11 +37,19 @@ public class AuthService {
             return false;
         }
 
-        for (Petugas petugas : ptgs) {
-            if (petugas.getUsername().equals(username) && petugas.getPassword().equals(password)) {
-                SessionData.petugas = petugas;
-                return true;
+        SessionData.petugas = ptgs.get(0);
+        return true;
+    }
+
+    public boolean loginRFID(String username) {
+        List<Petugas> ptgs = ptgRepo.get(new HashMap<String, Object>() {
+            {
+                put("username", username);
             }
+        });
+
+        if (ptgs.size() < 1) {
+            return false;
         }
 
         SessionData.petugas = ptgs.get(0);
