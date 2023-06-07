@@ -4,12 +4,16 @@
  */
 package view.layouts;
 
+import data.ChartData;
+import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import raven.chart.ModelChart;
 import repository.DashboardPRespository;
 import util.NumberFormatUtil;
 
@@ -32,8 +36,10 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
 
-        jam();
+        initChart();
         fillDashboard();
+
+        jam();
     }
 
     public void setUsername(String username) {
@@ -68,6 +74,7 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         tBukuBelumKembali = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         tTotalBuku = new javax.swing.JLabel();
+        chart = new raven.chart.CurveLineChart();
         background = new javax.swing.JLabel();
 
         setBorder(null);
@@ -117,6 +124,10 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         getContentPane().add(tTotalBuku);
         tTotalBuku.setBounds(1143, 200, 140, 120);
 
+        chart.setForeground(new java.awt.Color(0, 0, 0));
+        getContentPane().add(chart);
+        chart.setBounds(450, 420, 850, 310);
+
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Dashboard Petugas.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
@@ -129,6 +140,24 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
         tBukuDipinjam.setText(NumberFormatUtil.formatDec(repo.getBukuDipinjam(new Date())));
         tBukuBelumKembali.setText(NumberFormatUtil.formatDec(repo.getBukuBelumKembali(new Date())));
         tTotalBuku.setText(NumberFormatUtil.formatDec(repo.getTotalBuku()));
+    }
+
+    private void initChart() {
+        List<ChartData> cData = repo.getChartData();
+
+        chart.addLegend("Buku Dipinjam", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Peminjam", Color.decode("#0099F7"), Color.decode("#F11712"));
+
+        for (ChartData data : cData) {
+            chart.addData(new ModelChart(data.getMonth(), new double[]{
+                data.getBuku(),
+                data.getPeminjam()
+            }));
+        }
+
+        if (cData.size() > 1) {
+            chart.start();
+        }
     }
 
     private void jam() {
@@ -173,6 +202,7 @@ public class DashboardPetugasView extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
+    private raven.chart.CurveLineChart chart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel tBukuBelumKembali;

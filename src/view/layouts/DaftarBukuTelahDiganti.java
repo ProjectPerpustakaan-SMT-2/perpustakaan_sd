@@ -79,6 +79,7 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
         btnDaftarKerusakan = new javax.swing.JLabel();
+        btnDaftarBukuHilang = new javax.swing.JLabel();
         tCari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
@@ -104,7 +105,16 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(btnDaftarKerusakan);
-        btnDaftarKerusakan.setBounds(443, 150, 177, 30);
+        btnDaftarKerusakan.setBounds(440, 149, 98, 33);
+
+        btnDaftarBukuHilang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDaftarBukuHilang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDaftarBukuHilangMouseClicked(evt);
+            }
+        });
+        getContentPane().add(btnDaftarBukuHilang);
+        btnDaftarBukuHilang.setBounds(563, 149, 126, 33);
 
         tCari.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tCari.setBorder(null);
@@ -114,7 +124,7 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
             }
         });
         getContentPane().add(tCari);
-        tCari.setBounds(995, 145, 290, 40);
+        tCari.setBounds(995, 145, 280, 40);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -136,7 +146,7 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(437, 205, 890, 500);
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Buku Yang Telah Dikembalikan.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/layouts/Daftar Buku Telah Diganti.png"))); // NOI18N
         getContentPane().add(background);
         background.setBounds(0, 0, 1366, 768);
 
@@ -145,11 +155,11 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
 
     private void btnDaftarKerusakanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDaftarKerusakanMouseClicked
         // TODO add your handling code here:
-        DaftarBukuHilang daftarBukuHilang = new DaftarBukuHilang();
-        daftarBukuHilang.setUsername(username);
+        DaftarKerusakan daftarKerusakan = new DaftarKerusakan();
+        daftarKerusakan.setUsername(username);
         JDesktopPane desktopPane = getDesktopPane();
-        desktopPane.add(daftarBukuHilang);
-        daftarBukuHilang.setVisible(true);
+        desktopPane.add(daftarKerusakan);
+        daftarKerusakan.setVisible(true);
 
         this.dispose();
     }//GEN-LAST:event_btnDaftarKerusakanMouseClicked
@@ -212,6 +222,17 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
 
         new PopupViewDetailBukuTelahDiganti(transaksi).setVisible(true);
     }//GEN-LAST:event_TabelMouseClicked
+
+    private void btnDaftarBukuHilangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDaftarBukuHilangMouseClicked
+        // TODO add your handling code here:
+        DaftarBukuHilang daftarBukuHilang = new DaftarBukuHilang();
+        daftarBukuHilang.setUsername(username);
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(daftarBukuHilang);
+        daftarBukuHilang.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_btnDaftarBukuHilangMouseClicked
 
     private void loadData() {
         int no = 1;
@@ -304,6 +325,7 @@ public class DaftarBukuTelahDiganti extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
+    private javax.swing.JLabel btnDaftarBukuHilang;
     private javax.swing.JLabel btnDaftarKerusakan;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tCari;
