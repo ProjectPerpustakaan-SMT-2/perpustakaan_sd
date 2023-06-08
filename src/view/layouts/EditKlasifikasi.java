@@ -95,6 +95,11 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
 
         tKodeDDC.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKodeDDC.setBorder(null);
+        tKodeDDC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tKodeDDCKeyPressed(evt);
+            }
+        });
         getContentPane().add(tKodeDDC);
         tKodeDDC.setBounds(447, 183, 850, 35);
 
@@ -179,6 +184,17 @@ public class EditKlasifikasi extends javax.swing.JInternalFrame {
             new PopupViewHapusData().setVisible(true);
         }
     }//GEN-LAST:event_btnHapusMouseClicked
+
+    private void tKodeDDCKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tKodeDDCKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tKodeDDC.setEditable(false);
+        } else {
+            tKodeDDC.setEditable(true);
+        }
+    }//GEN-LAST:event_tKodeDDCKeyPressed
 
     private void fillForm() {
         tKodeDDC.setText(String.valueOf(klasifikasi.getKode_ddc()));

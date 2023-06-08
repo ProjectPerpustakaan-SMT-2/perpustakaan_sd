@@ -97,6 +97,11 @@ public class TambahKerusakan extends javax.swing.JInternalFrame {
 
         tNominalDenda.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tNominalDenda.setBorder(null);
+        tNominalDenda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tNominalDendaKeyPressed(evt);
+            }
+        });
         getContentPane().add(tNominalDenda);
         tNominalDenda.setBounds(897, 178, 423, 35);
 
@@ -169,6 +174,17 @@ public class TambahKerusakan extends javax.swing.JInternalFrame {
         tDeskripsiDenda.setText("");
         tNominalDenda.setText("");
     }//GEN-LAST:event_btnResetMouseClicked
+
+    private void tNominalDendaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tNominalDendaKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tNominalDenda.setEditable(false);
+        } else {
+            tNominalDenda.setEditable(true);
+        }
+    }//GEN-LAST:event_tNominalDendaKeyPressed
 
     private void jam() {
         try {

@@ -244,6 +244,9 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         tKodeBarcode.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKodeBarcode.setBorder(null);
         tKodeBarcode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tKodeBarcodeKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tKodeBarcodeKeyReleased(evt);
             }
@@ -598,6 +601,17 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
             timer.start();
         }
     }//GEN-LAST:event_tKodeBarcodeKeyReleased
+
+    private void tKodeBarcodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tKodeBarcodeKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tKodeBarcode.setEditable(false);
+        } else {
+            tKodeBarcode.setEditable(true);
+        }
+    }//GEN-LAST:event_tKodeBarcodeKeyPressed
 
     private TransaksiPengembalian mapToEntity(ResultSet result) throws SQLException {
         int ptgId = result.getInt("kode_petugas");
