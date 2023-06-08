@@ -22,6 +22,8 @@ import java.awt.Color;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,6 +41,7 @@ import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepositorySiswa;
+import service.BarcodeImage;
 import service.TransaksiValidasi;
 import util.SearchableComboBox;
 import util.ValidasiUtil;
@@ -288,6 +291,11 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         int id = transRepo.add(transaksiSiswa);
         transaksiSiswa.setKode_transaksi(id);
         addDetails(transaksiSiswa);
+
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String barcodePeminjaman = id + dateTime.format(formatter);
+        BarcodeImage.createImage("Barcode_Peminjaman.png", barcodePeminjaman);
 
         setStatusBuku();
 
