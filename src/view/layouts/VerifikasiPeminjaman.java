@@ -226,6 +226,11 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
         tKodeBarcode.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tKodeBarcode.setBorder(null);
+        tKodeBarcode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tKodeBarcodeKeyPressed(evt);
+            }
+        });
         getContentPane().add(tKodeBarcode);
         tKodeBarcode.setBounds(469, 176, 765, 35);
 
@@ -489,6 +494,17 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         loadTable();
         customColumnTable();
     }//GEN-LAST:event_btnHapusMouseClicked
+
+    private void tKodeBarcodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tKodeBarcodeKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tKodeBarcode.setEditable(false);
+        } else {
+            tKodeBarcode.setEditable(true);
+        }
+    }//GEN-LAST:event_tKodeBarcodeKeyPressed
 
     private void fillInput() {
         tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));

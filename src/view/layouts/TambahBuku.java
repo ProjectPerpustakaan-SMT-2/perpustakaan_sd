@@ -146,6 +146,11 @@ public class TambahBuku extends javax.swing.JInternalFrame {
 
         tISBN.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tISBN.setBorder(null);
+        tISBN.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tISBNKeyPressed(evt);
+            }
+        });
         getContentPane().add(tISBN);
         tISBN.setBounds(447, 183, 840, 35);
 
@@ -166,6 +171,11 @@ public class TambahBuku extends javax.swing.JInternalFrame {
 
         tHalaman.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tHalaman.setBorder(null);
+        tHalaman.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tHalamanKeyPressed(evt);
+            }
+        });
         getContentPane().add(tHalaman);
         tHalaman.setBounds(882, 426, 405, 35);
 
@@ -179,6 +189,11 @@ public class TambahBuku extends javax.swing.JInternalFrame {
 
         tJumlah.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJumlah.setBorder(null);
+        tJumlah.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tJumlahKeyPressed(evt);
+            }
+        });
         getContentPane().add(tJumlah);
         tJumlah.setBounds(882, 507, 404, 35);
 
@@ -269,6 +284,39 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         tStatus.setSelectedIndex(-1);
         tJumlah.setText("");
     }//GEN-LAST:event_btnResetMouseClicked
+
+    private void tISBNKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tISBNKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tISBN.setEditable(false);
+        } else {
+            tISBN.setEditable(true);
+        }
+    }//GEN-LAST:event_tISBNKeyPressed
+
+    private void tHalamanKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tHalamanKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tISBN.setEditable(false);
+        } else {
+            tISBN.setEditable(true);
+        }
+    }//GEN-LAST:event_tHalamanKeyPressed
+
+    private void tJumlahKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tJumlahKeyPressed
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            tISBN.setEditable(false);
+        } else {
+            tISBN.setEditable(true);
+        }
+    }//GEN-LAST:event_tJumlahKeyPressed
 
     private void jam() {
         try {

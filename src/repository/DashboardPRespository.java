@@ -110,12 +110,19 @@ public class DashboardPRespository {
     public List<ChartData> getChartData() {
         List<ChartData> data = new ArrayList<>();
 
-        String sql = "SELECT DATE_FORMAT(tgl_pinjam, '%M') AS MONTH, "
-                + "SUM(jumlah) AS buku, "
-                + "COUNT(DISTINCT transaksi.nama_peminjam) AS peminjam "
-                + "FROM detail_transaksi "
-                + "JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                + "GROUP BY YEAR(tgl_pinjam), MONTH(tgl_pinjam), tgl_pinjam LIMIT 5";
+        String sql = "SELECT subquery.month, SUM(buku) AS buku, SUM(peminjam) AS peminjam "
+                + "FROM ( "
+                + "    SELECT DATE_FORMAT(tgl_pinjam, '%M') AS MONTH, "
+                + "           tgl_pinjam, "
+                + "           SUM(jumlah) AS buku, "
+                + "           COUNT(DISTINCT transaksi.nama_peminjam) AS peminjam "
+                + "    FROM detail_transaksi "
+                + "    JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "    GROUP BY YEAR(tgl_pinjam), MONTH(tgl_pinjam), tgl_pinjam "
+                + ") AS subquery "
+                + "WHERE buku > 0 OR peminjam > 0 "
+                + "GROUP BY subquery.month "
+                + "LIMIT 5";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
