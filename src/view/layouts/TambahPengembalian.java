@@ -212,7 +212,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         tUserLogin = new javax.swing.JLabel();
         tKodeBarcode = new javax.swing.JTextField();
         tPeminjam = new javax.swing.JTextField();
-        tKelas = new javax.swing.JTextField();
+        tKelas = new javax.swing.JComboBox<>();
         tRp = new javax.swing.JTextField();
         tNominalDenda = new javax.swing.JTextField();
         tRp1 = new javax.swing.JTextField();
@@ -259,7 +259,10 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         getContentPane().add(tPeminjam);
         tPeminjam.setBounds(469, 269, 588, 35);
 
+        tKelas.setBackground(new Color(0,0,0,0));
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        tKelas.setSelectedIndex(-1);
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
         tKelas.setBounds(1082, 269, 160, 35);
@@ -361,7 +364,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         }
 
         transaksi.setNama_peminjam(tPeminjam.getText());
-        transaksi.setKelas(tKelas.getText());
+        transaksi.setKelas(tKelas.getSelectedItem().toString());
         transaksi.setStatus(TransaksiStatus.dikembalikan);
         transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
         transaksi.setTotal_denda(Integer.valueOf(tJumlahDenda.getText()));
@@ -438,7 +441,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         tKodeBarcode.setText("");
         tPeminjam.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tNominalDenda.setText("0");
         tJumlahDenda.setText("");
         tJumlahBuku.setText("");
@@ -558,7 +561,11 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         final String kode_transaksi = tKodeBarcode.getText();
 
-        if ("".equals(kode_transaksi)) {
+        // Remove dateformat and keep kode_transaksi
+        int dynamicPortionLength = getDynamicPortionLength(kode_transaksi);
+        String dynamicPortion = kode_transaksi.substring(0, dynamicPortionLength);
+
+        if ("".equals(dynamicPortion)) {
             resetPinjamBuku();
         } else {
             Timer timer = new Timer(500, new ActionListener() {
@@ -569,7 +576,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
                             + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_transaksi = ?";
 
                     try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                        statement.setInt(1, Integer.parseInt(kode_transaksi));
+                        statement.setInt(1, Integer.parseInt(dynamicPortion));
                         ResultSet results = statement.executeQuery();
 
                         if (results.next()) {
@@ -582,7 +589,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
 
                             tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
                             tPeminjam.setText(transaksi.getNama_peminjam());
-                            tKelas.setText(transaksi.getKelas());
+                            tKelas.setSelectedItem(transaksi.getKelas());
 
                             loadTable();
                             customColumnTable();
@@ -638,7 +645,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
     private void resetPinjamBuku() {
         tKodeBarcode.setText("");
         tPeminjam.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tNominalDenda.setText("0");
         tJumlahDenda.setText("");
         tJumlahBuku.setText("");
@@ -706,6 +713,18 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         }
     }
 
+    private static int getDynamicPortionLength(String input) {
+        int inputLength = input.length();
+        int dynamicPortionLength = 1; // Default dynamic portion length
+
+        // Adjust dynamic portion length based on input length
+        if (inputLength >= 9) {
+            dynamicPortionLength = inputLength - 8;
+        }
+
+        return dynamicPortionLength;
+    }
+
     private javax.swing.JComboBox bukuInput;
     private javax.swing.JComboBox kerusakanInput;
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -719,7 +738,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
     private javax.swing.JLabel tJam;
     private javax.swing.JLabel tJumlahBuku;
     private javax.swing.JTextField tJumlahDenda;
-    private javax.swing.JTextField tKelas;
+    private javax.swing.JComboBox<String> tKelas;
     private javax.swing.JTextField tKodeBarcode;
     private javax.swing.JLabel tNamaPetugas;
     private javax.swing.JTextField tNominalDenda;

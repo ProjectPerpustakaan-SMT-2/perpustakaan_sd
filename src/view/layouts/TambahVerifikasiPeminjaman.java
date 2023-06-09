@@ -192,7 +192,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         tUserLogin = new javax.swing.JLabel();
         tKodeBarcode = new javax.swing.JTextField();
         tPeminjam = new javax.swing.JTextField();
-        tKelas = new javax.swing.JTextField();
+        tKelas = new javax.swing.JComboBox<>();
         tJumlahBuku = new javax.swing.JTextField();
         tKembali = new com.toedter.calendar.JDateChooser();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -236,7 +236,10 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         getContentPane().add(tPeminjam);
         tPeminjam.setBounds(469, 257, 585, 35);
 
+        tKelas.setBackground(new Color(0,0,0,0));
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        tKelas.setSelectedIndex(-1);
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
         tKelas.setBounds(1082, 257, 160, 35);
@@ -322,7 +325,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         }
 
         transaksi.setNama_peminjam(tPeminjam.getText());
-        transaksi.setKelas(tKelas.getText());
+        transaksi.setKelas(tKelas.getSelectedItem().toString());
         transaksi.setStatus(TransaksiStatus.dipinjam);
         transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
         transaksi.setTotal_denda(0);
@@ -507,6 +510,10 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private void setLoadData() {
         final String kode_transaksi = tKodeBarcode.getText();
 
+        // Remove dateformat and keep kode_transaksi
+        int dynamicPortionLength = getDynamicPortionLength(kode_transaksi);
+        String dynamicPortion = kode_transaksi.substring(0, dynamicPortionLength);
+
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -528,7 +535,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
                         tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
                         tPeminjam.setText(transaksi.getNama_peminjam());
-                        tKelas.setText(transaksi.getKelas());
+                        tKelas.setSelectedItem(transaksi.getKelas());
 
                         loadTable();
                         customColumnTable();
@@ -551,7 +558,11 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         final String kode_transaksi = tKodeBarcode.getText();
 
-        if ("".equals(kode_transaksi)) {
+        // Remove dateformat and keep kode_transaksi
+        int dynamicPortionLength = getDynamicPortionLength(kode_transaksi);
+        String dynamicPortion = kode_transaksi.substring(0, dynamicPortionLength);
+
+        if ("".equals(dynamicPortion)) {
             resetPinjamBuku();
         } else {
             Timer timer = new Timer(500, new ActionListener() {
@@ -562,7 +573,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
                             + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_transaksi = ?";
 
                     try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                        statement.setInt(1, Integer.parseInt(kode_transaksi));
+                        statement.setInt(1, Integer.parseInt(dynamicPortion));
                         ResultSet results = statement.executeQuery();
 
                         if (results.next()) {
@@ -575,7 +586,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
                             tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
                             tPeminjam.setText(transaksi.getNama_peminjam());
-                            tKelas.setText(transaksi.getKelas());
+                            tKelas.setSelectedItem(transaksi.getKelas());
 
                             loadTable();
                             customColumnTable();
@@ -642,7 +653,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void resetPinjamBuku() {
         tKodeBarcode.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tKembali.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
@@ -689,6 +700,18 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         }
     }
 
+    private static int getDynamicPortionLength(String input) {
+        int inputLength = input.length();
+        int dynamicPortionLength = 1; // Default dynamic portion length
+
+        // Adjust dynamic portion length based on input length
+        if (inputLength >= 9) {
+            dynamicPortionLength = inputLength - 8;
+        }
+
+        return dynamicPortionLength;
+    }
+
     private javax.swing.JComboBox bukuInput;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Tabel;
@@ -700,7 +723,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJumlahBuku;
-    private javax.swing.JTextField tKelas;
+    private javax.swing.JComboBox<String> tKelas;
     private com.toedter.calendar.JDateChooser tKembali;
     private javax.swing.JTextField tKodeBarcode;
     private javax.swing.JLabel tNamaPetugas;

@@ -198,7 +198,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         tUserLogin = new javax.swing.JLabel();
         tKodeBarcode = new javax.swing.JTextField();
         tPeminjam = new javax.swing.JTextField();
-        tKelas = new javax.swing.JTextField();
+        tKelas = new javax.swing.JComboBox<>();
         tJumlahBuku = new javax.swing.JTextField();
         tKembali = new com.toedter.calendar.JDateChooser();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -239,7 +239,10 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         getContentPane().add(tPeminjam);
         tPeminjam.setBounds(469, 257, 585, 35);
 
+        tKelas.setBackground(new Color(0,0,0,0));
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        tKelas.setSelectedIndex(-1);
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
         tKelas.setBounds(1082, 257, 160, 35);
@@ -323,7 +326,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
         ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
 
         transaksi.setNama_peminjam(tPeminjam.getText());
-        transaksi.setKelas(tKelas.getText());
+        transaksi.setKelas(tKelas.getSelectedItem().toString());
         transaksi.setStatus(TransaksiStatus.dipinjam);
         transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
         transaksi.setTotal_denda(0);
@@ -509,7 +512,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private void fillInput() {
         tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
         tPeminjam.setText(transaksi.getNama_peminjam());
-        tKelas.setText(transaksi.getKelas());
+        tKelas.setSelectedItem(transaksi.getKelas());
     }
 
     private void manageDetail() {
@@ -532,7 +535,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void resetPinjamBuku() {
         tKodeBarcode.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tKembali.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
@@ -574,7 +577,7 @@ public class VerifikasiPeminjaman extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJumlahBuku;
-    private javax.swing.JTextField tKelas;
+    private javax.swing.JComboBox<String> tKelas;
     private com.toedter.calendar.JDateChooser tKembali;
     private javax.swing.JTextField tKodeBarcode;
     private javax.swing.JLabel tNamaPetugas;
