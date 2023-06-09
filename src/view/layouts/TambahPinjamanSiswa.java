@@ -146,7 +146,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         tPeminjam = new javax.swing.JTextField();
-        tKelas = new javax.swing.JTextField();
+        tKelas = new javax.swing.JComboBox<>();
         tJumlahBuku = new javax.swing.JTextField();
         tKalender = new com.toedter.calendar.JDateChooser();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -166,7 +166,10 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         getContentPane().add(tPeminjam);
         tPeminjam.setBounds(469, 202, 588, 35);
 
+        tKelas.setBackground(new Color(0,0,0,0));
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        tKelas.setSelectedIndex(-1);
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
         tKelas.setBounds(1082, 202, 160, 35);
@@ -257,7 +260,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
 
         TransaksiSiswa transaksiSiswa = new TransaksiSiswa(
                 tPeminjam.getText(),
-                tKelas.getText(),
+                tKelas.getSelectedItem().toString(),
                 TransaksiStatus.dipinjam,
                 Integer.valueOf(tJumlahBuku.getText()),
                 0,
@@ -292,6 +295,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
         transaksiSiswa.setKode_transaksi(id);
         addDetails(transaksiSiswa);
 
+        // Barcode
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String barcodePeminjaman = id + dateTime.format(formatter);
@@ -306,7 +310,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         // TODO add your handling code here:
         tPeminjam.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tKalender.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
@@ -421,7 +425,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
 
     private void resetPinjamBuku() {
         tPeminjam.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tKalender.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
@@ -487,7 +491,7 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField tJumlahBuku;
     private com.toedter.calendar.JDateChooser tKalender;
-    private javax.swing.JTextField tKelas;
+    private javax.swing.JComboBox<String> tKelas;
     private javax.swing.JTextField tPeminjam;
     // End of variables declaration//GEN-END:variables
 }

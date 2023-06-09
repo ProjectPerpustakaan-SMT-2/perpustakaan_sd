@@ -198,7 +198,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         tNamaPetugas = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
         tPeminjam = new javax.swing.JTextField();
-        tKelas = new javax.swing.JTextField();
+        tKelas = new javax.swing.JComboBox<>();
         tJumlahBuku = new javax.swing.JTextField();
         tKalender = new com.toedter.calendar.JDateChooser();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -229,10 +229,13 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         getContentPane().add(tPeminjam);
         tPeminjam.setBounds(469, 202, 588, 35);
 
+        tKelas.setBackground(new Color(0,0,0,0));
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        tKelas.setSelectedIndex(-1);
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
-        tKelas.setBounds(1082, 202, 160, 35);
+        tKelas.setBounds(1082, 200, 160, 35);
 
         tJumlahBuku.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
         tJumlahBuku.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -313,7 +316,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
         ComboItem buku = (ComboItem) bukuInput.getSelectedItem();
 
         transaksi.setNama_peminjam(tPeminjam.getText());
-        transaksi.setKelas(tKelas.getText());
+        transaksi.setKelas(tKelas.getSelectedItem().toString());
         transaksi.setStatus(TransaksiStatus.dipinjam);
         transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
         transaksi.setTotal_denda(0);
@@ -477,7 +480,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
 
     private void fillInput() {
         tPeminjam.setText(transaksi.getNama_peminjam());
-        tKelas.setText(transaksi.getKelas());
+        tKelas.setSelectedItem(transaksi.getKelas());
     }
 
     private void manageDetail() {
@@ -500,7 +503,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
 
     private void resetPinjamBuku() {
         tPeminjam.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         tKalender.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
         tJumlahBuku.setText("");
@@ -559,7 +562,7 @@ public class EditPinjamanPetugas extends javax.swing.JInternalFrame {
     private javax.swing.JLabel tJam;
     private javax.swing.JTextField tJumlahBuku;
     private com.toedter.calendar.JDateChooser tKalender;
-    private javax.swing.JTextField tKelas;
+    private javax.swing.JComboBox<String> tKelas;
     private javax.swing.JLabel tNamaPetugas;
     private javax.swing.JTextField tPeminjam;
     private javax.swing.JLabel tUserLogin;

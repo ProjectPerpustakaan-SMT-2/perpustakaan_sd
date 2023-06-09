@@ -221,7 +221,7 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
         tUserLogin = new javax.swing.JLabel();
         tKodeBarcode = new javax.swing.JTextField();
         tPeminjam = new javax.swing.JTextField();
-        tKelas = new javax.swing.JTextField();
+        tKelas = new javax.swing.JComboBox<>();
         tNominalDenda = new javax.swing.JTextField();
         tRp = new javax.swing.JTextField();
         tRp1 = new javax.swing.JTextField();
@@ -265,7 +265,10 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
         getContentPane().add(tPeminjam);
         tPeminjam.setBounds(469, 269, 585, 35);
 
+        tKelas.setBackground(new Color(0,0,0,0));
         tKelas.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tKelas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        tKelas.setSelectedIndex(-1);
         tKelas.setBorder(null);
         getContentPane().add(tKelas);
         tKelas.setBounds(1082, 269, 160, 35);
@@ -367,7 +370,7 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
         }
 
         transaksi.setNama_peminjam(tPeminjam.getText());
-        transaksi.setKelas(tKelas.getText());
+        transaksi.setKelas(tKelas.getSelectedItem().toString());
         transaksi.setStatus(TransaksiStatus.dikembalikan);
         transaksi.setTotal_pinjam(Integer.valueOf(tJumlahBuku.getText()));
         transaksi.setTotal_denda(Integer.valueOf(tJumlahDenda.getText()));
@@ -570,7 +573,7 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
     private void fillInput() {
         tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
         tPeminjam.setText(transaksi.getNama_peminjam());
-        tKelas.setText(transaksi.getKelas());
+        tKelas.setSelectedItem(transaksi.getKelas());
     }
 
     private void manageDetail() {
@@ -625,7 +628,7 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
 
     private void resetPinjamBuku() {
         tKodeBarcode.setText("");
-        tKelas.setText("");
+        tKelas.setSelectedIndex(-1);
         bukuInput.setSelectedIndex(0);
         tJumlahDenda.setText("");
 
@@ -663,7 +666,7 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
     private javax.swing.JLabel tJam;
     private javax.swing.JLabel tJumlahBuku;
     private javax.swing.JTextField tJumlahDenda;
-    private javax.swing.JTextField tKelas;
+    private javax.swing.JComboBox<String> tKelas;
     private javax.swing.JTextField tKodeBarcode;
     private javax.swing.JLabel tNamaPetugas;
     private javax.swing.JTextField tNominalDenda;
