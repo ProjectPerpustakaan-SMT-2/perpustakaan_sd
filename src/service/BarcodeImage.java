@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -48,7 +49,7 @@ public class BarcodeImage {
             // Get the barcode image from the canvas
             BufferedImage barcodeImage = canvas.getBufferedImage();
 
-            int textHeight = 80; // Height of the text area in pixels
+            int textHeight = 150; // Height of the text area in pixels
             int additionalTextHeight = 40; // Height of the additional text
             int spaceBelowBarcode = 40; // Space below the barcode in pixels
             int imageWidth = barcodeImage.getWidth();
@@ -74,18 +75,28 @@ public class BarcodeImage {
             int additionalTextWidth = fontMetrics.stringWidth(additionalText);
             int textX = (imageWidth - textWidth) / 2; // Center text horizontally
             int additionalTextX = (imageWidth - additionalTextWidth) / 2; // Center additional text horizontally
-            int textY = (textHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Center text vertically
-            int additionalTextY = 50 + (additionalTextHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Position of additional text below the first text
+            int textY = 40 + (textHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Center text vertically
+            int additionalTextY = 120 + (additionalTextHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Position of additional text below the first text
 
             g2d.setFont(font);
             g2d.setColor(Color.BLACK);
             g2d.drawString(text, textX, textY);
             g2d.drawString(additionalText, additionalTextX, additionalTextY);
 
+            // Load the image to be placed on top
+            Image image = ImageIO.read(new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\layouts\\Logo.png"));
+
+            // Calculate the position to place the image
+            int imageX = (imageWidth - image.getWidth(null)) / 2; // Center image horizontally
+            int imageY = 30; // Distance from the top
+
+            // Draw the image on top of the barcode
+            g2d.drawImage(image, imageX, imageY, null);
+
             g2d.dispose();
 
             //write to png file
-            FileOutputStream fos = new FileOutputStream("C:\\Users\\Hafidz Fadhillah\\Downloads\\Library Perpustakaan_SD\\barcode\\" + file_name);
+            FileOutputStream fos = new FileOutputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
             ImageIO.write(finalImage, "png", fos);
             fos.write(baos.toByteArray());
             fos.flush();
@@ -98,7 +109,7 @@ public class BarcodeImage {
             // Prepare the print document
             DocFlavor flavor = DocFlavor.INPUT_STREAM.PNG;
             DocAttributeSet attributes = new HashDocAttributeSet();
-            InputStream inputStream = new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Downloads\\Library Perpustakaan_SD\\barcode\\" + file_name);
+            InputStream inputStream = new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
             Doc doc = new SimpleDoc(inputStream, flavor, attributes);
 
             // Print the document
@@ -106,5 +117,12 @@ public class BarcodeImage {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public static void main(String[] args) {
+        String code = "1236728";
+
+        createImage("Barcode.png", code);
+        System.out.println("Sukses");
     }
 }
