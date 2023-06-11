@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import static repository.Repository.conn;
 import view.layouts.DaftarPetugas;
 import view.layouts.DaftarKerusakan;
+import view.layouts.DaftarLaporan;
 import view.layouts.DaftarPeminjaman;
 import view.layouts.DaftarPengembalian;
 import view.layouts.DashboardPetugasView;
@@ -310,6 +311,11 @@ public class DashboardPetugas extends javax.swing.JFrame {
         btnPengembalian.setIcon(null);
         btnManajemen.setIcon(null);
         btnSanksi.setIcon(null);
+
+        jDesktopPane1.removeAll();
+        DaftarLaporan dp = new DaftarLaporan();
+        dp.setUsername(tUsername.getText());
+        jDesktopPane1.add(dp).setVisible(true);
     }//GEN-LAST:event_btnLaporanMouseClicked
 
     private void btnLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogoutMouseClicked

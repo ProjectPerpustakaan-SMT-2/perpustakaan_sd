@@ -565,7 +565,7 @@ public class TambahPengembalian extends javax.swing.JInternalFrame {
         int dynamicPortionLength = getDynamicPortionLength(kode_transaksi);
         String dynamicPortion = kode_transaksi.substring(0, dynamicPortionLength);
 
-        if ("".equals(dynamicPortion)) {
+        if ("".equals(dynamicPortion) || kode_transaksi.equals("")) {
             resetPinjamBuku();
         } else {
             Timer timer = new Timer(500, new ActionListener() {

@@ -84,8 +84,6 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
         tNamaPetugas.setVisible(false);
 
-        setLoadData();
-
         loadTable();
         customColumnTable();
 
@@ -507,53 +505,6 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         customColumnTable();
     }//GEN-LAST:event_btnHapusMouseClicked
 
-    private void setLoadData() {
-        final String kode_transaksi = tKodeBarcode.getText();
-
-        // Remove dateformat and keep kode_transaksi
-        int dynamicPortionLength = getDynamicPortionLength(kode_transaksi);
-        String dynamicPortion = kode_transaksi.substring(0, dynamicPortionLength);
-
-        Timer timer = new Timer(500, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
-                        + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                        + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_transaksi = ?";
-
-                try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                    statement.setInt(1, Integer.parseInt(kode_transaksi));
-                    ResultSet results = statement.executeQuery();
-
-                    if (results.next()) {
-                        transaksi = mapToEntity(results);
-                        details = detailTransRepo.get(new HashMap<>() {
-                            {
-                                put("kode_transaksi", transaksi.getKode_transaksi());
-                            }
-                        });
-
-                        tKodeBarcode.setText(String.valueOf(transaksi.getKode_transaksi()));
-                        tPeminjam.setText(transaksi.getNama_peminjam());
-                        tKelas.setSelectedItem(transaksi.getKelas());
-
-                        loadTable();
-                        customColumnTable();
-                    } else {
-                        tKodeBarcode.setText("");
-                        resetPinjamBuku();
-                    }
-                } catch (SQLException ex) {
-                    System.out.println(ex);
-                }
-            }
-        });
-
-        // Start the timer
-        timer.setRepeats(false);
-        timer.start();
-    }
-
     private void tKodeBarcodeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tKodeBarcodeKeyReleased
         // TODO add your handling code here:
         final String kode_transaksi = tKodeBarcode.getText();
@@ -562,7 +513,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
         int dynamicPortionLength = getDynamicPortionLength(kode_transaksi);
         String dynamicPortion = kode_transaksi.substring(0, dynamicPortionLength);
 
-        if ("".equals(dynamicPortion)) {
+        if ("".equals(dynamicPortion) || "".equals(kode_transaksi)) {
             resetPinjamBuku();
         } else {
             Timer timer = new Timer(500, new ActionListener() {
@@ -570,7 +521,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
                 public void actionPerformed(ActionEvent e) {
                     String sql = "SELECT DISTINCT transaksi.*, detail_transaksi.kode_transaksi FROM transaksi "
                             + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
-                            + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_transaksi = ?";
+                            + "WHERE transaksi.status = 'dipinjam' AND transaksi.kode_petugas IS NULL AND transaksi.kode_transaksi = ?";
 
                     try (PreparedStatement statement = conn.prepareStatement(sql)) {
                         statement.setInt(1, Integer.parseInt(dynamicPortion));
@@ -653,6 +604,7 @@ public class TambahVerifikasiPeminjaman extends javax.swing.JInternalFrame {
 
     private void resetPinjamBuku() {
         tKodeBarcode.setText("");
+        tPeminjam.setText("");
         tKelas.setSelectedIndex(-1);
         tKembali.setDate(Calendar.getInstance().getTime());
         bukuInput.setSelectedIndex(0);
