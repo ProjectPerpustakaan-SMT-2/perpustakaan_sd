@@ -120,7 +120,7 @@ public class DaftarStatusBuku extends javax.swing.JInternalFrame {
 
         tStatus.setBackground(new Color(0,0,0,0));
         tStatus.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Layak", "Dipinjam", "Rusak", "Hilang" }));
+        tStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Layak", "Dipinjam", "Rusak", "Hilang", "Diganti" }));
         tStatus.setSelectedIndex(-1);
         tStatus.setBorder(null);
         getContentPane().add(tStatus);

@@ -31,14 +31,15 @@ public class LaporanService {
     private static Connection conn = Database.getConnection();
 
     private Integer bulan;
-    private String transaksiStatus;
+    private String transaksiStatus, namaBulan;
     private TransaksiRepository repo;
     private List<Object> values;
     private StringBuilder qb;
 
-    public LaporanService(String transaksiStatus, Integer bulan) {
+    public LaporanService(String transaksiStatus, Integer bulan, String namaBulan) {
         this.transaksiStatus = transaksiStatus;
         this.bulan = bulan;
+        this.namaBulan = namaBulan;
 
         values = new ArrayList<>();
 
@@ -58,6 +59,7 @@ public class LaporanService {
 
             HashMap<String, Object> nL = new HashMap<>();
             nL.put("namaLaporan", transaksiStatus);
+            nL.put("namaBulan", namaBulan);
 
             JRResultSetDataSource rsDataSource = new JRResultSetDataSource(rs);
             JasperPrint jp = JasperFillManager.fillReport(jr, nL, rsDataSource);

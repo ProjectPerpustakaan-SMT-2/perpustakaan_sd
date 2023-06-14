@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import static repository.Repository.conn;
 import service.LaporanService;
 import util.NumberFormatUtil;
@@ -153,7 +154,8 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         LaporanService service = new LaporanService(
                 tStatusData.getSelectedItem().toString(),
-                bulan
+                bulan,
+                tBulan.getSelectedItem().toString()
         );
 
         service.generate();
@@ -244,7 +246,7 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
                     results.getString("transaksi.kelas"),
                     sdf.format(results.getDate("detail_transaksi.tgl_pinjam")),
                     sdf.format(results.getDate("detail_transaksi.tgl_kembali")),
-                    NumberFormatUtil.formatDec(results.getInt("detail_transaksi.nominal_denda")),
+                    "Rp. " + NumberFormatUtil.formatDec(results.getInt("detail_transaksi.nominal_denda")),
                     results.getString("buku.judul_buku"),
                     results.getString("kerusakan.jenis_kerusakan")
                 });

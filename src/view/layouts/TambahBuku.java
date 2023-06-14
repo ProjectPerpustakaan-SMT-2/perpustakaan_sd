@@ -83,7 +83,7 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         items = new ComboItem[penerbits.size()];
         for (int i = 0; i < penerbits.size(); i++) {
             Penerbit penerbit = penerbits.get(i);
-            items[i] = new ComboItem(penerbit.getKode_penerbit(), penerbit.getKode_penerbit() + ". " + penerbit.getPenerbit() + " - " + penerbit.getKota_penerbit() + " - " + sdf.format(penerbit.getTahun_tebit()));
+            items[i] = new ComboItem(penerbit.getKode_penerbit(), penerbit.getPenerbit() + " - " + penerbit.getKota_penerbit() + " - " + sdf.format(penerbit.getTahun_tebit()));
         }
 
         penerbitInput = new SearchableComboBox(items);
