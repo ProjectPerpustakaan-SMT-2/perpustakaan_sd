@@ -9,18 +9,17 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-import entity.Petugas;
-import javax.swing.JDesktopPane;
-import repository.Repository;
-import repository.PetugasRepository;
 import customUI.TableCustom;
 import java.awt.Color;
-import util.ViewUtil;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import static repository.Repository.conn;
+import service.LaporanService;
+import util.NumberFormatUtil;
 
 /**
  *
@@ -29,9 +28,9 @@ import util.ViewUtil;
 public class DaftarLaporan extends javax.swing.JInternalFrame {
 
     private String username;
+    private int bulan;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-//    private Repository<Petugas> ptgRepo = new PetugasRepository();
-//    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
     /**
      * Creates new form TambahBuku
      */
@@ -40,6 +39,8 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
+
+        loadDataTable();
 
         jam();
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
@@ -72,8 +73,8 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
         tJam = new javax.swing.JLabel();
         tUserLogin = new javax.swing.JLabel();
         btnCetak = new javax.swing.JLabel();
-        dropDownData = new javax.swing.JComboBox<>();
-        dropDownData1 = new javax.swing.JComboBox<>();
+        tStatusData = new javax.swing.JComboBox<>();
+        tBulan = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         Tabel = new javax.swing.JTable();
         background = new javax.swing.JLabel();
@@ -90,26 +91,41 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
         tUserLogin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         getContentPane().add(tUserLogin);
         tUserLogin.setBounds(1105, 15, 200, 23);
+
+        btnCetak.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCetak.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCetakMouseClicked(evt);
+            }
+        });
         getContentPane().add(btnCetak);
         btnCetak.setBounds(1157, 143, 173, 33);
 
-        dropDownData.setBackground(new Color(0,0,0,0)
+        tStatusData.setBackground(new Color(0,0,0,0)
         );
-        dropDownData.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        dropDownData.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Peminjaman", "Pengembalian", "Sanksi" }));
-        dropDownData.setSelectedIndex(-1);
-        dropDownData.setBorder(null);
-        getContentPane().add(dropDownData);
-        dropDownData.setBounds(490, 145, 165, 31);
+        tStatusData.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tStatusData.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Peminjaman", "Pengembalian", "Sanksi" }));
+        tStatusData.setBorder(null);
+        tStatusData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tStatusDataActionPerformed(evt);
+            }
+        });
+        getContentPane().add(tStatusData);
+        tStatusData.setBounds(490, 145, 165, 31);
 
-        dropDownData1.setBackground(new Color(0,0,0,0)
+        tBulan.setBackground(new Color(0,0,0,0)
         );
-        dropDownData1.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        dropDownData1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli ", "Agustus", "September", "Oktober", "November", "Desember" }));
-        dropDownData1.setSelectedIndex(-1);
-        dropDownData1.setBorder(null);
-        getContentPane().add(dropDownData1);
-        dropDownData1.setBounds(743, 145, 145, 31);
+        tBulan.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
+        tBulan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli ", "Agustus", "September", "Oktober", "November", "Desember" }));
+        tBulan.setBorder(null);
+        tBulan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tBulanActionPerformed(evt);
+            }
+        });
+        getContentPane().add(tBulan);
+        tBulan.setBounds(743, 145, 145, 31);
 
         Tabel.setFont(new java.awt.Font("Calisto MT", 0, 14)); // NOI18N
         Tabel.setModel(new javax.swing.table.DefaultTableModel(
@@ -133,42 +149,118 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
         setBounds(0, 0, 1366, 768);
     }// </editor-fold>//GEN-END:initComponents
 
-//    private void loadDataTable(List<Petugas> petugass) {
-//        int no = 1;
-//        DefaultTableModel model = new DefaultTableModel() {
-//            @Override
-//            public boolean isCellEditable(int row, int column) {
-//                return false; // Disable cell editing
-//            }
-//        };
-//
-//        model.addColumn("No");
-//        model.addColumn("Nama");
-//        model.addColumn("Email");
-//        model.addColumn("Username");
-//        model.addColumn("Tanggal Lahir");
-//        model.addColumn("ID");
-//
-//        for (Petugas petugas : petugass) {
-//
-//            model.addRow(new Object[]{
-//                no++,
-//                petugas.getNama(),
-//                petugas.getEmail(),
-//                petugas.getUsername(),
-//                sdf.format(petugas.getTgl_lahir()),
-//                petugas.getId()
-//            });
-//        }
-//
-//        Tabel.setModel(model);
-//        ViewUtil.hideTableColumn(Tabel, 5);
-//        customStyleTable();
-//    }
-//
-//    private void customStyleTable() {
-//        Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
-//    }
+    private void btnCetakMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCetakMouseClicked
+        // TODO add your handling code here:
+        LaporanService service = new LaporanService(
+                tStatusData.getSelectedItem().toString(),
+                bulan
+        );
+
+        service.generate();
+    }//GEN-LAST:event_btnCetakMouseClicked
+
+    private void tStatusDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tStatusDataActionPerformed
+        // TODO add your handling code here:
+        loadDataTable();
+    }//GEN-LAST:event_tStatusDataActionPerformed
+
+    private void tBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tBulanActionPerformed
+        // TODO add your handling code here:
+        if (tBulan.getSelectedItem().equals("Januari")) {
+            bulan = 1;
+        } else if (tBulan.getSelectedItem().equals("Februari")) {
+            bulan = 2;
+        } else if (tBulan.getSelectedItem().equals("Maret")) {
+            bulan = 3;
+        } else if (tBulan.getSelectedItem().equals("April")) {
+            bulan = 4;
+        } else if (tBulan.getSelectedItem().equals("Mei")) {
+            bulan = 5;
+        } else if (tBulan.getSelectedItem().equals("Juni")) {
+            bulan = 6;
+        } else if (tBulan.getSelectedItem().equals("Juli")) {
+            bulan = 7;
+        } else if (tBulan.getSelectedItem().equals("Agustus")) {
+            bulan = 8;
+        } else if (tBulan.getSelectedItem().equals("September")) {
+            bulan = 9;
+        } else if (tBulan.getSelectedItem().equals("Oktober")) {
+            bulan = 10;
+        } else if (tBulan.getSelectedItem().equals("November")) {
+            bulan = 11;
+        } else if (tBulan.getSelectedItem().equals("Desember")) {
+            bulan = 12;
+        }
+
+        loadDataTable();
+    }//GEN-LAST:event_tBulanActionPerformed
+
+    private void loadDataTable() {
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Disable cell editing
+            }
+        };
+
+        model.addColumn("ID");
+        model.addColumn("Nama");
+        model.addColumn("Kelas");
+        model.addColumn("Tgl Pinjam");
+        model.addColumn("Tgl Kembali");
+        model.addColumn("Denda");
+        model.addColumn("Buku");
+        model.addColumn("Kondisi");
+
+        String sql = null;
+
+        if ((tBulan.getSelectedItem() != null) && (tStatusData.getSelectedItem().equals("Peminjaman"))) {
+            sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
+                    + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                    + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
+                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                    + "WHERE transaksi.status = 'dipinjam' AND MONTH(detail_transaksi.tgl_pinjam) = " + bulan + "";
+        } else if ((tBulan.getSelectedItem() != null) && (tStatusData.getSelectedItem().equals("Pengembalian"))) {
+            sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
+                    + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                    + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
+                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                    + "WHERE transaksi.status = 'dikembalikan' AND MONTH(detail_transaksi.tgl_kembali) = " + bulan + "";
+        } else if ((tBulan.getSelectedItem() != null) && (tStatusData.getSelectedItem().equals("Sanksi"))) {
+            sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
+                    + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                    + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
+                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                    + "WHERE detail_transaksi.kode_kerusakan IN (2,3,4) AND MONTH(detail_transaksi.tgl_kembali) = " + bulan + "";
+        }
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                model.addRow(new Object[]{
+                    results.getString("transaksi.kode_transaksi"),
+                    results.getString("transaksi.nama_peminjam"),
+                    results.getString("transaksi.kelas"),
+                    sdf.format(results.getDate("detail_transaksi.tgl_pinjam")),
+                    sdf.format(results.getDate("detail_transaksi.tgl_kembali")),
+                    NumberFormatUtil.formatDec(results.getInt("detail_transaksi.nominal_denda")),
+                    results.getString("buku.judul_buku"),
+                    results.getString("kerusakan.jenis_kerusakan")
+                });
+            }
+
+            Tabel.setModel(model);
+            customStyleTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void customStyleTable() {
+        Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
+    }
+
     private void jam() {
         try {
             ActionListener taskPerformer = new ActionListener() {
@@ -213,10 +305,10 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
     private javax.swing.JTable Tabel;
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnCetak;
-    private javax.swing.JComboBox<String> dropDownData;
-    private javax.swing.JComboBox<String> dropDownData1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JComboBox<String> tBulan;
     private javax.swing.JLabel tJam;
+    private javax.swing.JComboBox<String> tStatusData;
     private javax.swing.JLabel tUserLogin;
     // End of variables declaration//GEN-END:variables
 }
