@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import repository.Repository;
@@ -303,8 +304,14 @@ public class TambahPinjamanSiswa extends javax.swing.JInternalFrame {
 
         setStatusBuku();
 
-        new PopupViewDataBerhasil().setVisible(true);
         resetPinjamBuku();
+
+        TambahPinjamanSiswa pinjamanSiswa = new TambahPinjamanSiswa();
+        JDesktopPane desktopPane = getDesktopPane();
+        desktopPane.add(pinjamanSiswa);
+        pinjamanSiswa.setVisible(true);
+
+        new PopupViewDataBerhasil().setVisible(true);
     }//GEN-LAST:event_btnSimpanMouseClicked
 
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked

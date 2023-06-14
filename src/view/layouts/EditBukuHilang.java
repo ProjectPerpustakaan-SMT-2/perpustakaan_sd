@@ -14,7 +14,6 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import entity.Buku;
 import entity.DetailTransaksi;
-import entity.Kerusakan;
 import entity.Petugas;
 import entity.Transaksi;
 import jakarta.validation.ConstraintViolation;
@@ -24,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,8 +34,6 @@ import repository.Repository;
 import repository.BukuRepository;
 import repository.ComboBukuRepository;
 import repository.DetailBukuHilangRepository;
-import repository.DetailTransaksiRepository;
-import repository.KerusakanRepository;
 import repository.PetugasRepository;
 import static repository.Repository.conn;
 import repository.TransaksiRepository;
@@ -139,7 +135,7 @@ public class EditBukuHilang extends javax.swing.JInternalFrame {
         bukuInput = new SearchableComboBox(items);
         bukuInput.setFont(new java.awt.Font("Calisto MT", 0, 16));
         bukuInput.setBorder(null);
-        bukuInput.setBounds(475, 247, 460, 35);
+        bukuInput.setBounds(475, 250, 465, 35);
         bukuInput.setBackground(new Color(0, 0, 0, 0));
 
         getContentPane().add(bukuInput);
@@ -308,6 +304,11 @@ public class EditBukuHilang extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        if (tStatus.getSelectedItem().equals("Hilang")) {
+            JOptionPane.showMessageDialog(this, "Pastikan Telah Mengganti Status Penggantian!");
+            return;
+        }
+
         for (DetailTransaksi detail : details) {
 
             String sql = "UPDATE buku SET status = ?, note = ? WHERE kode_buku = ?";
@@ -396,11 +397,8 @@ public class EditBukuHilang extends javax.swing.JInternalFrame {
 
         Set<ConstraintViolation<TransaksiValidasi>> comboItemValidasi = ValidasiUtil.validate(comboValidasi);
 
-        Set<ConstraintViolation<DetailTransaksi>> detailTransaksi = ValidasiUtil.validate(detail);
-
         Set<ConstraintViolation<?>> allViolations = new HashSet<>();
         allViolations.addAll(comboItemValidasi);
-        allViolations.addAll(detailTransaksi);
 
         if (allViolations.size() > 0) {
             Set<String> errorMessages = new HashSet<>();
@@ -411,6 +409,9 @@ public class EditBukuHilang extends javax.swing.JInternalFrame {
 
             String errorMessageString = String.join("\n", errorMessages);
             JOptionPane.showMessageDialog(this, errorMessageString);
+            return;
+        } else if (activeDetail == null) {
+            JOptionPane.showMessageDialog(this, "Mohon Pilih Data Buku Terlebih Dahulu!");
             return;
         }
 

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b920e7ed-35e0-470d-8e3b-843c6ef56ac6">
-	<property name="ireport.zoom" value="0.6830134553650716"/>
+	<property name="ireport.zoom" value="0.9090909090909113"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="namaLaporan" class="java.lang.String"/>
+	<parameter name="namaBulan" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi 
 INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi 
@@ -82,11 +83,20 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 	<field name="deskripsi_kerusakan" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<variable name="totalDenda" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{nominal_denda}]]></variableExpression>
+	</variable>
+	<variable name="totalBuku" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{kode_detail_transaksi}]]></variableExpression>
+	</variable>
+	<variable name="totalPinjam" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{kode_transaksi}]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="69" splitType="Stretch">
+		<band height="96" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="22301044-89f0-4713-aefc-b10247353bc7" x="0" y="0" width="802" height="34"/>
 				<textElement textAlignment="Center">
@@ -95,19 +105,33 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 				<text><![CDATA[PERPUSTAKAAN SDN 1 SUMBERBSARI]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="8ab9817a-faa7-43d7-a824-137cc272ec0e" x="304" y="34" width="83" height="27" forecolor="#996600"/>
+				<reportElement uuid="8ab9817a-faa7-43d7-a824-137cc272ec0e" x="245" y="34" width="83" height="27" forecolor="#996600"/>
 				<textElement>
 					<font size="20"/>
 				</textElement>
 				<text><![CDATA[Laporan]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="b331052c-df86-4f07-a31f-f307ac0a4269" x="387" y="34" width="181" height="27" forecolor="#996600"/>
+				<reportElement uuid="b331052c-df86-4f07-a31f-f307ac0a4269" x="328" y="34" width="133" height="27" forecolor="#996600"/>
 				<textElement>
 					<font size="20"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{namaLaporan}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement uuid="ba59ccca-ab34-4ef4-a7ff-b66e8b8c0273" x="461" y="34" width="117" height="27" forecolor="#996600"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{namaBulan}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e4070afd-dc90-4040-9d1e-cb5917f4d993" mode="Transparent" x="98" y="61" width="592" height="33"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="14" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Laporan ini dibuat secara otomatis berdasarkan filter data yang telah dipilih sebelumnya.]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
@@ -237,7 +261,50 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="1" splitType="Stretch"/>
+		<band height="73" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="603" y="0" width="103" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Peminjam :]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0" isBlankWhenNull="true">
+				<reportElement uuid="768ac904-dca1-498e-92a8-3dfc112e62f7" x="706" y="40" width="96" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalDenda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6f254225-7108-4c33-960f-0b43e8dfb275" x="706" y="20" width="96" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalBuku}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7e1ffcce-5dc6-42b0-90b2-fac27d9f44e1" x="706" y="0" width="96" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalPinjam}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="632" y="20" width="74" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Buku :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="624" y="40" width="82" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Denda :]]></text>
+			</staticText>
+		</band>
 	</columnFooter>
 	<pageFooter>
 		<band height="20" splitType="Stretch">
