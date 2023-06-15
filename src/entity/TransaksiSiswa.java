@@ -17,10 +17,10 @@ public class TransaksiSiswa implements Entity {
 
     private Integer kode_transaksi;
 
-    @NotBlank(message = "Nama Harus Di Isi")
+    @NotBlank(message = "Nama Harus Diisi")
     private String nama_peminjam;
 
-    @NotBlank(message = "Kelas Harus Di Isi")
+    @NotBlank(message = "Kelas Harus Diisi")
     private String kelas;
 
     private TransaksiStatus status;

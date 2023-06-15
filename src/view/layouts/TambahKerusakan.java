@@ -142,6 +142,10 @@ public class TambahKerusakan extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        if (tJenisDenda.getText().isBlank() || tDeskripsiDenda.getText().isBlank() || tNominalDenda.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Pastikan Data Jenis Denda, Nominal Denda Dan Deskripsi Terisi");
+        }
+
         Kerusakan kerusakan = new Kerusakan(
                 tJenisDenda.getText(),
                 tDeskripsiDenda.getText(),

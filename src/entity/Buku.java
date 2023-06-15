@@ -5,6 +5,9 @@
 package entity;
 
 import data.BukuStatus;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *
@@ -15,13 +18,21 @@ public class Buku implements Entity {
     public final static String tableName = "buku";
 
     private Integer kode_buku;
+
+    @NotBlank(message = "Judul Buku Harus Diisi")
     private String judul_buku;
+
+    @NotBlank(message = "Nama Pengarang Harus Diisi")
     private String nama_pengarang;
+
     private Long isbn;
     private Penerbit penerbit;
     private String sumber;
     private Integer halaman;
+
+    @NotNull(message = "Pilih Status Buku")
     private BukuStatus bukuStatus;
+
     private Integer jumlah;
     private String note;
     private Klasifikasi klasifikasi;
