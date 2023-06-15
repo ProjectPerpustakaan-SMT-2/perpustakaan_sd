@@ -49,11 +49,11 @@ public class BarcodeImage {
             // Get the barcode image from the canvas
             BufferedImage barcodeImage = canvas.getBufferedImage();
 
-            int textHeight = 150; // Height of the text area in pixels
-            int additionalTextHeight = 40; // Height of the additional text
-            int spaceBelowBarcode = 40; // Space below the barcode in pixels
+            int topTextHeight = 150; // Height of the topText area in pixels
+            int midleTextHeight = 40; // Height of the midleText text
+            int spaceBelowBarcode = 70; // Space below the barcode in pixels
             int imageWidth = barcodeImage.getWidth();
-            int imageHeight = barcodeImage.getHeight() + textHeight + additionalTextHeight + spaceBelowBarcode;
+            int imageHeight = barcodeImage.getHeight() + topTextHeight + midleTextHeight + spaceBelowBarcode;
 
             BufferedImage finalImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_BYTE_BINARY);
             Graphics2D g2d = finalImage.createGraphics();
@@ -63,25 +63,32 @@ public class BarcodeImage {
             g2d.fillRect(0, 0, imageWidth, imageHeight);
 
             // Draw the barcode image
-            g2d.drawImage(barcodeImage, 0, textHeight + additionalTextHeight, null);
+            g2d.drawImage(barcodeImage, 0, topTextHeight + midleTextHeight, null);
 
             // Add text to the top of the image
-            String text = "PERPUSTAKAAN SDN 1 SUMBERSARI";
-            String additionalText = "Barcode Peminjaman Buku";
+            String topText = "PERPUSTAKAAN SDN 1 SUMBERSARI";
+            String midleText = "Barcode Peminjaman Buku";
+            String bellowText = "~ SIMPAN BUKTI PEMINJAMAN BUKU ~";
             Font font = new Font("Calisto MT", Font.PLAIN, 20);
             FontMetrics fontMetrics = g2d.getFontMetrics(font);
 
-            int textWidth = fontMetrics.stringWidth(text);
-            int additionalTextWidth = fontMetrics.stringWidth(additionalText);
-            int textX = (imageWidth - textWidth) / 2; // Center text horizontally
-            int additionalTextX = (imageWidth - additionalTextWidth) / 2; // Center additional text horizontally
-            int textY = 40 + (textHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Center text vertically
-            int additionalTextY = 120 + (additionalTextHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Position of additional text below the first text
+            int topTextWidth = fontMetrics.stringWidth(topText);
+            int midleTextWidth = fontMetrics.stringWidth(midleText);
+            int bellowTextWidth = fontMetrics.stringWidth(bellowText);
+
+            int topTextX = (imageWidth - topTextWidth) / 2; // Center topText horizontally
+            int midleTextX = (imageWidth - midleTextWidth) / 2; // Center midleText text horizontally
+            int bellowTextX = (imageWidth - bellowTextWidth) / 2; // Center text horizontally
+
+            int topTextY = 40 + (topTextHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Center topText vertically
+            int midleTextY = 120 + (midleTextHeight - fontMetrics.getHeight()) / 2 + fontMetrics.getAscent(); // Position of midleText text below the first text
+            int barcodeTextY = imageHeight - spaceBelowBarcode / 2;
 
             g2d.setFont(font);
             g2d.setColor(Color.BLACK);
-            g2d.drawString(text, textX, textY);
-            g2d.drawString(additionalText, additionalTextX, additionalTextY);
+            g2d.drawString(topText, topTextX, topTextY);
+            g2d.drawString(midleText, midleTextX, midleTextY);
+            g2d.drawString(bellowText, bellowTextX, barcodeTextY);
 
             // Load the image to be placed on top
             Image image = ImageIO.read(new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\layouts\\Logo.png"));
