@@ -130,6 +130,10 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
 
     private void btnSimpanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSimpanMouseClicked
         // TODO add your handling code here:
+        if (tKodeDDC.getText().isBlank() || tNamaKlasifikasi.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Mohon Pastikan Data Kode DDC dan Nama Klasifikasi Terisi");
+        }
+
         Klasifikasi klasifikasi = new Klasifikasi(
                 Integer.valueOf(tKodeDDC.getText()),
                 tNamaKlasifikasi.getText()

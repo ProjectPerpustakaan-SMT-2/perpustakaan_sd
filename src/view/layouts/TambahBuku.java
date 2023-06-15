@@ -301,9 +301,9 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         char c = evt.getKeyChar();
 
         if (Character.isLetter(c)) {
-            tISBN.setEditable(false);
+            tHalaman.setEditable(false);
         } else {
-            tISBN.setEditable(true);
+            tHalaman.setEditable(true);
         }
     }//GEN-LAST:event_tHalamanKeyPressed
 
@@ -312,9 +312,9 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         char c = evt.getKeyChar();
 
         if (Character.isLetter(c)) {
-            tISBN.setEditable(false);
+            tJumlah.setEditable(false);
         } else {
-            tISBN.setEditable(true);
+            tJumlah.setEditable(true);
         }
     }//GEN-LAST:event_tJumlahKeyPressed
 
