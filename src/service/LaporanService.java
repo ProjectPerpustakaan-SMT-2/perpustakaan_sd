@@ -74,19 +74,19 @@ public class LaporanService {
         if (isJoined) {
             qb.append(" INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
                     + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
-                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan");
+                    + "LEFT JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan");
         }
 
         qb.append(" WHERE");
 
         if ((bulan != null) && (transaksiStatus.equals("Peminjaman"))) {
-            qb.append(" transaksi.status = 'dipinjam' AND MONTH(detail_transaksi.tgl_pinjam) = ?");
+            qb.append(" transaksi.status = 'dipinjam' AND MONTH(detail_transaksi.tgl_pinjam) = ? ORDER BY transaksi.kode_transaksi ASC");
             values.add(bulan);
         } else if ((bulan != null) && (transaksiStatus.equals("Pengembalian"))) {
-            qb.append(" transaksi.status = 'dikembalikan' AND MONTH(detail_transaksi.tgl_kembali) = ?");
+            qb.append(" transaksi.status = 'dikembalikan' AND MONTH(detail_transaksi.tgl_kembali) = ? ORDER BY transaksi.kode_transaksi ASC");
             values.add(bulan);
         } else if ((bulan != null) && (transaksiStatus.equals("Sanksi"))) {
-            qb.append(" detail_transaksi.kode_kerusakan IN (2,3,4) AND MONTH(detail_transaksi.tgl_kembali) = ?");
+            qb.append(" detail_transaksi.kode_kerusakan IN (2,3,4) AND MONTH(detail_transaksi.tgl_kembali) = ? ORDER BY transaksi.kode_transaksi ASC");
             values.add(bulan);
         }
 
