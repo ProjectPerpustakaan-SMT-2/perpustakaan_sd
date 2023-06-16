@@ -23,6 +23,7 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.print.attribute.DocAttributeSet;
 import javax.print.attribute.HashDocAttributeSet;
+import javax.print.attribute.standard.MediaPrintableArea;
 import org.krysalis.barcode4j.impl.code128.Code128Bean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
@@ -116,6 +117,10 @@ public class BarcodeImage {
             // Prepare the print document
             DocFlavor flavor = DocFlavor.INPUT_STREAM.PNG;
             DocAttributeSet attributes = new HashDocAttributeSet();
+
+            // Set the print job width and height
+            attributes.add(new MediaPrintableArea(0, 0, 80, 200, MediaPrintableArea.MM));
+
             InputStream inputStream = new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
             Doc doc = new SimpleDoc(inputStream, flavor, attributes);
 

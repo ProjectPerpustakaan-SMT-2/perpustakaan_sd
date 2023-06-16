@@ -118,7 +118,7 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
         tBulan.setBackground(new Color(0,0,0,0)
         );
         tBulan.setFont(new java.awt.Font("Calisto MT", 0, 16)); // NOI18N
-        tBulan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli ", "Agustus", "September", "Oktober", "November", "Desember" }));
+        tBulan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember" }));
         tBulan.setBorder(null);
         tBulan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -168,29 +168,29 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
 
     private void tBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tBulanActionPerformed
         // TODO add your handling code here:
-        if (tBulan.getSelectedItem().equals("Januari")) {
+        if (tBulan.getSelectedIndex() == 0) {
             bulan = 1;
-        } else if (tBulan.getSelectedItem().equals("Februari")) {
+        } else if (tBulan.getSelectedIndex() == 1) {
             bulan = 2;
-        } else if (tBulan.getSelectedItem().equals("Maret")) {
+        } else if (tBulan.getSelectedIndex() == 2) {
             bulan = 3;
-        } else if (tBulan.getSelectedItem().equals("April")) {
+        } else if (tBulan.getSelectedIndex() == 3) {
             bulan = 4;
-        } else if (tBulan.getSelectedItem().equals("Mei")) {
+        } else if (tBulan.getSelectedIndex() == 4) {
             bulan = 5;
-        } else if (tBulan.getSelectedItem().equals("Juni")) {
+        } else if (tBulan.getSelectedIndex() == 5) {
             bulan = 6;
-        } else if (tBulan.getSelectedItem().equals("Juli")) {
+        } else if (tBulan.getSelectedIndex() == 6) {
             bulan = 7;
-        } else if (tBulan.getSelectedItem().equals("Agustus")) {
+        } else if (tBulan.getSelectedIndex() == 7) {
             bulan = 8;
-        } else if (tBulan.getSelectedItem().equals("September")) {
+        } else if (tBulan.getSelectedIndex() == 8) {
             bulan = 9;
-        } else if (tBulan.getSelectedItem().equals("Oktober")) {
+        } else if (tBulan.getSelectedIndex() == 9) {
             bulan = 10;
-        } else if (tBulan.getSelectedItem().equals("November")) {
+        } else if (tBulan.getSelectedIndex() == 10) {
             bulan = 11;
-        } else if (tBulan.getSelectedItem().equals("Desember")) {
+        } else if (tBulan.getSelectedIndex() == 11) {
             bulan = 12;
         }
 
@@ -220,20 +220,23 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
             sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
                     + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
                     + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
-                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
-                    + "WHERE transaksi.status = 'dipinjam' AND MONTH(detail_transaksi.tgl_pinjam) = " + bulan + "";
+                    + "LEFT JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                    + "WHERE transaksi.status = 'dipinjam' AND MONTH(detail_transaksi.tgl_pinjam) = " + bulan + " "
+                    + "ORDER BY transaksi.kode_transaksi ASC";
         } else if ((tBulan.getSelectedItem() != null) && (tStatusData.getSelectedItem().equals("Pengembalian"))) {
             sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
                     + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
                     + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
-                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
-                    + "WHERE transaksi.status = 'dikembalikan' AND MONTH(detail_transaksi.tgl_kembali) = " + bulan + "";
+                    + "LEFT JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                    + "WHERE transaksi.status = 'dikembalikan' AND MONTH(detail_transaksi.tgl_kembali) = " + bulan + " "
+                    + "ORDER BY transaksi.kode_transaksi ASC";
         } else if ((tBulan.getSelectedItem() != null) && (tStatusData.getSelectedItem().equals("Sanksi"))) {
             sql = "SELECT transaksi.*, detail_transaksi.*, buku.*, kerusakan.* FROM transaksi "
                     + "INNER JOIN detail_transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
                     + "INNER JOIN buku ON detail_transaksi.kode_buku = buku.kode_buku "
-                    + "INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
-                    + "WHERE detail_transaksi.kode_kerusakan IN (2,3,4) AND MONTH(detail_transaksi.tgl_kembali) = " + bulan + "";
+                    + "LEFT JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusakan "
+                    + "WHERE detail_transaksi.kode_kerusakan IN (2,3,4) AND MONTH(detail_transaksi.tgl_kembali) = " + bulan + " "
+                    + "ORDER BY transaksi.kode_transaksi ASC";
         }
 
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -248,7 +251,7 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
                     sdf.format(results.getDate("detail_transaksi.tgl_kembali")),
                     "Rp. " + NumberFormatUtil.formatDec(results.getInt("detail_transaksi.nominal_denda")),
                     results.getString("buku.judul_buku"),
-                    results.getString("kerusakan.jenis_kerusakan")
+                    results.getString("kerusakan.jenis_kerusakan") != null ? results.getString("kerusakan.jenis_kerusakan") : "-"
                 });
             }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b920e7ed-35e0-470d-8e3b-843c6ef56ac6">
 	<property name="ireport.zoom" value="0.9090909090909113"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="74"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="namaLaporan" class="java.lang.String"/>
 	<parameter name="namaBulan" class="java.lang.String"/>
@@ -216,7 +216,7 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 				</textElement>
 				<textFieldExpression><![CDATA[$F{tgl_kembali}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement uuid="aeabe8ba-6793-4c4b-8c10-9a514a3b10c1" x="706" y="0" width="96" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12"/>
