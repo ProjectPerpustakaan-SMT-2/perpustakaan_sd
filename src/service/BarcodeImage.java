@@ -70,7 +70,7 @@ public class BarcodeImage {
             String topText = "PERPUSTAKAAN SDN 1 SUMBERSARI";
             String midleText = "Barcode Peminjaman Buku";
             String bellowText = "~ SIMPAN BUKTI PEMINJAMAN BUKU ~";
-            Font font = new Font("Calisto MT", Font.PLAIN, 20);
+            Font font = new Font("Arial", Font.BOLD, 20);
             FontMetrics fontMetrics = g2d.getFontMetrics(font);
 
             int topTextWidth = fontMetrics.stringWidth(topText);
