@@ -413,6 +413,9 @@ public class EditBukuHilang extends javax.swing.JInternalFrame {
         } else if (activeDetail == null) {
             JOptionPane.showMessageDialog(this, "Mohon Pilih Data Buku Terlebih Dahulu!");
             return;
+        } else if (detail.getKode_buku().getCatatan().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Catatan Buku Tidak Boleh Kosong!");
+            return;
         }
 
         if (activeDetail == null) {
