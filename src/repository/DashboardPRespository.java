@@ -110,7 +110,7 @@ public class DashboardPRespository {
     public List<ChartData> getChartData() {
         List<ChartData> data = new ArrayList<>();
 
-        String sql = "SELECT subquery.month, SUM(buku) AS buku, SUM(peminjam) AS peminjam "
+        String sql = "SELECT subquery.month, COALESCE(SUM(buku), 0) AS buku, COALESCE(SUM(peminjam), 0) AS peminjam "
                 + "FROM ( "
                 + "    SELECT DATE_FORMAT(tgl_pinjam, '%M') AS MONTH, "
                 + "           tgl_pinjam, "
@@ -118,6 +118,7 @@ public class DashboardPRespository {
                 + "           COUNT(DISTINCT transaksi.nama_peminjam) AS peminjam "
                 + "    FROM detail_transaksi "
                 + "    JOIN transaksi ON detail_transaksi.kode_transaksi = transaksi.kode_transaksi "
+                + "    WHERE MONTH(tgl_pinjam) >= MONTH(CURRENT_DATE()) "
                 + "    GROUP BY YEAR(tgl_pinjam), MONTH(tgl_pinjam), tgl_pinjam "
                 + ") AS subquery "
                 + "WHERE buku > 0 OR peminjam > 0 "
