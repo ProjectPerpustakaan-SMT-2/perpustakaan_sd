@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b920e7ed-35e0-470d-8e3b-843c6ef56ac6">
-	<property name="ireport.zoom" value="0.9090909090909113"/>
-	<property name="ireport.x" value="74"/>
-	<property name="ireport.y" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="1000" pageHeight="595" orientation="Landscape" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b920e7ed-35e0-470d-8e3b-843c6ef56ac6">
+	<property name="ireport.zoom" value="1.771561000000005"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="5"/>
 	<parameter name="namaLaporan" class="java.lang.String"/>
 	<parameter name="namaBulan" class="java.lang.String"/>
 	<queryString language="SQL">
@@ -140,7 +140,7 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 	<columnHeader>
 		<band height="28" splitType="Stretch">
 			<line>
-				<reportElement uuid="bbdbd823-0a4d-46b5-b45d-8c50ae7951c0" x="0" y="27" width="802" height="1"/>
+				<reportElement uuid="bbdbd823-0a4d-46b5-b45d-8c50ae7951c0" x="0" y="27" width="960" height="1"/>
 			</line>
 			<staticText>
 				<reportElement uuid="20473c03-8d54-4e17-aac9-c18005687da8" x="39" y="0" width="129" height="27" forecolor="#996600"/>
@@ -197,6 +197,13 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 					<font size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tgl Kembali]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b97d6fe9-f942-44b1-b738-25bc9997360f" x="802" y="0" width="158" height="27" forecolor="#996600"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Catatan]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -258,47 +265,54 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 				</textElement>
 				<textFieldExpression><![CDATA[$F{judul_buku}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="642df6f3-eb30-4666-af5f-eb982a670823" x="802" y="0" width="158" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
 		<band height="73" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="603" y="0" width="103" height="20"/>
+				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="761" y="0" width="103" height="20"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total Peminjam :]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0" isBlankWhenNull="true">
-				<reportElement uuid="768ac904-dca1-498e-92a8-3dfc112e62f7" x="706" y="40" width="96" height="20"/>
+				<reportElement uuid="768ac904-dca1-498e-92a8-3dfc112e62f7" x="864" y="40" width="96" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totalDenda}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="6f254225-7108-4c33-960f-0b43e8dfb275" x="706" y="20" width="96" height="20"/>
+				<reportElement uuid="6f254225-7108-4c33-960f-0b43e8dfb275" x="864" y="20" width="96" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totalBuku}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7e1ffcce-5dc6-42b0-90b2-fac27d9f44e1" x="706" y="0" width="96" height="20"/>
+				<reportElement uuid="7e1ffcce-5dc6-42b0-90b2-fac27d9f44e1" x="864" y="0" width="96" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{totalPinjam}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="632" y="20" width="74" height="20"/>
+				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="790" y="20" width="74" height="20"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total Buku :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="624" y="40" width="82" height="20"/>
+				<reportElement uuid="691ca255-958a-4cf3-89f6-778ae77e7c9f" x="782" y="40" width="82" height="20"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="true"/>
 				</textElement>
@@ -309,16 +323,16 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 	<pageFooter>
 		<band height="20" splitType="Stretch">
 			<frame>
-				<reportElement uuid="8bcc6b54-d894-4e70-a900-ac3af50340d0" mode="Opaque" x="0" y="0" width="802" height="20" forecolor="#FFFFCC" backcolor="#FFFF99"/>
+				<reportElement uuid="8bcc6b54-d894-4e70-a900-ac3af50340d0" mode="Opaque" x="0" y="0" width="960" height="20" forecolor="#FFFFCC" backcolor="#FFFF99"/>
 				<textField>
-					<reportElement uuid="2367b768-3ac0-403b-a09e-2531a4dc57bf" x="680" y="0" width="78" height="20"/>
+					<reportElement uuid="2367b768-3ac0-403b-a09e-2531a4dc57bf" x="838" y="0" width="78" height="20"/>
 					<textElement textAlignment="Right">
 						<font size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement uuid="5035035b-a042-44e8-b6da-3672969118a7" x="758" y="0" width="44" height="20"/>
+					<reportElement uuid="5035035b-a042-44e8-b6da-3672969118a7" x="916" y="0" width="44" height="20"/>
 					<textElement>
 						<font size="12"/>
 					</textElement>
