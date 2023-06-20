@@ -19,6 +19,7 @@ import util.ValidasiUtil;
 import repository.Repository;
 import repository.KlasifikasiRepository;
 import view.popup.PopupViewDataDiubah;
+import view.popup.PopupViewDataGagal;
 import view.popup.PopupViewHapusData;
 
 /**

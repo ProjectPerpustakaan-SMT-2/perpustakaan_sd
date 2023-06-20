@@ -142,17 +142,21 @@ public class TambahKlasifikasi extends javax.swing.JInternalFrame {
         Set<ConstraintViolation<Klasifikasi>> vols = ValidasiUtil.validate(klasifikasi);
 
         if (vols.size() < 1) {
-            klsfRepo.add(klasifikasi);
+            try {
+                klsfRepo.add(klasifikasi);
 
-            DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
-            daftarKlasifikasii.setUsername(username);
-            JDesktopPane desktopPane = getDesktopPane();
-            desktopPane.add(daftarKlasifikasii);
-            daftarKlasifikasii.setVisible(true);
+                DaftarKlasifikasi daftarKlasifikasii = new DaftarKlasifikasi();
+                daftarKlasifikasii.setUsername(username);
+                JDesktopPane desktopPane = getDesktopPane();
+                desktopPane.add(daftarKlasifikasii);
+                daftarKlasifikasii.setVisible(true);
 
-            this.dispose();
+                this.dispose();
 
-            new PopupViewDataBerhasil().setVisible(true);
+                new PopupViewDataBerhasil().setVisible(true);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
         } else {
             JOptionPane.showMessageDialog(this, ValidasiUtil.getErrorsAsString(vols, "\n"));
             new PopupViewDataGagal().setVisible(true);
