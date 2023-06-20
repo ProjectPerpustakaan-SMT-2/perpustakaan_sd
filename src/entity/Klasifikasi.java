@@ -4,8 +4,6 @@
  */
 package entity;
 
-import jakarta.validation.constraints.NotBlank;
-
 /**
  *
  * @author Hafidz Fadhillah

@@ -232,6 +232,13 @@ public class TambahBuku extends javax.swing.JInternalFrame {
         ComboItem pnbtItem = (ComboItem) penerbitInput.getSelectedItem();
         ComboItem kodeDDCItem = (ComboItem) klasifikasiInput.getSelectedItem();
 
+        if (tJudulBuku.getText().equals("") || tNamaPengarang.getText().equals("") || tISBN.getText().equals("")
+                || tSumber.getText().equals("") || tHalaman.getText().equals("") || tJumlah.getText().equals("")
+                || tStatus.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Pastikan Seluruh Data Terisi (Kecuali Catatan Opsional)");
+            return;
+        }
+
         String catatan;
         if (tCatatan.getText().equals("")) {
             catatan = null;
