@@ -17,7 +17,6 @@ import java.awt.Color;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import static repository.Repository.conn;
 import service.LaporanService;
 import util.NumberFormatUtil;
@@ -168,30 +167,45 @@ public class DaftarLaporan extends javax.swing.JInternalFrame {
 
     private void tBulanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tBulanActionPerformed
         // TODO add your handling code here:
-        if (tBulan.getSelectedIndex() == 0) {
-            bulan = 1;
-        } else if (tBulan.getSelectedIndex() == 1) {
-            bulan = 2;
-        } else if (tBulan.getSelectedIndex() == 2) {
-            bulan = 3;
-        } else if (tBulan.getSelectedIndex() == 3) {
-            bulan = 4;
-        } else if (tBulan.getSelectedIndex() == 4) {
-            bulan = 5;
-        } else if (tBulan.getSelectedIndex() == 5) {
-            bulan = 6;
-        } else if (tBulan.getSelectedIndex() == 6) {
-            bulan = 7;
-        } else if (tBulan.getSelectedIndex() == 7) {
-            bulan = 8;
-        } else if (tBulan.getSelectedIndex() == 8) {
-            bulan = 9;
-        } else if (tBulan.getSelectedIndex() == 9) {
-            bulan = 10;
-        } else if (tBulan.getSelectedIndex() == 10) {
-            bulan = 11;
-        } else if (tBulan.getSelectedIndex() == 11) {
-            bulan = 12;
+        switch (tBulan.getSelectedIndex()) {
+            case 0:
+                bulan = 1;
+                break;
+            case 1:
+                bulan = 2;
+                break;
+            case 2:
+                bulan = 3;
+                break;
+            case 3:
+                bulan = 4;
+                break;
+            case 4:
+                bulan = 5;
+                break;
+            case 5:
+                bulan = 6;
+                break;
+            case 6:
+                bulan = 7;
+                break;
+            case 7:
+                bulan = 8;
+                break;
+            case 8:
+                bulan = 9;
+                break;
+            case 9:
+                bulan = 10;
+                break;
+            case 10:
+                bulan = 11;
+                break;
+            case 11:
+                bulan = 12;
+                break;
+            default:
+                break;
         }
 
         loadDataTable();
