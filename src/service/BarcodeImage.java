@@ -92,7 +92,7 @@ public class BarcodeImage {
             g2d.drawString(bellowText, bellowTextX, barcodeTextY);
 
             // Load the image to be placed on top
-            Image image = ImageIO.read(new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\layouts\\Logo.png"));
+            Image image = ImageIO.read(new FileInputStream("G:\\KULIAH\\SEMESTER 2\\FINAL PROJECT\\Perpustakaan_SD\\src\\assets\\layouts\\Logo.png"));
 
             // Calculate the position to place the image
             int imageX = (imageWidth - image.getWidth(null)) / 2; // Center image horizontally
@@ -104,7 +104,7 @@ public class BarcodeImage {
             g2d.dispose();
 
             //write to png file
-            FileOutputStream fos = new FileOutputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
+            FileOutputStream fos = new FileOutputStream("G:\\KULIAH\\SEMESTER 2\\FINAL PROJECT\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
             ImageIO.write(finalImage, "png", fos);
             fos.write(baos.toByteArray());
             fos.flush();
@@ -121,7 +121,7 @@ public class BarcodeImage {
             // Set the print job width and height
             attributes.add(new MediaPrintableArea(0, 0, 80, 200, MediaPrintableArea.MM));
 
-            InputStream inputStream = new FileInputStream("C:\\Users\\Hafidz Fadhillah\\Documents\\NetBeansProjects\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
+            InputStream inputStream = new FileInputStream("G:\\KULIAH\\SEMESTER 2\\FINAL PROJECT\\Perpustakaan_SD\\src\\assets\\barcode\\" + file_name);
             Doc doc = new SimpleDoc(inputStream, flavor, attributes);
 
             // Print the document

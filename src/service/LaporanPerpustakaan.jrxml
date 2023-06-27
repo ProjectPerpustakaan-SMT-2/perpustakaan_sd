@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="1000" pageHeight="595" orientation="Landscape" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b920e7ed-35e0-470d-8e3b-843c6ef56ac6">
 	<property name="ireport.zoom" value="1.771561000000005"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="5"/>
+	<property name="ireport.x" value="203"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="namaLaporan" class="java.lang.String"/>
 	<parameter name="namaBulan" class="java.lang.String"/>
 	<queryString language="SQL">
@@ -102,7 +102,7 @@ INNER JOIN kerusakan ON detail_transaksi.kode_kerusakan = kerusakan.kode_kerusak
 				<textElement textAlignment="Center">
 					<font size="26" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PERPUSTAKAAN SDN 1 SUMBERBSARI]]></text>
+				<text><![CDATA[PERPUSTAKAAN SDN 1 SUMBERSARI]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="8ab9817a-faa7-43d7-a824-137cc272ec0e" x="245" y="34" width="83" height="27" forecolor="#996600"/>
