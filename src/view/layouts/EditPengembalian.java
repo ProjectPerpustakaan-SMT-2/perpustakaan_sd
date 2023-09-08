@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,6 +88,8 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
+
+        jam();
 
         tNamaPetugas.setVisible(false);
         tJumlahBuku.setVisible(false);
@@ -651,6 +654,46 @@ public class EditPengembalian extends javax.swing.JInternalFrame {
 
     private void customColumnTable() {
         Tabel.getColumnModel().getColumn(0).setMaxWidth(40);
+    }
+
+    private void jam() {
+        try {
+            ActionListener taskPerformer = new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    String finalJam;
+                    String noljam = "";
+                    String nolmenit = "";
+                    String noldetik = "";
+                    Calendar dt = Calendar.getInstance();
+
+                    int jam = dt.get(Calendar.HOUR_OF_DAY);
+                    int menit = dt.get(Calendar.MINUTE);
+                    int detik = dt.get(Calendar.SECOND);
+
+                    if (jam < 10) {
+                        noljam = "0";
+                    }
+
+                    if (menit < 10) {
+                        nolmenit = "0";
+                    }
+
+                    if (detik < 10) {
+                        noldetik = "0";
+                    }
+
+                    String Sjam = noljam + Integer.toString(jam);
+                    String Smenit = nolmenit + Integer.toString(menit);
+                    String Sdetik = noldetik + Integer.toString(detik);
+                    finalJam = Sjam + ":" + Smenit + ":" + Sdetik;
+
+                    tJam.setText(finalJam);
+                }
+            };
+            new javax.swing.Timer(1000, taskPerformer).start();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     private javax.swing.JComboBox bukuInput;
