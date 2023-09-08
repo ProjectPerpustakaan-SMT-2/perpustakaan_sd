@@ -48,6 +48,8 @@ public class DaftarStatusBuku extends javax.swing.JInternalFrame {
         BasicInternalFrameUI BUI = (BasicInternalFrameUI) this.getUI();
         BUI.setNorthPane(null);
 
+        jam();
+
         loadDataTable(bkuRepo.get());
         TableCustom.apply(jScrollPane2, TableCustom.TableType.DEFAULT);
     }
